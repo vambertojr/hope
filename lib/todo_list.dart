@@ -26,16 +26,18 @@ class TodoListState extends State<TodoList> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Todos'),
+        title: Text("ADICIONAR DOENÇAS"),
+        backgroundColor: Colors.teal,
       ),
       body: getTodoListView(),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.teal,
         onPressed: () {
           debugPrint('FAB clicked');
-          navigateToDetail(Todo('', '', ''), 'Add Todo');
+          navigateToDetail(Todo('', '', ''), 'Adicionar Doença');
         },
         tooltip: 'Add Todo',
-        child: Icon(Icons.add),
+        child: Icon(Icons.add, color: Colors.white),
       ),
     );
   }
@@ -69,7 +71,8 @@ class TodoListState extends State<TodoList> {
             ),
             onTap: () {
               debugPrint("ListTile Tapped");
-              navigateToDetail(this.todoList[position], 'Edit Todo');
+              navigateToDetail(this.todoList[position], 'Editar Doença');
+              Colors.teal;
             },
           ),
         );
@@ -84,13 +87,14 @@ class TodoListState extends State<TodoList> {
   void _delete(BuildContext context, Todo todo) async {
     int result = await databaseHelper.deleteTodo(todo.id);
     if (result != 0) {
-      _showSnackBar(context, 'Todo Deleted Successfully');
+      _showSnackBar(context, 'Doença Apagada com Sucesso');
       updateListView();
     }
   }
 
   void _showSnackBar(BuildContext context, String message) {
     final snackBar = SnackBar(content: Text(message));
+    // ignore: deprecated_member_use
     Scaffold.of(context).showSnackBar(snackBar);
   }
 

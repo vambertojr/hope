@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hope/screens/login.dart';
 
 
 import '../todo_detail.dart';
@@ -28,12 +29,15 @@ class HomePage extends StatelessWidget {
           children: <Widget>[
             _pageView(),
             _text(),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                _button(context),
-              ],
+            Container(
+            height: 130,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  _button(context),
+                ],
+              ),
             ),
 
 
@@ -71,7 +75,8 @@ class HomePage extends StatelessWidget {
       child: Text("ENTRAR"),
       onPressed: () {
         Navigator.push(context, MaterialPageRoute(builder: (BuildContext context){
-          return TodoList();
+          //return TodoList();
+          return LoginPage();
         }));
       },
     );

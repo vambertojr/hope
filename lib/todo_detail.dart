@@ -70,7 +70,7 @@ class TodoDetailState extends State<TodoDetail> {
                       updateTitle();
                     },
                     decoration: InputDecoration(
-                        labelText: 'Title',
+                        labelText: 'Nome',
                         labelStyle: textStyle,
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5.0)
@@ -89,7 +89,7 @@ class TodoDetailState extends State<TodoDetail> {
                       updateDescription();
                     },
                     decoration: InputDecoration(
-                        labelText: 'Description',
+                        labelText: 'Descrição',
                         labelStyle: textStyle,
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5.0)
@@ -103,15 +103,19 @@ class TodoDetailState extends State<TodoDetail> {
                   child: Row(
                     children: <Widget>[
                       Expanded(
+                        // ignore: deprecated_member_use
                         child: RaisedButton(
                           color: Theme.of(context).primaryColorDark,
+
                           textColor: Theme.of(context).primaryColorLight,
+
                           child: Text(
-                            'Save',
+                            'Salvar',
                             textScaleFactor: 1.5,
+
                           ),
                           onPressed: () {
-                            setState(() {
+                              setState(() {
                               debugPrint("Save button clicked");
 
                               _save();
@@ -123,11 +127,12 @@ class TodoDetailState extends State<TodoDetail> {
                       Container(width: 5.0,),
 
                       Expanded(
+                        // ignore: deprecated_member_use
                         child: RaisedButton(
                           color: Theme.of(context).primaryColorDark,
                           textColor: Theme.of(context).primaryColorLight,
                           child: Text(
-                            'Delete',
+                            'Deletar',
                             textScaleFactor: 1.5,
                           ),
                           onPressed: () {
@@ -179,9 +184,9 @@ class TodoDetailState extends State<TodoDetail> {
     }
 
     if (result != 0) {  // Success
-      _showAlertDialog('Status', 'Todo Saved Successfully');
+      _showAlertDialog('Status', 'Doença Salva com Sucesso');
     } else {  // Failure
-      _showAlertDialog('Status', 'Problem Saving Todo');
+      _showAlertDialog('Status', 'Problema Para Salvar Doença');
     }
 
   }
@@ -198,9 +203,9 @@ class TodoDetailState extends State<TodoDetail> {
 
     int result = await helper.deleteTodo(todo.id);
     if (result != 0) {
-      _showAlertDialog('Status', 'Todo Deleted Successfully');
+      _showAlertDialog('Status', 'Doença Apagada Com Sucesso');
     } else {
-      _showAlertDialog('Status', 'Error Occured while Deleting Todo');
+      _showAlertDialog('Status', 'Ocorreu Um Erro da Deleção da Doença');
     }
   }
 
@@ -209,6 +214,7 @@ class TodoDetailState extends State<TodoDetail> {
     AlertDialog alertDialog = AlertDialog(
       title: Text(title),
       content: Text(message),
+      backgroundColor: Colors.white,
     );
     showDialog(
         context: context,
