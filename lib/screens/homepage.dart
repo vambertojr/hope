@@ -1,10 +1,11 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hope/screens/login.dart';
+import 'package:hope/screens/menu.dart';
 
 
-import '../todo_detail.dart';
-import '../todo_list.dart';
+import '../todo/todo_detail.dart';
+import '../todo/todo_list.dart';
 
 
 class HomePage extends StatelessWidget {
@@ -76,7 +77,7 @@ class HomePage extends StatelessWidget {
       onPressed: () {
         Navigator.push(context, MaterialPageRoute(builder: (BuildContext context){
           //return TodoList();
-          return LoginPage();
+          return menu();
         }));
       },
     );

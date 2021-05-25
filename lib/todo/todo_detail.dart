@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:hope/todo.dart';
-import 'package:hope/database_helper.dart';
+import 'file:///C:/Users/vamberto/Projects/hope/lib/todo/todo.dart';
+import 'package:hope/todo/database_helper.dart';
 import 'package:intl/intl.dart';
 
 class TodoDetail extends StatefulWidget {

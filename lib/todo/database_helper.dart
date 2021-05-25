@@ -2,7 +2,7 @@ import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-import 'package:hope/todo.dart'
+import 'file:///C:/Users/vamberto/Projects/hope/lib/todo/todo.dart'
  show Todo;
 
 class DatabaseHelper {

@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:hope/todo.dart';
-import 'package:hope/database_helper.dart';
-import 'package:hope/todo_detail.dart';
+import 'file:///C:/Users/vamberto/Projects/hope/lib/todo/todo.dart';
+import 'package:hope/todo/database_helper.dart';
+import 'file:///C:/Users/vamberto/Projects/hope/lib/todo/todo_detail.dart';
 import 'package:sqflite/sqflite.dart';
 
 class TodoList extends StatefulWidget {
