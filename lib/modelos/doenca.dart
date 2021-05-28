@@ -17,6 +17,10 @@ class Doenca {
 
   String get agente => _agenteEtiologico;
 
+  set id(int id){
+    this._id = id;
+  }
+
   set nome(String nome) {
     if (nome.length <= 255) {
       this._nome = nome;

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hope/homepage.dart';
-import 'package:hope/lista_doencas.dart';
+import 'package:hope/visoes/homepage.dart';
+import 'package:hope/visoes/lista_doencas.dart';
+
+import 'visoes/lista_perguntas.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,7 +16,8 @@ class MyApp extends StatelessWidget{
       routes: {
         'home': (context) => HomePage(),
         //'quiz': (context) => Quiz(),
-        'listaDoencas': (context) => ListaDoencas()
+        'listaDoencas': (context) => ListaDoencas(),
+        'listaPerguntas': (context) => ListaPerguntas(),
       },
     );
   }

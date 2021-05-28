@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hope/menu.dart';
+import 'package:hope/visoes/menu.dart';
 
 
 class HomePage extends StatelessWidget {
@@ -8,8 +8,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Hope"),
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.white,
       ),
       body: _body(context),
     );

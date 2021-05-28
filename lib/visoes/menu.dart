@@ -30,8 +30,6 @@ class menu extends StatelessWidget {
           child: InkWell(
               onTap: (){
                 Navigator.of(context).pushNamed(opcoes[index].tela);
-                Navigator.of(context).pushNamed(opcoes[index].tela);
-                Navigator.of(context).pushNamed(opcoes[index].tela);
               },
               child: OpcaoCard(opcao: opcoes[index])),
 
@@ -53,8 +51,9 @@ class Opcao {
 
 List<Opcao> opcoes = <Opcao>[
   Opcao(titulo: 'Início', icon: (Icons.home ), tela:'home'),
-  Opcao(titulo: 'Quiz', icon: Icons.contact_support, tela:'quiz'),
-  Opcao(titulo: 'Doenças', icon: Icons.directions_boat, tela:'listaDoencas')
+  Opcao(titulo: 'Doenças', icon: Icons.directions_boat, tela:'listaDoencas'),
+  Opcao(titulo: 'Perguntas', icon: Icons.contact_support, tela:'listaPerguntas'),
+  Opcao(titulo: 'Quiz', icon: Icons.directions_bus, tela:'quiz'),
 ];
 
 class OpcaoCard extends StatelessWidget {

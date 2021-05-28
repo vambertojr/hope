@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:hope/doenca.dart';
-import 'package:hope/database_helper.dart';
-import 'package:hope/doenca_info.dart';
+import 'package:hope/modelos/doenca.dart';
+import 'package:hope/visoes/doenca_info.dart';
+import 'package:hope/repositorios/doenca_repositorio.dart';
 import 'package:sqflite/sqflite.dart';
 
 class ListaDoencas extends StatefulWidget {
@@ -13,7 +13,7 @@ class ListaDoencas extends StatefulWidget {
 }
 
 class ListaDoencasState extends State<ListaDoencas> {
-  DatabaseHelper databaseHelper = DatabaseHelper();
+  DoencaRepositorio databaseHelper = DoencaRepositorio();
   List<Doenca> listaDoencas;
   int count = 0;
 
@@ -34,7 +34,7 @@ class ListaDoencasState extends State<ListaDoencas> {
         backgroundColor: Colors.teal,
         onPressed: () {
           debugPrint('FAB clicked');
-          navigateToDetail(Doenca('', '', ''), 'Adicionar Doença');
+          navigateToDetail(Doenca.withId(-1, '', '', ''), 'Adicionar doença');
         },
         tooltip: 'Adicionar doença',
         child: Icon(Icons.add, color: Colors.white),
@@ -71,7 +71,7 @@ class ListaDoencasState extends State<ListaDoencas> {
             ),
             onTap: () {
               debugPrint("ListTile Tapped");
-              navigateToDetail(this.listaDoencas[position], 'Editar Doença');
+              navigateToDetail(this.listaDoencas[position], 'Editar doença');
               Colors.teal;
             },
           ),
@@ -85,9 +85,9 @@ class ListaDoencasState extends State<ListaDoencas> {
   }
 
   void _delete(BuildContext context, Doenca doenca) async {
-    int result = await databaseHelper.deleteDoenca(doenca.id);
+    int result = await databaseHelper.apagarDoenca(doenca.id);
     if (result != 0) {
-      _showSnackBar(context, 'Doença Apagada com Sucesso');
+      _showSnackBar(context, 'Doença apagada com sucesso');
       updateListView();
     }
   }
@@ -110,7 +110,7 @@ class ListaDoencasState extends State<ListaDoencas> {
   }
 
   void updateListView() {
-    final Future<Database> dbFuture = databaseHelper.initializeDatabase();
+    final Future<Database> dbFuture = databaseHelper.inicializarDatabase();
     dbFuture.then((database) {
       Future<List<Doenca>> listaDoencasFutura = databaseHelper.getListaDoencas();
       listaDoencasFutura.then((listaDoencas) {

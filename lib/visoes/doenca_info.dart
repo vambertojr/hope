@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:hope/doenca.dart';
-import 'package:hope/database_helper.dart';
+import 'package:hope/modelos/doenca.dart';
+import 'package:hope/repositorios/doenca_repositorio.dart';
 
 class DoencaInfo extends StatefulWidget {
 
@@ -12,14 +12,13 @@ class DoencaInfo extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-
     return DoencaInfoState(this.doenca, this.appBarTitle);
   }
 }
 
 class DoencaInfoState extends State<DoencaInfo> {
 
-  DatabaseHelper helper = DatabaseHelper();
+  DoencaRepositorio helper = DoencaRepositorio();
 
   String appBarTitle;
   Doenca doenca;
@@ -69,7 +68,7 @@ class DoencaInfoState extends State<DoencaInfo> {
                     style: textStyle,
                     onChanged: (value) {
                       debugPrint('Something changed in Name Text Field');
-                      updateNome();
+                      atualizarNome();
                     },
                     decoration: InputDecoration(
                         labelText: 'Nome',
@@ -90,7 +89,7 @@ class DoencaInfoState extends State<DoencaInfo> {
                     maxLines: 20,
                     onChanged: (value) {
                       debugPrint('Something changed in Description Text Field');
-                      updateDescricao();
+                      atualizarDescricao();
                     },
                     decoration: InputDecoration(
                         labelText: 'Descrição',
@@ -109,7 +108,7 @@ class DoencaInfoState extends State<DoencaInfo> {
                     onChanged: (value) {
                       debugPrint('Something changed in Agente Field');
                       agenteController = value;
-                      updateAgente();
+                      atualizarAgente();
                     },
                     decoration: InputDecoration(
                         labelText: 'Agente etiológico',
@@ -191,15 +190,15 @@ class DoencaInfoState extends State<DoencaInfo> {
     Navigator.pop(context, true);
   }
 
-  void updateNome(){
+  void atualizarNome(){
     doenca.nome = nomeController.text;
   }
 
-  void updateDescricao() {
+  void atualizarDescricao() {
     doenca.descricao = descricaoController.text;
   }
 
-  void updateAgente(){
+  void atualizarAgente(){
     doenca.agente = agenteController;
   }
 
@@ -210,7 +209,7 @@ class DoencaInfoState extends State<DoencaInfo> {
 
     int result;
     if (doenca.id != null) {  // Case 1: Update operation
-      result = await helper.updateDoenca(doenca);
+      result = await helper.atualizarDoenca(doenca);
     } else { // Case 2: Insert Operation
       result = await helper.inserirDoenca(doenca);
     }
@@ -233,7 +232,7 @@ class DoencaInfoState extends State<DoencaInfo> {
       return;
     }
 
-    int result = await helper.deleteDoenca(doenca.id);
+    int result = await helper.apagarDoenca(doenca.id);
     if (result != 0) {
       _showAlertDialog('Status', 'Doença apagada com sucesso');
     } else {
