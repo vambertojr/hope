@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hope/modelos/doenca.dart';
 import 'package:hope/modelos/pergunta.dart';
+import 'package:hope/repositorios/database_helper.dart';
 import 'package:hope/repositorios/doenca_repositorio.dart';
 import 'package:hope/repositorios/pergunta_repositorio.dart';
+import 'package:sqflite/sqflite.dart';
 
 
 class PerguntaInfo extends StatefulWidget {
@@ -14,7 +16,6 @@ class PerguntaInfo extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-
     return PerguntaInfoState(this.pergunta, this.appBarTitle);
   }
 }
@@ -44,6 +45,7 @@ class PerguntaInfoState extends State<PerguntaInfo> {
     super.initState();
     _perguntasRepositorio = PerguntaRepositorio();
     _doencasRepositorio = DoencaRepositorio();
+
     carregarListaDoencas();
     _textoController = new TextEditingController(text: pergunta.texto);
     _alternativa1Controller = new TextEditingController(text: pergunta.alternativa1);
@@ -52,7 +54,10 @@ class PerguntaInfoState extends State<PerguntaInfo> {
     _alternativa4Controller = new TextEditingController(text: pergunta.alternativa4);
     _alternativa5Controller = new TextEditingController(text: pergunta.alternativa5);
     _gabarito = pergunta.gabarito?.toString()?.isEmpty ? 1 : pergunta.gabarito;
-    _doencaSelecionada = pergunta.doenca;
+    carregarDoenca();
+    print("Doenca associada a pergunta: ${pergunta.doenca.nome}");
+    print("Doenca selecionada: ${_doencaSelecionada?.nome}");
+
   }
 
   @override
@@ -85,12 +90,11 @@ class PerguntaInfoState extends State<PerguntaInfo> {
                   padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
                   child: DropdownButtonFormField<Doenca>(
                     value: _doencaSelecionada,
-                    onChanged: (Doenca value){
+                    onChanged: (doenca){
                       debugPrint('Something changed in Doença Field');
                       setState(() {
-                        _doencaSelecionada = value;
+                        atualizarDoenca(doenca);
                       });
-                      atualizarDoenca();
                     },
                     decoration: InputDecoration(
                         labelText: 'Doença',
@@ -99,11 +103,7 @@ class PerguntaInfoState extends State<PerguntaInfo> {
                             borderRadius: BorderRadius.circular(5.0)
                         )
                     ),
-                    items: doencasLista.map((doenca) => DropdownMenuItem<Doenca>(
-                      child: Text(doenca.nome),
-                      value: doenca,
-                    )
-                    ).toList(),
+                    items: _atualizarListaDoencas(),
 
                   ),
                 ),
@@ -307,22 +307,48 @@ class PerguntaInfoState extends State<PerguntaInfo> {
         ));
   }
 
+  List<DropdownMenuItem<Doenca>> _atualizarListaDoencas(){
+    print("executou _atualizarListaDoencas()");
+    var lista = doencasLista.map((doenca) => DropdownMenuItem<Doenca>(
+      child: Text(doenca.nome),
+      value: doenca,
+    )
+    ).toList();
+
+    print("Tamanho da lista: ${lista.length}");
+    for(var i in lista){
+      print(i.value);
+      print(i.value.nome);
+      print(i.value.descricao);
+      print(i.value.agenteEtiologico);
+      print(i.value.id);
+    }
+    return lista;
+  }
+
   void carregarListaDoencas() {
-    Future<List<Doenca>> listaDoencasFutura = _doencasRepositorio.getListaDoencas();
     this.doencasLista = [];
-    listaDoencasFutura.then((listaDoencas) {
-      setState(() {
-        this.doencasLista = listaDoencas;
+      Future<List<Doenca>> listaDoencasFutura = _doencasRepositorio.getListaDoencas();
+      listaDoencasFutura.then((listaDoencas) {
+        setState(() {
+          this.doencasLista += listaDoencas;
+        });
       });
-    });
+  }
+
+  void carregarDoenca(){
+    if(pergunta.doenca != null) {
+      this._doencaSelecionada = pergunta.doenca;
+    }
+  }
+
+  void atualizarDoenca(Doenca doenca){
+    _doencaSelecionada = doenca;
+    pergunta.doenca = _doencaSelecionada;
   }
 
   void moveToLastScreen() {
     Navigator.pop(context, true);
-  }
-
-  void atualizarDoenca(){
-    pergunta.doenca = _doencaSelecionada;
   }
 
   void atualizarTexto(){

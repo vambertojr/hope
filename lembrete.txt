@@ -1,0 +1,24 @@
+Para resolver o problema da persistência de objetos complexos (onde um objeto referencia outro),
+eu tentei usar uma biblioteca.
+
+Exemplo de uso na classe Pergunta:
+
+import 'package:json_annotation/json_annotation.dart';
+part 'pergunta.g.dart';
+
+@JsonSerializable(explicitToJson: true)
+class Pergunta {
+    ...
+
+    factory Pergunta.fromJson(Map<String, dynamic> json) => _$PerguntaFromJson(json);
+    Map<String, dynamic> toJson() => _$PerguntaToJson(this);
+
+}
+
+Daí roda no terminal: flutter pub run build_runner watch
+Para que então seja gerado automaticamente o código dos métodos toJson e fromJson
+
+A biblioteca não resolveu, porque a forma que ela lida com o atributo Doenca em Pergunta ainda não
+é a ideal. Porém, eu copiei os métodos que ela gerou e corrigi esse ponto com base em solução vista
+na internet. Não deu para manter o uso da biblioteca porque ela fica regerando sempre o código, então
+a mudança que eu fiz se perdia.

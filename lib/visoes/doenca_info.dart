@@ -37,7 +37,7 @@ class DoencaInfoState extends State<DoencaInfo> {
 
     nomeController.text = doenca.nome;
     descricaoController.text = doenca.descricao;
-    agenteController = doenca.agente?.isEmpty ? 'Vírus' : doenca.agente;
+    agenteController = doenca.agenteEtiologico?.isEmpty ? 'Vírus' : doenca.agenteEtiologico;
 
     return WillPopScope(
 
@@ -199,7 +199,7 @@ class DoencaInfoState extends State<DoencaInfo> {
   }
 
   void atualizarAgente(){
-    doenca.agente = agenteController;
+    doenca.agenteEtiologico = agenteController;
   }
 
   // Save data to database

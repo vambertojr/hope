@@ -34,7 +34,7 @@ class ListaDoencasState extends State<ListaDoencas> {
         backgroundColor: Colors.teal,
         onPressed: () {
           debugPrint('FAB clicked');
-          navigateToDetail(Doenca.withId(-1, '', '', ''), 'Adicionar doença');
+          navigateToDetail(Doenca('', '', ''), 'Adicionar doença');
         },
         tooltip: 'Adicionar doença',
         child: Icon(Icons.add, color: Colors.white),

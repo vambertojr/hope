@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:hope/modelos/doenca.dart';
 import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/visoes/pergunta_info.dart';
 import 'package:hope/repositorios/pergunta_repositorio.dart';
@@ -34,7 +35,7 @@ class ListaPerguntasState extends State<ListaPerguntas> {
         backgroundColor: Colors.teal,
         onPressed: () {
           debugPrint('FAB clicked');
-          navigateToDetail(Pergunta(null, '', '', '', '', '', '', 1), 'Adicionar Pergunta');
+          navigateToDetail(Pergunta(new Doenca('','',''), '', '', '', '', '', '', 1), 'Adicionar Pergunta');
         },
         tooltip: 'Adicionar pergunta',
         child: Icon(Icons.add, color: Colors.white),

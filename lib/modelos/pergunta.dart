@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:hope/modelos/doenca.dart';
 
 class Pergunta {
@@ -19,88 +21,83 @@ class Pergunta {
       this._alternativa2, this._alternativa3, this._alternativa4,
       this._alternativa5, this._gabarito);
 
-  int get id => _id;
+  Pergunta.fromJson(Map<String, dynamic> json)
+    : _doenca = json['doenca'] == null ? null : Doenca.fromJson(jsonDecode(json['doenca'])),
+      _texto = json['texto'] as String,
+      _alternativa1 = json['alternativa1'] as String,
+      _alternativa2 = json['alternativa2'] as String,
+      _alternativa3 = json['alternativa3'] as String,
+      _alternativa4 = json['alternativa4'] as String,
+      _alternativa5 = json['alternativa5'] as String,
+      _gabarito = json['gabarito'] as int,
+      _id = json['id'] as int;
 
-  Doenca get doenca => _doenca;
+  Map<String, dynamic> toJson() => _$PerguntaToJson(this);
 
-  String get texto => _texto;
-
-  String get alternativa1 => _alternativa1;
-
-  String get alternativa2 => _alternativa2;
-
-  String get alternativa3 => _alternativa3;
-
-  String get alternativa4 => _alternativa4;
-
-  String get alternativa5 => _alternativa5;
+  Map<String, dynamic> _$PerguntaToJson(Pergunta instance) => <String, dynamic>{
+    'id': instance._id,
+    'doenca': jsonEncode(instance._doenca),
+    'texto': instance._texto,
+    'alternativa1': instance._alternativa1,
+    'alternativa2': instance._alternativa2,
+    'alternativa3': instance._alternativa3,
+    'alternativa4': instance._alternativa4,
+    'alternativa5': instance._alternativa5,
+    'gabarito': instance._gabarito,
+  };
 
   int get gabarito => _gabarito;
 
-  set doenca(Doenca doenca) {
-    this._doenca = doenca;
+  set gabarito(int value) {
+    _gabarito = value;
   }
 
-  set texto(String texto) {
-      this._texto = texto;
+  String get alternativa5 => _alternativa5;
+
+  set alternativa5(String value) {
+    _alternativa5 = value;
   }
 
-  set alternativa1(String alternativa1) {
-      this._alternativa1 = alternativa1;
+  String get alternativa4 => _alternativa4;
+
+  set alternativa4(String value) {
+    _alternativa4 = value;
   }
 
-  set alternativa2(String alternativa2) {
-    this._alternativa2 = alternativa2;
+  String get alternativa3 => _alternativa3;
+
+  set alternativa3(String value) {
+    _alternativa3 = value;
   }
 
-  set alternativa3(String alternativa3) {
-    this._alternativa3 = alternativa3;
+  String get alternativa2 => _alternativa2;
+
+  set alternativa2(String value) {
+    _alternativa2 = value;
   }
 
-  set alternativa4(String alternativa4) {
-    this._alternativa4 = alternativa4;
+  String get alternativa1 => _alternativa1;
+
+  set alternativa1(String value) {
+    _alternativa1 = value;
   }
 
-  set alternativa5(String alternativa5) {
-    this._alternativa5 = alternativa5;
+  String get texto => _texto;
+
+  set texto(String value) {
+    _texto = value;
   }
 
-  set gabarito(int gabarito){
-    if(gabarito>=1 && gabarito<=5){
-      this._gabarito = gabarito;
-    }
+  Doenca get doenca => _doenca;
+
+  set doenca(Doenca value) {
+    _doenca = value;
   }
 
-  // Convert a Note object into a Map object
-  Map<String, dynamic> toMap() {
-    var map = Map<String, dynamic>();
-    if (id != null) {
-      map['id'] = _id;
-    }
+  int get id => _id;
 
-    map['doenca'] = _doenca.id;
-    map['texto'] = _texto;
-    map['alternativa1'] = _alternativa1;
-    map['alternativa2'] = _alternativa2;
-    map['alternativa3'] = _alternativa3;
-    map['alternativa4'] = _alternativa4;
-    map['alternativa5'] = _alternativa5;
-    map['gabarito'] = _gabarito;
-
-    return map;
-  }
-
-  // Extract a Note object from a Map object
-  Pergunta.fromMapObject(Map<String, dynamic> map) {
-    this._id = map['id'];
-    this._doenca.id = map['doenca'];
-    this._texto = map['texto'];
-    this._alternativa1 = map['alternativa1'];
-    this._alternativa2 = map['alternativa2'];
-    this._alternativa3 = map['alternativa3'];
-    this._alternativa4 = map['alternativa4'];
-    this._alternativa5 = map['alternativa5'];
-    this._gabarito = map['gabarito'];
+  set id(int value) {
+    _id = value;
   }
 }
 

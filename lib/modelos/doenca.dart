@@ -9,17 +9,28 @@ class Doenca {
 
   Doenca.withId(this._id, this._nome, this._agenteEtiologico, [this._descricao]);
 
+  Doenca.fromJson(Map<String, dynamic> json)
+    : _nome = json['nome'] as String,
+      _agenteEtiologico = json['agenteEtiologico'] as String,
+      _descricao = json['descricao'] as String,
+      _id = json['id'] as int;
+
+  Map<String, dynamic> toJson() => _$DoencaToJson(this);
+
+  Map<String, dynamic> _$DoencaToJson(Doenca instance) => <String, dynamic>{
+    'id': instance._id,
+    'nome': instance._nome,
+    'descricao': instance._descricao,
+    'agenteEtiologico': instance._agenteEtiologico,
+  };
+
   int get id => _id;
 
   String get nome => _nome;
 
   String get descricao => _descricao;
 
-  String get agente => _agenteEtiologico;
-
-  set id(int id){
-    this._id = id;
-  }
+  String get agenteEtiologico => _agenteEtiologico;
 
   set nome(String nome) {
     if (nome.length <= 255) {
@@ -27,7 +38,7 @@ class Doenca {
     }
   }
 
-  set agente(String agente) {
+  set agenteEtiologico(String agente) {
     if (agente.length <= 50) {
       this._agenteEtiologico = agente;
     }
@@ -39,27 +50,6 @@ class Doenca {
     }
   }
 
-  // Convert a Note object into a Map object
-  Map<String, dynamic> toMap() {
-
-    var map = Map<String, dynamic>();
-    if (id != null) {
-      map['id'] = _id;
-    }
-    map['nome'] = _nome;
-    map['descricao'] = _descricao;
-    map['agente'] = _agenteEtiologico;
-
-    return map;
-  }
-
-  // Extract a Note object from a Map object
-  Doenca.fromMapObject(Map<String, dynamic> map) {
-    this._id = map['id'];
-    this._nome = map['nome'];
-    this._descricao = map['descricao'];
-    this._agenteEtiologico = map['agente'];
-  }
 }
 
 

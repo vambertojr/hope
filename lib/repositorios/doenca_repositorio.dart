@@ -14,13 +14,13 @@ class DoencaRepositorio {
 
   Future<int> inserirDoenca(Doenca doenca) async {
     Database db = await new DatabaseHelper().database;
-    var result = await db.insert(ConstanteRepositorio.doencaTabela, doenca.toMap());
+    var result = await db.insert(ConstanteRepositorio.doencaTabela, doenca.toJson());
     return result;
   }
 
   Future<int> atualizarDoenca(Doenca doenca) async {
     var db = await new DatabaseHelper().database;
-    var result = await db.update(ConstanteRepositorio.doencaTabela, doenca.toMap(),
+    var result = await db.update(ConstanteRepositorio.doencaTabela, doenca.toJson(),
         where: '${ConstanteRepositorio.doencaTabela_colId} = ?', whereArgs: [doenca.id]);
     return result;
   }
@@ -40,12 +40,12 @@ class DoencaRepositorio {
   }
 
   Future<List<Doenca>> getListaDoencas() async {
-    var doencasMapList = await getDoencasMapList(); // Get 'Map List' from database
-    int count = doencasMapList.length;         // Count the number of map entries in db table
+    var doencasMapList = await getDoencasMapList();
+    int count = doencasMapList.length;
 
     List<Doenca> listaDoencas = List<Doenca>();
     for (int i = 0; i < count; i++) {
-      listaDoencas.add(Doenca.fromMapObject(doencasMapList[i]));
+      listaDoencas.add(Doenca.fromJson(doencasMapList[i]));
     }
 
     return listaDoencas;
@@ -53,8 +53,6 @@ class DoencaRepositorio {
 
   Future<List<Map<String, dynamic>>> getDoencasMapList() async {
     Database db = await new DatabaseHelper().database;
-
-//		var result = await db.rawQuery('SELECT * FROM $todoTable order by $colTitle ASC');
     var result = await db.query(ConstanteRepositorio.doencaTabela,
         orderBy: '${ConstanteRepositorio.doencaTabela_colNome} ASC');
     return result;
