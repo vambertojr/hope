@@ -14,17 +14,22 @@ class ListaPerguntas extends StatefulWidget {
 }
 
 class ListaPerguntasState extends State<ListaPerguntas> {
-  PerguntaRepositorio databaseHelper = PerguntaRepositorio();
-  List<Pergunta> listaPerguntas;
-  int count = 0;
+  PerguntaRepositorio _databaseHelper = PerguntaRepositorio();
+  List<Pergunta> _listaPerguntas;
+  int _totalPerguntas;
+
+  @override
+  void initState() {
+    super.initState();
+    if (_listaPerguntas == null) {
+      _listaPerguntas = [];
+      _totalPerguntas = 0;
+      _atualizarListaPerguntas();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (listaPerguntas == null) {
-      listaPerguntas = List<Pergunta>();
-      updateListView();
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: Text("ADICIONAR PERGUNTAS"),
@@ -45,7 +50,7 @@ class ListaPerguntasState extends State<ListaPerguntas> {
 
   ListView getListaPerguntasView() {
     return ListView.builder(
-      itemCount: count,
+      itemCount: _totalPerguntas,
       itemBuilder: (BuildContext context, int position) {
         return Card(
           color: Colors.white,
@@ -53,26 +58,26 @@ class ListaPerguntasState extends State<ListaPerguntas> {
           child: ListTile(
             leading: CircleAvatar(
               backgroundColor: Colors.amber,
-              child: Text(getFirstLetter(this.listaPerguntas[position].texto),
+              child: Text(getFirstLetter(this._listaPerguntas[position].texto),
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ),
-            title: Text(this.listaPerguntas[position].texto,
+            title: Text(this._listaPerguntas[position].texto,
                 style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text(this.listaPerguntas[position].texto),
+            subtitle: Text(this._listaPerguntas[position].texto),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 GestureDetector(
                   child: Icon(Icons.delete,color: Colors.red,),
                   onTap: () {
-                    _delete(context, listaPerguntas[position]);
+                    _delete(context, _listaPerguntas[position]);
                   },
                 ),
               ],
             ),
             onTap: () {
               debugPrint("ListTile Tapped");
-              navigateToDetail(this.listaPerguntas[position], 'Editar Pergunta');
+              navigateToDetail(this._listaPerguntas[position], 'Editar Pergunta');
               Colors.teal;
             },
           ),
@@ -86,10 +91,10 @@ class ListaPerguntasState extends State<ListaPerguntas> {
   }
 
   void _delete(BuildContext context, Pergunta pergunta) async {
-    int result = await databaseHelper.apagarPergunta(pergunta.id);
+    int result = await _databaseHelper.apagarPergunta(pergunta.id);
     if (result != 0) {
       _showSnackBar(context, 'Pergunta apagada com sucesso');
-      updateListView();
+      _atualizarListaPerguntas();
     }
   }
 
@@ -106,18 +111,18 @@ class ListaPerguntasState extends State<ListaPerguntas> {
     }));
 
     if (result == true) {
-      updateListView();
+      _atualizarListaPerguntas();
     }
   }
 
-  void updateListView() {
-    final Future<Database> dbFuture = databaseHelper.inicializarDatabase();
+  void _atualizarListaPerguntas() {
+    final Future<Database> dbFuture = _databaseHelper.inicializarDatabase();
     dbFuture.then((database) {
-      Future<List<Pergunta>> listaPerguntasFutura = databaseHelper.getListaPerguntas();
+      Future<List<Pergunta>> listaPerguntasFutura = _databaseHelper.getListaPerguntas();
       listaPerguntasFutura.then((listaPerguntas) {
         setState(() {
-          this.listaPerguntas = listaPerguntas;
-          this.count = listaPerguntas.length;
+          this._listaPerguntas = listaPerguntas;
+          this._totalPerguntas = listaPerguntas.length;
         });
       });
     });
