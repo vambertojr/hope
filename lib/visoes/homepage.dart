@@ -72,12 +72,6 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  _text() {
-    return Text("Investigar sobre a doenças incluindo, assuntos como "
-        "tratamento, progresso do tratamento, ou dificuldades enfrentadas, inclusão social, relatos de profissionais da área, pacientes, familiares e amigos.");
-
-  }
-
   TextFormField _textFormFieldLogin() {
     return TextFormField(
         controller: _tedLogin,
