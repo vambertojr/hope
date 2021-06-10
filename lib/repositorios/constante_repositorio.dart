@@ -17,4 +17,10 @@ class ConstanteRepositorio {
   static String perguntaTabela_colAlternativa5 = 'alternativa5';
   static String perguntaTabela_colGabarito = 'gabarito';
 
+  static String usuarioTabela = 'tabela_usuarios';
+  static String usuarioTabela_colId = 'id';
+  static String usuarioTabela_colLogin = 'login';
+  static String usuarioTabela_colSenha = 'senha';
+  static String usuarioTabela_colPapel = 'papel';
+
 }

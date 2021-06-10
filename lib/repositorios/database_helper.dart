@@ -59,6 +59,15 @@ class DatabaseHelper {
         'FOREIGN KEY(${ConstanteRepositorio.perguntaTabela_colDoenca}) REFERENCES '
         '${ConstanteRepositorio.doencaTabela}(${ConstanteRepositorio.doencaTabela_colId}))'
     );
+
+    await db.execute(
+        'CREATE TABLE ${ConstanteRepositorio.usuarioTabela}('
+            '${ConstanteRepositorio.usuarioTabela_colId} INTEGER PRIMARY KEY AUTOINCREMENT, '
+            '${ConstanteRepositorio.usuarioTabela_colLogin} TEXT, '
+            '${ConstanteRepositorio.usuarioTabela_colSenha} TEXT, '
+            '${ConstanteRepositorio.usuarioTabela_colPapel} TEXT)'
+    );
+
   }
 
 }

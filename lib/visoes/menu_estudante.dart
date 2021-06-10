@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class Menu extends StatelessWidget {
+class MenuEstudante extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
@@ -51,8 +51,6 @@ class Opcao {
 
 List<Opcao> opcoes = <Opcao>[
   Opcao(titulo: 'Início', icon: (Icons.home ), tela:'home'),
-  Opcao(titulo: 'Doenças', icon: Icons.directions_boat, tela:'listaDoencas'),
-  Opcao(titulo: 'Perguntas', icon: Icons.contact_support, tela:'listaPerguntas'),
   Opcao(titulo: 'Quiz', icon: Icons.directions_bus, tela:'quiz'),
 ];
 
