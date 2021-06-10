@@ -29,18 +29,25 @@ class HomePage extends StatelessWidget {
   _body(context) {
     return Form(
       key: _formKey,
-      //height: double.infinity,
-      //margin: EdgeInsets.only(top:12.0, bottom: 12.0, left: 12, right: 12),
-      //color: Colors.white,
       child: ListView(
           children: <Widget>[
             Column(crossAxisAlignment: CrossAxisAlignment.center,
-              //mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                _pageView(),
-                _textFormFieldLogin(),
-                SizedBox(height: 10),
-                _textFormFieldSenha(),
+                Container(
+                  margin: EdgeInsets.only(top:12.0, bottom: 12.0, left: 12, right: 12),
+                  color: Colors.white,
+                  child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        _pageView(),
+                        _textFormFieldLogin(),
+                        SizedBox(height: 10),
+                        _textFormFieldSenha()
+                      ],
+                  ),
+                ),
+
                 Container(
                 height: 80,
                   child: Row(
@@ -76,11 +83,8 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Container _textFormFieldLogin() {
-    return Container(
-        margin: EdgeInsets.only(top:12.0, bottom: 12.0, left: 12, right: 12),
-        color: Colors.white,
-        child: TextFormField(
+  TextFormField _textFormFieldLogin() {
+    return TextFormField(
           controller: _tedLogin,
           validator: _validarLogin,
           keyboardType: TextInputType.text,
@@ -90,15 +94,11 @@ class HomePage extends StatelessWidget {
               labelStyle: textStyle,
               hintText: "Informe o login"
           )
-        )
     );
   }
 
-  Container _textFormFieldSenha() {
-    return Container(
-        margin: EdgeInsets.only(top:12.0, bottom: 12.0, left: 12, right: 12),
-        color: Colors.white,
-        child: TextFormField(
+  TextFormField _textFormFieldSenha() {
+    return TextFormField(
           controller: _tedSenha,
           validator: _validarSenha,
           obscureText: true,
@@ -109,13 +109,14 @@ class HomePage extends StatelessWidget {
               labelStyle: textStyle,
               hintText: "Informe a senha"
           )
-        )
-    );
+        );
   }
 
   String _validarLogin(String text){
     if(text.isEmpty){
       return "Informe o login";
+    } else if(text.length<3){
+      return "O login não pode ter menos de 3 caracteres";
     }
     return null;
   }
@@ -123,6 +124,8 @@ class HomePage extends StatelessWidget {
   String _validarSenha(String text){
     if(text.isEmpty){
       return "Informe a senha";
+    } else if(text.length<6){
+      return "O login não pode ter menos de 6 caracteres";
     }
     return null;
   }
@@ -141,17 +144,18 @@ class HomePage extends StatelessWidget {
     final login = _tedLogin.text;
     final senha = _tedSenha.text;
 
-    print("Login: $login , Senha: $senha ");
     if (!_formKey.currentState.validate()) {
       return;
     }
 
-    Usuario usuario = new Usuario(login, senha);
-    var usuarioEncontrado = await _usuarioRepositorio.getUsuario(usuario);
+    Usuario usuario = new Usuario(login, senha, '');
+    Usuario usuarioEncontrado = await _usuarioRepositorio.getUsuario(usuario);
 
     if(usuarioEncontrado == null) {
       _showAlertDialog('Status', 'Usuário não encontrado', context);
-    } else {
+      return;
+    }
+    else {
       Navigator.push(context, MaterialPageRoute(builder: (BuildContext context){
         if(usuarioEncontrado.papel == 'Médico'){
           return Menu();
