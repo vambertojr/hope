@@ -188,19 +188,29 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
   }
 
   void _save() async {
-
-    moveToLastScreen();
-
     int result;
+    bool usuarioJaExiste = false;
+
     if (usuario.id != null) {  // Case 1: Update operation
+      moveToLastScreen();
       result = await _usuarioRepositorio.atualizarUsuario(usuario);
     } else { // Case 2: Insert Operation
-      result = await _usuarioRepositorio.inserirUsuario(usuario);
+      bool existe = await _usuarioRepositorio.existeUsuarioComLogin(usuario);
+      if(existe == true) {
+        result = 0;
+        usuarioJaExiste = true;
+      }
+      else{
+        moveToLastScreen();
+        result = await _usuarioRepositorio.inserirUsuario(usuario);
+      }
     }
 
     if (result != 0) {  // Success
       _showAlertDialog('Status', 'Usuário salvo com sucesso');
-    } else {  // Failure
+    } else if(result == 0 && usuarioJaExiste) { // Failure
+      _showAlertDialog('Status', 'Já existe um usuário com esse login');
+    } else {
       _showAlertDialog('Status', 'Erro ao salvar usuário');
     }
 

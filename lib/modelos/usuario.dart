@@ -5,7 +5,7 @@ class Usuario {
   String _senha;
   String _papel;
 
-  Usuario(this._login, this._senha, [this._papel]);
+  Usuario(this._login, this._senha, this._papel);
 
   Usuario.withId(this._id, this._login, this._senha, this._papel);
 
@@ -46,5 +46,17 @@ class Usuario {
 
   set papel(String value) {
     _papel = value;
+  }
+
+  bool validarLogin(String text){
+    if(text.isNotEmpty && text.length<3){
+      return true;
+    } else false;
+  }
+
+  bool validarSenha(String text){
+    if(text.isNotEmpty && text.length<6){
+      return true;
+    } else false;
   }
 }

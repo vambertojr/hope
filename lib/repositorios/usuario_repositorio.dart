@@ -40,12 +40,25 @@ class UsuarioRepositorio {
     int count = result.length;
     List<Usuario> listaUsuarios = List<Usuario>();
     for (int i = 0; i < count; i++) {
-      print(Usuario.fromJson(result[i]));
       listaUsuarios.add(Usuario.fromJson(result[i]));
     }
 
     if(listaUsuarios.isEmpty) return null;
     else return listaUsuarios[0];
+  }
+
+  Future<bool> existeUsuarioComLogin(Usuario usuario) async {
+    var db = await new DatabaseHelper().database;
+    var result = await db.query(ConstanteRepositorio.usuarioTabela,
+        where: '${ConstanteRepositorio.usuarioTabela_colLogin} = ?',
+        whereArgs: [usuario.login]);
+    int count = result.length;
+    List<Usuario> listaUsuarios = List<Usuario>();
+    for (int i = 0; i < count; i++) {
+      listaUsuarios.add(Usuario.fromJson(result[i]));
+    }
+    bool resultado = listaUsuarios.isEmpty? false : true;
+    return resultado;
   }
 
   Future<int> getTotalUsuarios() async {
