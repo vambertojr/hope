@@ -115,8 +115,6 @@ class HomePage extends StatelessWidget {
   String _validarLogin(String text){
     if(text.isEmpty){
       return "Informe o login";
-    } else if(text.length<3){
-      return "O login não pode ter menos de 3 caracteres";
     }
     return null;
   }
@@ -124,8 +122,6 @@ class HomePage extends StatelessWidget {
   String _validarSenha(String text){
     if(text.isEmpty){
       return "Informe a senha";
-    } else if(text.length<6){
-      return "O login não pode ter menos de 6 caracteres";
     }
     return null;
   }
