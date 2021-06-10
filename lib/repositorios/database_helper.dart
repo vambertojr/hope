@@ -65,7 +65,8 @@ class DatabaseHelper {
             '${ConstanteRepositorio.usuarioTabela_colId} INTEGER PRIMARY KEY AUTOINCREMENT, '
             '${ConstanteRepositorio.usuarioTabela_colLogin} TEXT, '
             '${ConstanteRepositorio.usuarioTabela_colSenha} TEXT, '
-            '${ConstanteRepositorio.usuarioTabela_colPapel} TEXT)'
+            '${ConstanteRepositorio.usuarioTabela_colPapel} TEXT, '
+            'UNIQUE(${ConstanteRepositorio.usuarioTabela_colLogin}) ON CONFLICT IGNORE)'
     );
 
   }

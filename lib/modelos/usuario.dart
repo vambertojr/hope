@@ -48,15 +48,4 @@ class Usuario {
     _papel = value;
   }
 
-  bool validarLogin(String text){
-    if(text.isNotEmpty && text.length<3){
-      return true;
-    } else false;
-  }
-
-  bool validarSenha(String text){
-    if(text.isNotEmpty && text.length<6){
-      return true;
-    } else false;
-  }
 }

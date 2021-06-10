@@ -189,29 +189,25 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
 
   void _save() async {
     int result;
-    bool usuarioJaExiste = false;
 
     if (usuario.id != null) {  // Case 1: Update operation
-      moveToLastScreen();
       result = await _usuarioRepositorio.atualizarUsuario(usuario);
     } else { // Case 2: Insert Operation
-      bool existe = await _usuarioRepositorio.existeUsuarioComLogin(usuario);
-      if(existe == true) {
-        result = 0;
-        usuarioJaExiste = true;
-      }
-      else{
-        moveToLastScreen();
-        result = await _usuarioRepositorio.inserirUsuario(usuario);
-      }
+      result = await _usuarioRepositorio.inserirUsuario(usuario);
     }
 
+    print("Result when saving user: ${result}");
+
     if (result != 0) {  // Success
+      moveToLastScreen();
       _showAlertDialog('Status', 'Usuário salvo com sucesso');
-    } else if(result == 0 && usuarioJaExiste) { // Failure
-      _showAlertDialog('Status', 'Já existe um usuário com esse login');
     } else {
-      _showAlertDialog('Status', 'Erro ao salvar usuário');
+      bool existe = await _usuarioRepositorio.existeUsuarioComLogin(usuario);
+      if(existe){
+        _showAlertDialog('Status', 'Já existe um usuário com esse login');
+      } else {
+        _showAlertDialog('Status', 'Erro ao salvar usuário');
+      }
     }
 
   }
@@ -228,4 +224,18 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
         builder: (_) => alertDialog
     );
   }
+
+  bool validarLogin(String text){
+    if(text.isNotEmpty && text.length<3){
+      return true;
+    } else false;
+  }
+
+  bool validarSenha(String text){
+    if(text.isNotEmpty && text.length<6){
+      return true;
+    } else false;
+  }
+
+
 }
