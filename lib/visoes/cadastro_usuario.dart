@@ -18,6 +18,8 @@ class CadastroUsuario extends StatefulWidget {
 
 class CadastroUsuarioState extends State<CadastroUsuario> {
 
+  GlobalKey<FormState> _formKey;
+
   UsuarioRepositorio _usuarioRepositorio;
 
   String appBarTitle;
@@ -32,6 +34,7 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
   @override
   void initState() {
     super.initState();
+    _formKey = GlobalKey<FormState>();
     _usuarioRepositorio = UsuarioRepositorio();
     _loginController = new TextEditingController(text: usuario.login);
     _senhaController = new TextEditingController(text: usuario.senha);
@@ -62,111 +65,115 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
 
           body: Padding(
             padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
-            child: ListView(
-              children: <Widget>[
+            child: Form(
+              key: _formKey,
+              child: ListView(
+                children: <Widget>[
 
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: TextField(
-                    controller: _loginController,
-                    style: textStyle,
-                    onChanged: (value) {
-                      debugPrint('Something changed in Login Text Field');
-                      atualizarLogin();
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Login',
-                        labelStyle: textStyle,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0)
-                        )
-                    ),
-                  ),
-                ),
-
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: TextField(
-                    controller: _senhaController,
-                    obscureText: true,
-                    style: textStyle,
-                    onChanged: (value) {
-                      debugPrint('Something changed in Senha Text Field');
-                      atualizarSenha();
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Senha',
-                        labelStyle: textStyle,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0)
-                        )
-                    ),
-                  ),
-                ),
-
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: DropdownButtonFormField<String>(
-                    value: _papel,
-                    onChanged: (value) {
-                      debugPrint('Something changed in Papel Field');
-                      _papel = value;
-                      atualizarPapel();
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Papel',
-                        labelStyle: textStyle,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0)
-                        )
-                    ),
-                    items: <String>['Médico', 'Estudante']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ),
-
-
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        // ignore: deprecated_member_use
-                        child: RaisedButton(
-                          color: Theme.of(context).primaryColorDark,
-
-                          textColor: Theme.of(context).primaryColorLight,
-
-                          child: Text(
-                            'Salvar',
-                            textScaleFactor: 1.5,
-
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              debugPrint("Save button clicked");
-
-                              _save();
-                            });
-                          },
-                        ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+                    child: TextFormField(
+                      controller: _loginController,
+                      validator: _validarLogin,
+                      style: textStyle,
+                      onChanged: (value) {
+                        debugPrint('Something changed in Login Text Field');
+                        atualizarLogin();
+                      },
+                      decoration: InputDecoration(
+                          labelText: 'Login',
+                          labelStyle: textStyle,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0)
+                          )
                       ),
-
-                      Container(width: 5.0,),
-
-                    ],
+                    ),
                   ),
-                ),
+
+                  Padding(
+                    padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+                    child: TextFormField(
+                      controller: _senhaController,
+                      validator: _validarSenha,
+                      obscureText: true,
+                      style: textStyle,
+                      onChanged: (value) {
+                        debugPrint('Something changed in Senha Text Field');
+                        atualizarSenha();
+                      },
+                      decoration: InputDecoration(
+                          labelText: 'Senha',
+                          labelStyle: textStyle,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0)
+                          )
+                      ),
+                    ),
+                  ),
+
+                  Padding(
+                    padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+                    child: DropdownButtonFormField<String>(
+                      value: _papel,
+                      onChanged: (value) {
+                        debugPrint('Something changed in Papel Field');
+                        _papel = value;
+                        atualizarPapel();
+                      },
+                      decoration: InputDecoration(
+                          labelText: 'Papel',
+                          labelStyle: textStyle,
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0)
+                          )
+                      ),
+                      items: <String>['Médico', 'Estudante']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
 
 
-              ],
-            ),
-          ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          // ignore: deprecated_member_use
+                          child: RaisedButton(
+                            color: Theme.of(context).primaryColorDark,
+
+                            textColor: Theme.of(context).primaryColorLight,
+
+                            child: Text(
+                              'Salvar',
+                              textScaleFactor: 1.5,
+
+                            ),
+                            onPressed: () {
+                              setState(() {
+                                debugPrint("Save button clicked");
+
+                                _save();
+                              });
+                            },
+                          ),
+                        ),
+
+                        Container(width: 5.0,),
+
+                      ],
+                    ),
+                  ),
+
+
+                ],
+              ),
+          ),),
 
         ));
   }
@@ -189,6 +196,10 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
 
   void _save() async {
     int result;
+
+    if (!_formKey.currentState.validate()) {
+      return;
+    }
 
     if (usuario.id != null) {  // Case 1: Update operation
       result = await _usuarioRepositorio.atualizarUsuario(usuario);
@@ -225,16 +236,24 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
     );
   }
 
-  bool validarLogin(String text){
-    if(text.isNotEmpty && text.length<3){
-      return true;
-    } else false;
+  String _validarLogin(String text){
+    String mensagem;
+    if(text.isEmpty){
+      mensagem = "Informe o login";
+    } else if(text.length<4){
+      mensagem = "O login deve ter pelo menos 4 caracteres";
+    }
+    return mensagem;
   }
 
-  bool validarSenha(String text){
-    if(text.isNotEmpty && text.length<6){
-      return true;
-    } else false;
+  String _validarSenha(String text){
+    String mensagem;
+    if(text.isEmpty){
+      mensagem = "Informe a senha";
+    } else if(text.length<8){
+      mensagem = "A senha deve ter pelo menos 8 caracteres";
+    }
+    return mensagem;
   }
 
 
