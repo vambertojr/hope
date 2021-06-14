@@ -81,7 +81,6 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
                       validator: _validarLogin,
                       style: textStyle,
                       onChanged: (value) {
-                        debugPrint('Something changed in Login Text Field');
                         atualizarLogin();
                       },
                       decoration: InputDecoration(
@@ -102,7 +101,6 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
                       obscureText: true,
                       style: textStyle,
                       onChanged: (value) {
-                        debugPrint('Something changed in Senha Text Field');
                         atualizarSenha();
                       },
                       decoration: InputDecoration(
@@ -120,7 +118,6 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
                     child: DropdownButtonFormField<String>(
                       value: _papel,
                       onChanged: (value) {
-                        debugPrint('Something changed in Papel Field');
                         _papel = value;
                         atualizarPapel();
                       },
@@ -160,8 +157,6 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
                             ),
                             onPressed: () {
                               setState(() {
-                                debugPrint("Save button clicked");
-
                                 _save();
                               });
                             },

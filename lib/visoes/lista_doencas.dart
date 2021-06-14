@@ -33,7 +33,6 @@ class ListaDoencasState extends State<ListaDoencas> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.teal,
         onPressed: () {
-          debugPrint('FAB clicked');
           navigateToDetail(Doenca('', '', ''), 'Adicionar doença');
         },
         tooltip: 'Adicionar doença',
@@ -70,7 +69,6 @@ class ListaDoencasState extends State<ListaDoencas> {
               ],
             ),
             onTap: () {
-              debugPrint("ListTile Tapped");
               navigateToDetail(this.listaDoencas[position], 'Editar doença');
               Colors.teal;
             },

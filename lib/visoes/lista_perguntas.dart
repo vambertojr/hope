@@ -39,7 +39,6 @@ class ListaPerguntasState extends State<ListaPerguntas> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.teal,
         onPressed: () {
-          debugPrint('FAB clicked');
           navigateToDetail(Pergunta(new Doenca('','',''), '', '', '', '', '', '', 1), 'Adicionar Pergunta');
         },
         tooltip: 'Adicionar pergunta',
@@ -76,7 +75,6 @@ class ListaPerguntasState extends State<ListaPerguntas> {
               ],
             ),
             onTap: () {
-              debugPrint("ListTile Tapped");
               navigateToDetail(this._listaPerguntas[position], 'Editar Pergunta');
               Colors.teal;
             },

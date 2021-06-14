@@ -67,7 +67,6 @@ class DoencaInfoState extends State<DoencaInfo> {
                     controller: nomeController,
                     style: textStyle,
                     onChanged: (value) {
-                      debugPrint('Something changed in Name Text Field');
                       atualizarNome();
                     },
                     decoration: InputDecoration(
@@ -88,7 +87,6 @@ class DoencaInfoState extends State<DoencaInfo> {
                     minLines: 10,
                     maxLines: 20,
                     onChanged: (value) {
-                      debugPrint('Something changed in Description Text Field');
                       atualizarDescricao();
                     },
                     decoration: InputDecoration(
@@ -106,7 +104,6 @@ class DoencaInfoState extends State<DoencaInfo> {
                   child: DropdownButtonFormField<String>(
                     value: agenteController,
                     onChanged: (value) {
-                      debugPrint('Something changed in Agente Field');
                       agenteController = value;
                       atualizarAgente();
                     },
@@ -146,8 +143,6 @@ class DoencaInfoState extends State<DoencaInfo> {
                           ),
                           onPressed: () {
                               setState(() {
-                              debugPrint("Save button clicked");
-
                               _save();
                             });
                           },
@@ -167,7 +162,6 @@ class DoencaInfoState extends State<DoencaInfo> {
                           ),
                           onPressed: () {
                             setState(() {
-                              debugPrint("Delete button clicked");
                               _delete();
                             });
                           },
