@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hope/modelos/doenca.dart';
 import 'package:hope/repositorios/doenca_repositorio.dart';
@@ -18,41 +17,47 @@ class DoencaInfo extends StatefulWidget {
 
 class DoencaInfoState extends State<DoencaInfo> {
 
-  DoencaRepositorio helper = DoencaRepositorio();
+  DoencaRepositorio _helper;
 
-  String appBarTitle;
-  Doenca doenca;
+  String _appBarTitle;
+  Doenca _doenca;
 
-  TextEditingController nomeController = TextEditingController();
-  TextEditingController descricaoController = TextEditingController();
+  TextEditingController _nomeController;
+  TextEditingController _descricaoController;
   String agenteController;
 
+  DoencaInfoState(this._doenca, this._appBarTitle);
 
-  DoencaInfoState(this.doenca, this.appBarTitle);
+  @override
+  void initState() {
+    super.initState();
+    _helper = DoencaRepositorio();
+    _nomeController = TextEditingController();
+    _descricaoController = TextEditingController();
+    _nomeController.text = _doenca.nome;
+    _descricaoController.text = _doenca.descricao;
+    agenteController = _doenca.agenteEtiologico?.isEmpty ? 'Vírus' : _doenca.agenteEtiologico;
+  }
 
   @override
   Widget build(BuildContext context) {
 
-    TextStyle textStyle = Theme.of(context).textTheme.title;
-
-    nomeController.text = doenca.nome;
-    descricaoController.text = doenca.descricao;
-    agenteController = doenca.agenteEtiologico?.isEmpty ? 'Vírus' : doenca.agenteEtiologico;
+    TextStyle textStyle = Theme.of(context).textTheme.headline6;
 
     return WillPopScope(
 
         onWillPop: () {
-          moveToLastScreen();
+          _voltarParaUltimaTela();
         },
 
         child: Scaffold(
           appBar: AppBar(
-            title: Text(appBarTitle),
+            title: Text(_appBarTitle),
             backgroundColor: Colors.teal,
             leading: IconButton(icon: Icon(
                 Icons.arrow_back),
                 onPressed: () {
-                  moveToLastScreen();
+                  _voltarParaUltimaTela();
                 }
             ),
           ),
@@ -65,10 +70,10 @@ class DoencaInfoState extends State<DoencaInfo> {
                 Padding(
                   padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
                   child: TextField(
-                    controller: nomeController,
+                    controller: _nomeController,
                     style: textStyle,
                     onChanged: (value) {
-                      atualizarNome();
+                      _atualizarNome();
                     },
                     decoration: InputDecoration(
                         labelText: 'Nome',
@@ -83,12 +88,12 @@ class DoencaInfoState extends State<DoencaInfo> {
                 Padding(
                   padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
                   child: TextField(
-                    controller: descricaoController,
+                    controller: _descricaoController,
                     style: textStyle,
                     minLines: 10,
                     maxLines: 20,
                     onChanged: (value) {
-                      atualizarDescricao();
+                      _atualizarDescricao();
                     },
                     decoration: InputDecoration(
                         labelText: 'Descrição',
@@ -106,7 +111,7 @@ class DoencaInfoState extends State<DoencaInfo> {
                     value: agenteController,
                     onChanged: (value) {
                       agenteController = value;
-                      atualizarAgente();
+                      _atualizarAgente();
                     },
                     decoration: InputDecoration(
                         labelText: 'Agente etiológico',
@@ -124,7 +129,6 @@ class DoencaInfoState extends State<DoencaInfo> {
                     }).toList(),
                   ),
                 ),
-
 
                 Padding(
                   padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
@@ -178,53 +182,49 @@ class DoencaInfoState extends State<DoencaInfo> {
         ));
   }
 
-  void moveToLastScreen() {
+  void _voltarParaUltimaTela() {
     Navigator.pop(context, true);
   }
 
-  void atualizarNome(){
-    doenca.nome = nomeController.text;
+  void _atualizarNome(){
+    _doenca.nome = _nomeController.text;
   }
 
-  void atualizarDescricao() {
-    doenca.descricao = descricaoController.text;
+  void _atualizarDescricao() {
+    _doenca.descricao = _descricaoController.text;
   }
 
-  void atualizarAgente(){
-    doenca.agenteEtiologico = agenteController;
+  void _atualizarAgente(){
+    _doenca.agenteEtiologico = agenteController;
   }
 
   // Save data to database
   void _save() async {
-
-    moveToLastScreen();
+    _voltarParaUltimaTela();
 
     int result;
-    if (doenca.id != null) {  // Case 1: Update operation
-      result = await helper.atualizarDoenca(doenca);
-    } else { // Case 2: Insert Operation
-      result = await helper.inserirDoenca(doenca);
+    if (_doenca.id != null) {
+      result = await _helper.atualizarDoenca(_doenca);
+    } else {
+      result = await _helper.inserirDoenca(_doenca);
     }
 
-    if (result != 0) {  // Success
+    if (result != 0) {
       _showAlertDialog('Status', 'Doença salva com sucesso');
     } else {  // Failure
       _showAlertDialog('Status', 'Erro ao salvar doença');
     }
-
   }
 
-
   void _delete() async {
+    _voltarParaUltimaTela();
 
-    moveToLastScreen();
-
-    if (doenca.id == null) {
+    if (_doenca.id == null) {
       _showAlertDialog('Status', 'Nenhuma doença foi apagada');
       return;
     }
 
-    int result = await helper.apagarDoenca(doenca.id);
+    int result = await _helper.apagarDoenca(_doenca.id);
     if (result != 0) {
       _showAlertDialog('Status', 'Doença apagada com sucesso');
     } else {
@@ -233,7 +233,6 @@ class DoencaInfoState extends State<DoencaInfo> {
   }
 
   void _showAlertDialog(String title, String message) {
-
     AlertDialog alertDialog = AlertDialog(
       title: Text(title),
       content: Text(message),

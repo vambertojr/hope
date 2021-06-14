@@ -13,7 +13,7 @@ class Menu extends StatelessWidget {
         actions: <Widget>[
           IconButton(
             onPressed: () {
-              logout(context);
+              _logout(context);
             },
             icon: Icon(Icons.logout),
           )
@@ -30,7 +30,7 @@ class Menu extends StatelessWidget {
 
   }
 
-  void logout(context) async {
+  void _logout(context) async {
     Login.registrarLogout();
     await Navigator.push(context, MaterialPageRoute(builder: (context) {
       return HomePage();
@@ -55,7 +55,6 @@ class Menu extends StatelessWidget {
       }),
     );
   }
-
 
 }
 

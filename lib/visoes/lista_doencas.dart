@@ -13,27 +13,33 @@ class ListaDoencas extends StatefulWidget {
 }
 
 class ListaDoencasState extends State<ListaDoencas> {
-  DoencaRepositorio databaseHelper = DoencaRepositorio();
-  List<Doenca> listaDoencas;
-  int count = 0;
+  DoencaRepositorio _databaseHelper;
+  List<Doenca> _listaDoencas;
+  int _totalDoencas;
+
+  @override
+  void initState() {
+    super.initState();
+    _databaseHelper = DoencaRepositorio();
+    if (_listaDoencas == null) {
+      _listaDoencas = [];
+      _totalDoencas = 0;
+      _updateListView();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    if (listaDoencas == null) {
-      listaDoencas = List<Doenca>();
-      updateListView();
-    }
-
     return Scaffold(
       appBar: AppBar(
         title: Text("Doenças"),
         backgroundColor: Colors.teal,
       ),
-      body: getListaDoencasView(),
+      body: _getListaDoencasView(),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.teal,
         onPressed: () {
-          navigateToDetail(Doenca('', '', ''), 'Adicionar doença');
+          _navigateToDetail(Doenca('', '', ''), 'Adicionar doença');
         },
         tooltip: 'Adicionar doença',
         child: Icon(Icons.add, color: Colors.white),
@@ -41,9 +47,9 @@ class ListaDoencasState extends State<ListaDoencas> {
     );
   }
 
-  ListView getListaDoencasView() {
+  ListView _getListaDoencasView() {
     return ListView.builder(
-      itemCount: count,
+      itemCount: _totalDoencas,
       itemBuilder: (BuildContext context, int position) {
         return Card(
           color: Colors.white,
@@ -51,25 +57,25 @@ class ListaDoencasState extends State<ListaDoencas> {
           child: ListTile(
             leading: CircleAvatar(
               backgroundColor: Colors.amber,
-              child: Text(getFirstLetter(this.listaDoencas[position].nome),
+              child: Text(_getFirstLetter(this._listaDoencas[position].nome),
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ),
-            title: Text(this.listaDoencas[position].nome,
+            title: Text(this._listaDoencas[position].nome,
                 style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text(this.listaDoencas[position].descricao),
+            subtitle: Text(this._listaDoencas[position].descricao),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 GestureDetector(
                   child: Icon(Icons.delete,color: Colors.red,),
                   onTap: () {
-                    _delete(context, listaDoencas[position]);
+                    _delete(context, _listaDoencas[position]);
                   },
                 ),
               ],
             ),
             onTap: () {
-              navigateToDetail(this.listaDoencas[position], 'Editar doença');
+              _navigateToDetail(this._listaDoencas[position], 'Editar doença');
               Colors.teal;
             },
           ),
@@ -78,15 +84,15 @@ class ListaDoencasState extends State<ListaDoencas> {
     );
   }
 
-  getFirstLetter(String title) {
+  _getFirstLetter(String title) {
     return title.substring(0, 2);
   }
 
   void _delete(BuildContext context, Doenca doenca) async {
-    int result = await databaseHelper.apagarDoenca(doenca.id);
+    int result = await _databaseHelper.apagarDoenca(doenca.id);
     if (result != 0) {
       _showSnackBar(context, 'Doença apagada com sucesso');
-      updateListView();
+      _updateListView();
     }
   }
 
@@ -96,25 +102,25 @@ class ListaDoencasState extends State<ListaDoencas> {
     Scaffold.of(context).showSnackBar(snackBar);
   }
 
-  void navigateToDetail(Doenca doenca, String titulo) async {
+  void _navigateToDetail(Doenca doenca, String titulo) async {
     bool result =
     await Navigator.push(context, MaterialPageRoute(builder: (context) {
       return DoencaInfo(doenca, titulo);
     }));
 
     if (result == true) {
-      updateListView();
+      _updateListView();
     }
   }
 
-  void updateListView() {
-    final Future<Database> dbFuture = databaseHelper.inicializarDatabase();
+  void _updateListView() {
+    final Future<Database> dbFuture = _databaseHelper.inicializarDatabase();
     dbFuture.then((database) {
-      Future<List<Doenca>> listaDoencasFutura = databaseHelper.getListaDoencas();
+      Future<List<Doenca>> listaDoencasFutura = _databaseHelper.getListaDoencas();
       listaDoencasFutura.then((listaDoencas) {
         setState(() {
-          this.listaDoencas = listaDoencas;
-          this.count = listaDoencas.length;
+          this._listaDoencas = listaDoencas;
+          this._totalDoencas = listaDoencas.length;
         });
       });
     });

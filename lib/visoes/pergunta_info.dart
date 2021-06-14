@@ -25,9 +25,9 @@ class PerguntaInfoState extends State<PerguntaInfo> {
   PerguntaRepositorio _perguntasRepositorio;
   DoencaRepositorio _doencasRepositorio;
 
-  String appBarTitle;
-  Pergunta pergunta;
-  List<Doenca> doencasLista;
+  String _appBarTitle;
+  Pergunta _pergunta;
+  List<Doenca> _doencasLista;
   Doenca _doencaSelecionada;
   int _gabarito;
   List<DropdownMenuItem<Doenca>> _menuDoencas;
@@ -39,20 +39,20 @@ class PerguntaInfoState extends State<PerguntaInfo> {
   TextEditingController _alternativa4Controller;
   TextEditingController _alternativa5Controller;
 
-  PerguntaInfoState(this.pergunta, this.appBarTitle);
+  PerguntaInfoState(this._pergunta, this._appBarTitle);
 
   @override
   void initState() {
     super.initState();
     _perguntasRepositorio = PerguntaRepositorio();
     _doencasRepositorio = DoencaRepositorio();
-    _textoController = new TextEditingController(text: pergunta.texto);
-    _alternativa1Controller = new TextEditingController(text: pergunta.alternativa1);
-    _alternativa2Controller = new TextEditingController(text: pergunta.alternativa2);
-    _alternativa3Controller = new TextEditingController(text: pergunta.alternativa3);
-    _alternativa4Controller = new TextEditingController(text: pergunta.alternativa4);
-    _alternativa5Controller = new TextEditingController(text: pergunta.alternativa5);
-    _gabarito = pergunta.gabarito?.toString()?.isEmpty ? 1 : pergunta.gabarito;
+    _textoController = new TextEditingController(text: _pergunta.texto);
+    _alternativa1Controller = new TextEditingController(text: _pergunta.alternativa1);
+    _alternativa2Controller = new TextEditingController(text: _pergunta.alternativa2);
+    _alternativa3Controller = new TextEditingController(text: _pergunta.alternativa3);
+    _alternativa4Controller = new TextEditingController(text: _pergunta.alternativa4);
+    _alternativa5Controller = new TextEditingController(text: _pergunta.alternativa5);
+    _gabarito = _pergunta.gabarito?.toString()?.isEmpty ? 1 : _pergunta.gabarito;
     _inicializarMenuDoencas();
   }
 
@@ -63,17 +63,17 @@ class PerguntaInfoState extends State<PerguntaInfo> {
     return WillPopScope(
 
         onWillPop: () {
-          moveToLastScreen();
+          _voltarParaUltimaTela();
         },
 
         child: Scaffold(
           appBar: AppBar(
-            title: Text(appBarTitle),
+            title: Text(_appBarTitle),
             backgroundColor: Colors.teal,
             leading: IconButton(icon: Icon(
                 Icons.arrow_back),
                 onPressed: () {
-                  moveToLastScreen();
+                  _voltarParaUltimaTela();
                 }
             ),
           ),
@@ -111,7 +111,7 @@ class PerguntaInfoState extends State<PerguntaInfo> {
                     minLines: 3,
                     maxLines: 10,
                     onChanged: (value) {
-                      atualizarTexto();
+                      _atualizarTexto();
                     },
                     decoration: InputDecoration(
                         labelText: 'Texto',
@@ -129,7 +129,7 @@ class PerguntaInfoState extends State<PerguntaInfo> {
                     controller: _alternativa1Controller,
                     style: textStyle,
                     onChanged: (value) {
-                      atualizarAlternativa(1, _alternativa1Controller);
+                      _atualizarAlternativa(1, _alternativa1Controller);
                     },
                     decoration: InputDecoration(
                         labelText: 'Alternativa 1',
@@ -147,7 +147,7 @@ class PerguntaInfoState extends State<PerguntaInfo> {
                     controller: _alternativa2Controller,
                     style: textStyle,
                     onChanged: (value) {
-                      atualizarAlternativa(2, _alternativa2Controller);
+                      _atualizarAlternativa(2, _alternativa2Controller);
                     },
                     decoration: InputDecoration(
                         labelText: 'Alternativa 2',
@@ -165,7 +165,7 @@ class PerguntaInfoState extends State<PerguntaInfo> {
                     controller: _alternativa3Controller,
                     style: textStyle,
                     onChanged: (value) {
-                      atualizarAlternativa(3, _alternativa3Controller);
+                      _atualizarAlternativa(3, _alternativa3Controller);
                     },
                     decoration: InputDecoration(
                         labelText: 'Alternativa 3',
@@ -183,7 +183,7 @@ class PerguntaInfoState extends State<PerguntaInfo> {
                     controller: _alternativa4Controller,
                     style: textStyle,
                     onChanged: (value) {
-                      atualizarAlternativa(4, _alternativa4Controller);
+                      _atualizarAlternativa(4, _alternativa4Controller);
                     },
                     decoration: InputDecoration(
                         labelText: 'Alternativa 4',
@@ -201,7 +201,7 @@ class PerguntaInfoState extends State<PerguntaInfo> {
                     controller: _alternativa5Controller,
                     style: textStyle,
                     onChanged: (value) {
-                      atualizarAlternativa(5, _alternativa5Controller);
+                      _atualizarAlternativa(5, _alternativa5Controller);
                     },
                     decoration: InputDecoration(
                         labelText: 'Alternativa 5',
@@ -219,7 +219,7 @@ class PerguntaInfoState extends State<PerguntaInfo> {
                     value: _gabarito,
                     onChanged: (value) {
                       _gabarito = value;
-                      atualizarGabarito();
+                      _atualizarGabarito();
                     },
                     decoration: InputDecoration(
                         labelText: 'Gabarito',
@@ -290,7 +290,7 @@ class PerguntaInfoState extends State<PerguntaInfo> {
   }
 
   void _atualizarDoencasLista(){
-    _menuDoencas = doencasLista.map((doenca) => DropdownMenuItem<Doenca>(
+    _menuDoencas = _doencasLista.map((doenca) => DropdownMenuItem<Doenca>(
       child: Text(doenca.nome),
       value: doenca,
     )
@@ -298,11 +298,11 @@ class PerguntaInfoState extends State<PerguntaInfo> {
   }
 
   void _inicializarMenuDoencas() async {
-      this.doencasLista = [];
+      this._doencasLista = [];
       Future<List<Doenca>> listaDoencasFutura = _doencasRepositorio.getListaDoencas();
       listaDoencasFutura.then((listaDoencas) {
         setState(() {
-          this.doencasLista = listaDoencas;
+          this._doencasLista = listaDoencas;
           _atualizarDoencasLista();
           _inicializarDoencaSelecionada();
         });
@@ -310,74 +310,70 @@ class PerguntaInfoState extends State<PerguntaInfo> {
   }
 
   void _inicializarDoencaSelecionada(){
-    if(pergunta.doenca == null || pergunta.doenca.nome.isEmpty){
-      pergunta.doenca = this.doencasLista[0];
+    if(_pergunta.doenca == null || _pergunta.doenca.nome.isEmpty){
+      _pergunta.doenca = this._doencasLista[0];
     }
-    this._doencaSelecionada = pergunta.doenca;
+    this._doencaSelecionada = _pergunta.doenca;
   }
 
   void atualizarDoenca(Doenca doenca){
     _doencaSelecionada = doenca;
-    pergunta.doenca = _doencaSelecionada;
+    _pergunta.doenca = _doencaSelecionada;
   }
 
-  void moveToLastScreen() {
+  void _voltarParaUltimaTela() {
     Navigator.pop(context, true);
   }
 
-  void atualizarTexto(){
-    pergunta.texto = _textoController.text;
+  void _atualizarTexto(){
+    _pergunta.texto = _textoController.text;
   }
 
-  void atualizarAlternativa(int index, TextEditingController controller) {
+  void _atualizarAlternativa(int index, TextEditingController controller) {
     switch(index){
-      case 1: pergunta.alternativa1 = controller.text;
+      case 1: _pergunta.alternativa1 = controller.text;
         break;
-      case 2: pergunta.alternativa2 = controller.text;
+      case 2: _pergunta.alternativa2 = controller.text;
         break;
-      case 3: pergunta.alternativa3 = controller.text;
+      case 3: _pergunta.alternativa3 = controller.text;
         break;
-      case 4: pergunta.alternativa4 = controller.text;
+      case 4: _pergunta.alternativa4 = controller.text;
         break;
-      case 5: pergunta.alternativa5 = controller.text;
+      case 5: _pergunta.alternativa5 = controller.text;
         break;
     }
   }
 
-  void atualizarGabarito(){
-    pergunta.gabarito = _gabarito;
+  void _atualizarGabarito(){
+    _pergunta.gabarito = _gabarito;
   }
 
-  // Save data to database
   void _save() async {
-
-    moveToLastScreen();
+    _voltarParaUltimaTela();
 
     int result;
-    if (pergunta.id != null) {  // Case 1: Update operation
-      result = await _perguntasRepositorio.atualizarPergunta(pergunta);
-    } else { // Case 2: Insert Operation
-      result = await _perguntasRepositorio.inserirPergunta(pergunta);
+    if (_pergunta.id != null) {
+      result = await _perguntasRepositorio.atualizarPergunta(_pergunta);
+    } else {
+      result = await _perguntasRepositorio.inserirPergunta(_pergunta);
     }
 
-    if (result != 0) {  // Success
+    if (result != 0) {
       _showAlertDialog('Status', 'Pergunta salva com sucesso');
-    } else {  // Failure
+    } else {
       _showAlertDialog('Status', 'Erro ao salvar pergunta');
     }
-
   }
 
   void _delete() async {
+    _voltarParaUltimaTela();
 
-    moveToLastScreen();
-
-    if (pergunta.id == null) {
+    if (_pergunta.id == null) {
       _showAlertDialog('Status', 'Nenhuma pergunta foi apagada');
       return;
     }
 
-    int result = await _perguntasRepositorio.apagarPergunta(pergunta.id);
+    int result = await _perguntasRepositorio.apagarPergunta(_pergunta.id);
     if (result != 0) {
       _showAlertDialog('Status', 'Pergunta apagada com sucesso');
     } else {

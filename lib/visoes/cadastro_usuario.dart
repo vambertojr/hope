@@ -53,7 +53,7 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
     return WillPopScope(
 
         onWillPop: () {
-          moveToLastScreen();
+          _voltarParaUltimaTela();
         },
 
         child: Scaffold(
@@ -63,7 +63,7 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
             leading: IconButton(icon: Icon(
                 Icons.arrow_back),
                 onPressed: () {
-                  moveToLastScreen();
+                  _voltarParaUltimaTela();
                 }
             ),
           ),
@@ -82,7 +82,7 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
                       validator: _validarLogin,
                       style: textStyle,
                       onChanged: (value) {
-                        atualizarLogin();
+                        _atualizarLogin();
                       },
                       decoration: InputDecoration(
                           labelText: 'Login',
@@ -102,7 +102,7 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
                       obscureText: true,
                       style: textStyle,
                       onChanged: (value) {
-                        atualizarSenha();
+                        _atualizarSenha();
                       },
                       decoration: InputDecoration(
                           labelText: 'Senha',
@@ -120,7 +120,7 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
                       value: _papel,
                       onChanged: (value) {
                         _papel = value;
-                        atualizarPapel();
+                        _atualizarPapel();
                       },
                       decoration: InputDecoration(
                           labelText: 'Papel',
@@ -174,19 +174,19 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
         ));
   }
 
-  void moveToLastScreen() {
+  void _voltarParaUltimaTela() {
     Navigator.pop(context, true);
   }
 
-  void atualizarLogin(){
+  void _atualizarLogin(){
     usuario.login = _loginController.text;
   }
 
-  void atualizarSenha() {
+  void _atualizarSenha() {
     usuario.senha = _senhaController.text;
   }
 
-  void atualizarPapel(){
+  void _atualizarPapel(){
     usuario.papel = _papel;
   }
 
@@ -197,15 +197,15 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
       return;
     }
 
-    if (usuario.id != null) {  // Case 1: Update operation
+    if (usuario.id != null) {
       result = await _usuarioRepositorio.atualizarUsuario(usuario);
       Login.registrarLogout();
-    } else { // Case 2: Insert Operation
+    } else {
       result = await _usuarioRepositorio.inserirUsuario(usuario);
     }
 
-    if (result != 0) {  // Success
-      moveToLastScreen();
+    if (result != 0) {
+      _voltarParaUltimaTela();
       _showAlertDialog('Status', 'Usuário salvo com sucesso');
     } else {
       bool existe = await _usuarioRepositorio.existeUsuarioComLogin(usuario);
@@ -219,7 +219,6 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
   }
 
   void _showAlertDialog(String title, String message) {
-
     AlertDialog alertDialog = AlertDialog(
       title: Text(title),
       content: Text(message),
