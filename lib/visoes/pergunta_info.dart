@@ -30,6 +30,7 @@ class PerguntaInfoState extends State<PerguntaInfo> {
   List<Doenca> doencasLista;
   Doenca _doencaSelecionada;
   int _gabarito;
+  List<DropdownMenuItem<Doenca>> _menuDoencas;
 
   TextEditingController _textoController;
   TextEditingController _alternativa1Controller;
@@ -45,8 +46,6 @@ class PerguntaInfoState extends State<PerguntaInfo> {
     super.initState();
     _perguntasRepositorio = PerguntaRepositorio();
     _doencasRepositorio = DoencaRepositorio();
-
-    carregarListaDoencas();
     _textoController = new TextEditingController(text: pergunta.texto);
     _alternativa1Controller = new TextEditingController(text: pergunta.alternativa1);
     _alternativa2Controller = new TextEditingController(text: pergunta.alternativa2);
@@ -54,10 +53,7 @@ class PerguntaInfoState extends State<PerguntaInfo> {
     _alternativa4Controller = new TextEditingController(text: pergunta.alternativa4);
     _alternativa5Controller = new TextEditingController(text: pergunta.alternativa5);
     _gabarito = pergunta.gabarito?.toString()?.isEmpty ? 1 : pergunta.gabarito;
-    carregarDoenca();
-    print("Doenca associada a pergunta: ${pergunta.doenca.nome}");
-    print("Doenca selecionada: ${_doencaSelecionada?.nome}");
-
+    _inicializarMenuDoencas();
   }
 
   @override
@@ -73,6 +69,7 @@ class PerguntaInfoState extends State<PerguntaInfo> {
         child: Scaffold(
           appBar: AppBar(
             title: Text(appBarTitle),
+            backgroundColor: Colors.teal,
             leading: IconButton(icon: Icon(
                 Icons.arrow_back),
                 onPressed: () {
@@ -90,8 +87,7 @@ class PerguntaInfoState extends State<PerguntaInfo> {
                   padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
                   child: DropdownButtonFormField<Doenca>(
                     value: _doencaSelecionada,
-                    onChanged: (doenca){
-                      debugPrint('Something changed in Doença Field');
+                    onChanged: (doenca) {
                       setState(() {
                         atualizarDoenca(doenca);
                       });
@@ -103,8 +99,7 @@ class PerguntaInfoState extends State<PerguntaInfo> {
                             borderRadius: BorderRadius.circular(5.0)
                         )
                     ),
-                    items: _atualizarListaDoencas(),
-
+                    items: _menuDoencas,
                   ),
                 ),
 
@@ -116,7 +111,6 @@ class PerguntaInfoState extends State<PerguntaInfo> {
                     minLines: 3,
                     maxLines: 10,
                     onChanged: (value) {
-                      debugPrint('Something changed in Texto Text Field');
                       atualizarTexto();
                     },
                     decoration: InputDecoration(
@@ -135,7 +129,6 @@ class PerguntaInfoState extends State<PerguntaInfo> {
                     controller: _alternativa1Controller,
                     style: textStyle,
                     onChanged: (value) {
-                      debugPrint('Something changed in Alternativa A Text Field');
                       atualizarAlternativa(1, _alternativa1Controller);
                     },
                     decoration: InputDecoration(
@@ -154,7 +147,6 @@ class PerguntaInfoState extends State<PerguntaInfo> {
                     controller: _alternativa2Controller,
                     style: textStyle,
                     onChanged: (value) {
-                      debugPrint('Something changed in Alternativa B Text Field');
                       atualizarAlternativa(2, _alternativa2Controller);
                     },
                     decoration: InputDecoration(
@@ -173,7 +165,6 @@ class PerguntaInfoState extends State<PerguntaInfo> {
                     controller: _alternativa3Controller,
                     style: textStyle,
                     onChanged: (value) {
-                      debugPrint('Something changed in Alternativa C Text Field');
                       atualizarAlternativa(3, _alternativa3Controller);
                     },
                     decoration: InputDecoration(
@@ -192,7 +183,6 @@ class PerguntaInfoState extends State<PerguntaInfo> {
                     controller: _alternativa4Controller,
                     style: textStyle,
                     onChanged: (value) {
-                      debugPrint('Something changed in Alternativa D Text Field');
                       atualizarAlternativa(4, _alternativa4Controller);
                     },
                     decoration: InputDecoration(
@@ -211,7 +201,6 @@ class PerguntaInfoState extends State<PerguntaInfo> {
                     controller: _alternativa5Controller,
                     style: textStyle,
                     onChanged: (value) {
-                      debugPrint('Something changed in Alternativa E Text Field');
                       atualizarAlternativa(5, _alternativa5Controller);
                     },
                     decoration: InputDecoration(
@@ -229,7 +218,6 @@ class PerguntaInfoState extends State<PerguntaInfo> {
                   child: DropdownButtonFormField<int>(
                     value: _gabarito,
                     onChanged: (value) {
-                      debugPrint('Something changed in Gabarito Field');
                       _gabarito = value;
                       atualizarGabarito();
                     },
@@ -257,19 +245,14 @@ class PerguntaInfoState extends State<PerguntaInfo> {
                       Expanded(
                         // ignore: deprecated_member_use
                         child: RaisedButton(
-                          color: Theme.of(context).primaryColorDark,
-
-                          textColor: Theme.of(context).primaryColorLight,
-
+                          color: Colors.teal,
+                          textColor: Colors.white,
                           child: Text(
                             'Salvar',
                             textScaleFactor: 1.5,
-
                           ),
                           onPressed: () {
                               setState(() {
-                              debugPrint("Save button clicked");
-
                               _save();
                             });
                           },
@@ -281,15 +264,14 @@ class PerguntaInfoState extends State<PerguntaInfo> {
                       Expanded(
                         // ignore: deprecated_member_use
                         child: RaisedButton(
-                          color: Theme.of(context).primaryColorDark,
-                          textColor: Theme.of(context).primaryColorLight,
+                          color: Colors.teal,
+                          textColor: Colors.white,
                           child: Text(
                             'Deletar',
                             textScaleFactor: 1.5,
                           ),
                           onPressed: () {
                             setState(() {
-                              debugPrint("Delete button clicked");
                               _delete();
                             });
                           },
@@ -307,39 +289,31 @@ class PerguntaInfoState extends State<PerguntaInfo> {
         ));
   }
 
-  List<DropdownMenuItem<Doenca>> _atualizarListaDoencas(){
-    print("executou _atualizarListaDoencas()");
-    var lista = doencasLista.map((doenca) => DropdownMenuItem<Doenca>(
+  void _atualizarDoencasLista(){
+    _menuDoencas = doencasLista.map((doenca) => DropdownMenuItem<Doenca>(
       child: Text(doenca.nome),
       value: doenca,
     )
     ).toList();
-
-    print("Tamanho da lista: ${lista.length}");
-    for(var i in lista){
-      print(i.value);
-      print(i.value.nome);
-      print(i.value.descricao);
-      print(i.value.agenteEtiologico);
-      print(i.value.id);
-    }
-    return lista;
   }
 
-  void carregarListaDoencas() {
-    this.doencasLista = [];
+  void _inicializarMenuDoencas() async {
+      this.doencasLista = [];
       Future<List<Doenca>> listaDoencasFutura = _doencasRepositorio.getListaDoencas();
       listaDoencasFutura.then((listaDoencas) {
         setState(() {
-          this.doencasLista += listaDoencas;
+          this.doencasLista = listaDoencas;
+          _atualizarDoencasLista();
+          _inicializarDoencaSelecionada();
         });
       });
   }
 
-  void carregarDoenca(){
-    if(pergunta.doenca != null) {
-      this._doencaSelecionada = pergunta.doenca;
+  void _inicializarDoencaSelecionada(){
+    if(pergunta.doenca == null || pergunta.doenca.nome.isEmpty){
+      pergunta.doenca = this.doencasLista[0];
     }
+    this._doencaSelecionada = pergunta.doenca;
   }
 
   void atualizarDoenca(Doenca doenca){
