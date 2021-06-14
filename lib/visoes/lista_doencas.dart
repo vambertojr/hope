@@ -26,7 +26,7 @@ class ListaDoencasState extends State<ListaDoencas> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text("ADICIONAR DOENÇAS"),
+        title: Text("Doenças"),
         backgroundColor: Colors.teal,
       ),
       body: getListaDoencasView(),

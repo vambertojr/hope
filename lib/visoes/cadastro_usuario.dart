@@ -59,6 +59,7 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
         child: Scaffold(
           appBar: AppBar(
             title: Text(appBarTitle),
+            backgroundColor: Colors.teal,
             leading: IconButton(icon: Icon(
                 Icons.arrow_back),
                 onPressed: () {
@@ -138,7 +139,6 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
                     ),
                   ),
 
-
                   Padding(
                     padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
                     child: Row(
@@ -146,14 +146,11 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
                         Expanded(
                           // ignore: deprecated_member_use
                           child: RaisedButton(
-                            color: Theme.of(context).primaryColorDark,
-
-                            textColor: Theme.of(context).primaryColorLight,
-
+                            color: Colors.teal,
+                            textColor: Colors.white,
                             child: Text(
                               'Salvar',
                               textScaleFactor: 1.5,
-
                             ),
                             onPressed: () {
                               setState(() {

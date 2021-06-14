@@ -32,14 +32,14 @@ class ListaPerguntasState extends State<ListaPerguntas> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("ADICIONAR PERGUNTAS"),
+        title: Text("Perguntas"),
         backgroundColor: Colors.teal,
       ),
       body: getListaPerguntasView(),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.teal,
         onPressed: () {
-          navigateToDetail(Pergunta(new Doenca('','',''), '', '', '', '', '', '', 1), 'Adicionar Pergunta');
+          navigateToDetail(Pergunta(new Doenca('','',''), '', '', '', '', '', '', 1), 'Adicionar pergunta');
         },
         tooltip: 'Adicionar pergunta',
         child: Icon(Icons.add, color: Colors.white),

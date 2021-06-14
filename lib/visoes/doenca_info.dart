@@ -48,6 +48,7 @@ class DoencaInfoState extends State<DoencaInfo> {
         child: Scaffold(
           appBar: AppBar(
             title: Text(appBarTitle),
+            backgroundColor: Colors.teal,
             leading: IconButton(icon: Icon(
                 Icons.arrow_back),
                 onPressed: () {
@@ -132,14 +133,11 @@ class DoencaInfoState extends State<DoencaInfo> {
                       Expanded(
                         // ignore: deprecated_member_use
                         child: RaisedButton(
-                          color: Theme.of(context).primaryColorDark,
-
-                          textColor: Theme.of(context).primaryColorLight,
-
+                          color: Colors.teal,
+                          textColor: Colors.white,
                           child: Text(
                             'Salvar',
                             textScaleFactor: 1.5,
-
                           ),
                           onPressed: () {
                               setState(() {
@@ -154,8 +152,8 @@ class DoencaInfoState extends State<DoencaInfo> {
                       Expanded(
                         // ignore: deprecated_member_use
                         child: RaisedButton(
-                          color: Theme.of(context).primaryColorDark,
-                          textColor: Theme.of(context).primaryColorLight,
+                          color: Colors.teal,
+                          textColor: Colors.white,
                           child: Text(
                             'Deletar',
                             textScaleFactor: 1.5,
