@@ -38,7 +38,10 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
     _usuarioRepositorio = UsuarioRepositorio();
     _loginController = new TextEditingController(text: usuario.login);
     _senhaController = new TextEditingController(text: usuario.senha);
-    _papel = usuario.papel?.isEmpty ? 'Médico' : usuario.papel;
+    if(usuario.papel.isEmpty){
+      usuario.papel = 'Médico';
+    }
+    _papel = usuario.papel;
   }
 
   @override
