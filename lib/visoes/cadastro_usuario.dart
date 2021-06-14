@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hope/modelos/login.dart';
 import 'package:hope/modelos/usuario.dart';
 import 'package:hope/repositorios/usuario_repositorio.dart';
 
@@ -206,11 +207,10 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
 
     if (usuario.id != null) {  // Case 1: Update operation
       result = await _usuarioRepositorio.atualizarUsuario(usuario);
+      Login.registrarLogout();
     } else { // Case 2: Insert Operation
       result = await _usuarioRepositorio.inserirUsuario(usuario);
     }
-
-    print("Result when saving user: ${result}");
 
     if (result != 0) {  // Success
       moveToLastScreen();

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hope/modelos/login.dart';
+import 'package:hope/visoes/homepage.dart';
 
 class MenuEstudante extends StatelessWidget {
   @override
@@ -7,7 +9,15 @@ class MenuEstudante extends StatelessWidget {
     return Scaffold(
       appBar: AppBar
         (title: Text('Hope',),
-        backgroundColor: Colors.teal
+        backgroundColor: Colors.teal,
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {
+              logout(context);
+            },
+            icon: Icon(Icons.logout),
+          )
+        ],
         ),
       body: Padding(
         padding: const EdgeInsets.all(12.0),
@@ -18,6 +28,13 @@ class MenuEstudante extends StatelessWidget {
 
     );
 
+  }
+
+  void logout(context) async {
+    Login.registrarLogout();
+    await Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return HomePage();
+    }));
   }
 
   GridView _buildGridView(BuildContext context) {
@@ -51,7 +68,8 @@ class Opcao {
 
 List<Opcao> opcoes = <Opcao>[
   Opcao(titulo: 'Início', icon: (Icons.home ), tela:'home'),
-  Opcao(titulo: 'Quiz', icon: Icons.directions_bus, tela:'quiz'),
+  Opcao(titulo: 'Perfil', icon: Icons.account_box, tela:'perfilUsuario'),
+  Opcao(titulo: 'Quiz', icon: Icons.article, tela:'quiz'),
 ];
 
 class OpcaoCard extends StatelessWidget {

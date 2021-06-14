@@ -3,9 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:hope/modelos/usuario.dart';
 import 'package:hope/repositorios/usuario_repositorio.dart';
 import 'package:hope/visoes/cadastro_usuario.dart';
+import 'package:hope/modelos/login.dart';
 import 'package:hope/visoes/menu.dart';
 import 'package:hope/visoes/menu_estudante.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatelessWidget {
 
@@ -14,6 +15,7 @@ class HomePage extends StatelessWidget {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextStyle textStyle;
   UsuarioRepositorio _usuarioRepositorio = new UsuarioRepositorio();
+  LoginStatus _loginStatus = LoginStatus.naoLogado;
 
   @override
   Widget build(BuildContext context) {
@@ -152,6 +154,9 @@ class HomePage extends StatelessWidget {
       return;
     }
     else {
+      Login.registrarLogin(usuarioEncontrado);
+      _loginStatus = LoginStatus.logado;
+
       Navigator.push(context, MaterialPageRoute(builder: (BuildContext context){
         if(usuarioEncontrado.papel == 'Médico'){
           return Menu();
@@ -193,3 +198,5 @@ class HomePage extends StatelessWidget {
   }
 
 }
+
+enum LoginStatus { naoLogado, logado }

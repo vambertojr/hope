@@ -61,30 +61,4 @@ class UsuarioRepositorio {
     return resultado;
   }
 
-  Future<int> getTotalUsuarios() async {
-    Database db = await new DatabaseHelper().database;
-    List<Map<String, dynamic>> x = await db.rawQuery('SELECT COUNT (*) from ${ConstanteRepositorio.usuarioTabela}');
-    int result = Sqflite.firstIntValue(x);
-    return result;
-  }
-
-  Future<List<Usuario>> getListaUsuarios() async {
-    var usuariosMapList = await getUsuariosMapList();
-    int count = usuariosMapList.length;
-
-    List<Usuario> listaUsuarios = List<Usuario>();
-    for (int i = 0; i < count; i++) {
-      listaUsuarios.add(Usuario.fromJson(usuariosMapList[i]));
-    }
-
-    return listaUsuarios;
-  }
-
-  Future<List<Map<String, dynamic>>> getUsuariosMapList() async {
-    Database db = await new DatabaseHelper().database;
-    var result = await db.query(ConstanteRepositorio.usuarioTabela,
-        orderBy: '${ConstanteRepositorio.usuarioTabela_colLogin} ASC');
-    return result;
-  }
-
 }
