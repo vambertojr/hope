@@ -50,6 +50,22 @@ class Doenca {
     }
   }
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Doenca &&
+          runtimeType == other.runtimeType &&
+          _id == other._id &&
+          _nome == other._nome &&
+          _descricao == other._descricao &&
+          _agenteEtiologico == other._agenteEtiologico;
+
+  @override
+  int get hashCode =>
+      _id.hashCode ^
+      _nome.hashCode ^
+      _descricao.hashCode ^
+      _agenteEtiologico.hashCode;
 }
 
 

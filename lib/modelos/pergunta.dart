@@ -99,6 +99,34 @@ class Pergunta {
   set id(int value) {
     _id = value;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Pergunta &&
+          runtimeType == other.runtimeType &&
+          _id == other._id &&
+          _doenca == other._doenca &&
+          _texto == other._texto &&
+          _alternativa1 == other._alternativa1 &&
+          _alternativa2 == other._alternativa2 &&
+          _alternativa3 == other._alternativa3 &&
+          _alternativa4 == other._alternativa4 &&
+          _alternativa5 == other._alternativa5 &&
+          _gabarito == other._gabarito;
+
+  @override
+  int get hashCode =>
+      _id.hashCode ^
+      _doenca.hashCode ^
+      _texto.hashCode ^
+      _alternativa1.hashCode ^
+      _alternativa2.hashCode ^
+      _alternativa3.hashCode ^
+      _alternativa4.hashCode ^
+      _alternativa5.hashCode ^
+      _gabarito.hashCode;
+
 }
 
 

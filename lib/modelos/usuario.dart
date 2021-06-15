@@ -48,4 +48,18 @@ class Usuario {
     _papel = value;
   }
 
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Usuario &&
+          runtimeType == other.runtimeType &&
+          _id == other._id &&
+          _login == other._login &&
+          _senha == other._senha &&
+          _papel == other._papel;
+
+  @override
+  int get hashCode =>
+      _id.hashCode ^ _login.hashCode ^ _senha.hashCode ^ _papel.hashCode;
+
 }
