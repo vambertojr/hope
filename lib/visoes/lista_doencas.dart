@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:hope/modelos/doenca.dart';
 import 'package:hope/visoes/doenca_info.dart';
 import 'package:hope/repositorios/doenca_repositorio.dart';
-import 'package:sqflite/sqflite.dart';
 
 class ListaDoencas extends StatefulWidget {
   @override
@@ -24,7 +23,7 @@ class ListaDoencasState extends State<ListaDoencas> {
     if (_listaDoencas == null) {
       _listaDoencas = [];
       _totalDoencas = 0;
-      _updateListView();
+      _atualizarListaDoencas();
     }
   }
 
@@ -92,7 +91,7 @@ class ListaDoencasState extends State<ListaDoencas> {
     int result = await _databaseHelper.apagarDoenca(doenca.id);
     if (result != 0) {
       _showSnackBar(context, 'Doença apagada com sucesso');
-      _updateListView();
+      _atualizarListaDoencas();
     }
   }
 
@@ -109,19 +108,16 @@ class ListaDoencasState extends State<ListaDoencas> {
     }));
 
     if (result == true) {
-      _updateListView();
+      _atualizarListaDoencas();
     }
   }
 
-  void _updateListView() {
-    final Future<Database> dbFuture = _databaseHelper.inicializarDatabase();
-    dbFuture.then((database) {
-      Future<List<Doenca>> listaDoencasFutura = _databaseHelper.getListaDoencas();
-      listaDoencasFutura.then((listaDoencas) {
-        setState(() {
-          this._listaDoencas = listaDoencas;
-          this._totalDoencas = listaDoencas.length;
-        });
+  void _atualizarListaDoencas() {
+    Future<List<Doenca>> listaDoencasFutura = _databaseHelper.getListaDoencas();
+    listaDoencasFutura.then((listaDoencas) {
+      setState(() {
+        this._listaDoencas = listaDoencas;
+        this._totalDoencas = listaDoencas.length;
       });
     });
   }

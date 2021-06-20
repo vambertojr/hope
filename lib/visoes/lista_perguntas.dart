@@ -4,7 +4,6 @@ import 'package:hope/modelos/doenca.dart';
 import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/visoes/pergunta_info.dart';
 import 'package:hope/repositorios/pergunta_repositorio.dart';
-import 'package:sqflite/sqflite.dart';
 
 class ListaPerguntas extends StatefulWidget {
   @override
@@ -114,14 +113,11 @@ class ListaPerguntasState extends State<ListaPerguntas> {
   }
 
   void _atualizarListaPerguntas() {
-    final Future<Database> dbFuture = _databaseHelper.inicializarDatabase();
-    dbFuture.then((database) {
-      Future<List<Pergunta>> listaPerguntasFutura = _databaseHelper.getListaPerguntas();
-      listaPerguntasFutura.then((listaPerguntas) {
-        setState(() {
-          this._listaPerguntas = listaPerguntas;
-          this._totalPerguntas = listaPerguntas.length;
-        });
+    Future<List<Pergunta>> listaPerguntasFutura = _databaseHelper.getListaPerguntas();
+    listaPerguntasFutura.then((listaPerguntas) {
+      setState(() {
+        this._listaPerguntas = listaPerguntas;
+        this._totalPerguntas = listaPerguntas.length;
       });
     });
   }
