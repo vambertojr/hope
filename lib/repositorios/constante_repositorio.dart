@@ -23,4 +23,14 @@ class ConstanteRepositorio {
   static String usuarioTabela_colSenha = 'senha';
   static String usuarioTabela_colPapel = 'papel';
 
+  static String quizTabela = 'tabela_quiz';
+  static String quizTabela_colId = 'id';
+  static String quizTabela_colPerguntas = 'perguntas';
+  static String quizTabela_colPontuacao = 'pontuacao';
+  static String quizTabela_colTotalPerguntas = 'totalPerguntas';
+  static String quizTabela_colDoenca = 'doenca';
+  static String quizTabela_colUsuario = 'usuario';
+  static String quizTabela_colData = 'data';
+  static String quizTabela_colNome = 'nome';
+
 }

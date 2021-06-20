@@ -1,3 +1,4 @@
+import 'package:hope/modelos/doenca.dart';
 import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/repositorios/constante_repositorio.dart';
 import 'package:hope/repositorios/database_helper.dart';
@@ -53,7 +54,30 @@ class PerguntaRepositorio {
   Future<List<Map<String, dynamic>>> getPerguntasMapList() async {
     Database db = await new DatabaseHelper().database;
     var result = await db.query(ConstanteRepositorio.perguntaTabela,
-        orderBy: '${ConstanteRepositorio.perguntaTabela_colTexto} ASC');
+        orderBy: '${ConstanteRepositorio.perguntaTabela_colId} ASC');
     return result;
   }
+
+  Future<List<Map<String, dynamic>>> getPerguntasMapListPorDoenca(Doenca doenca) async {
+    Database db = await new DatabaseHelper().database;
+    var result = await db.query(ConstanteRepositorio.perguntaTabela,
+        where: '${ConstanteRepositorio.perguntaTabela_colDoenca} = ? ',
+        whereArgs: [doenca.id],
+        orderBy: '${ConstanteRepositorio.perguntaTabela_colId} ASC');
+    return result;
+  }
+
+  Future<List<Pergunta>> getListaPerguntasPorDoenca(Doenca doenca) async {
+    var perguntasMapList = await getPerguntasMapListPorDoenca(doenca);
+    int count = perguntasMapList.length;
+
+    List<Pergunta> listaPerguntas = List<Pergunta>();
+    for (int i = 0; i < count; i++) {
+      listaPerguntas.add(Pergunta.fromJson(perguntasMapList[i]));
+    }
+
+    return listaPerguntas;
+  }
+
+
 }

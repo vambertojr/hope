@@ -42,7 +42,8 @@ class DatabaseHelper {
         '${ConstanteRepositorio.doencaTabela_colId} INTEGER PRIMARY KEY AUTOINCREMENT, '
         '${ConstanteRepositorio.doencaTabela_colNome} TEXT, '
         '${ConstanteRepositorio.doencaTabela_colDescricao} TEXT, '
-        '${ConstanteRepositorio.doencaTabela_colAgente} TEXT)'
+        '${ConstanteRepositorio.doencaTabela_colAgente} TEXT, '
+        'UNIQUE(${ConstanteRepositorio.doencaTabela_colNome}) ON CONFLICT IGNORE)'
     );
 
     await db.execute(
@@ -67,6 +68,21 @@ class DatabaseHelper {
             '${ConstanteRepositorio.usuarioTabela_colSenha} TEXT, '
             '${ConstanteRepositorio.usuarioTabela_colPapel} TEXT, '
             'UNIQUE(${ConstanteRepositorio.usuarioTabela_colLogin}) ON CONFLICT IGNORE)'
+    );
+
+    await db.execute(
+        'CREATE TABLE ${ConstanteRepositorio.quizTabela}('
+            '${ConstanteRepositorio.quizTabela_colId} INTEGER PRIMARY KEY AUTOINCREMENT, '
+            '${ConstanteRepositorio.quizTabela_colData} TEXT, '
+            '${ConstanteRepositorio.quizTabela_colUsuario} INTEGER, '
+            '${ConstanteRepositorio.quizTabela_colDoenca} INTEGER NULL, '
+            '${ConstanteRepositorio.quizTabela_colPerguntas} TEXT, '
+            '${ConstanteRepositorio.quizTabela_colPontuacao} INTEGER, '
+            '${ConstanteRepositorio.quizTabela_colTotalPerguntas} INTEGER, '
+            'FOREIGN KEY(${ConstanteRepositorio.quizTabela_colDoenca}) REFERENCES '
+            '${ConstanteRepositorio.doencaTabela}(${ConstanteRepositorio.doencaTabela_colId}), '
+            'FOREIGN KEY(${ConstanteRepositorio.quizTabela_colUsuario}) REFERENCES '
+            '${ConstanteRepositorio.usuarioTabela}(${ConstanteRepositorio.usuarioTabela_colId}))'
     );
 
   }
