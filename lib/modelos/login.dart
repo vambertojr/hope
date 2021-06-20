@@ -6,20 +6,18 @@ class Login {
 
   static registrarLogin(Usuario usuario) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setString('login', usuario.login);
-    preferences.setString('senha', usuario.senha);
-    preferences.setString('papel', usuario.papel);
-    preferences.setInt('status', 1);
-    preferences.commit();
+    await preferences.setString('login', usuario.login);
+    await preferences.setString('senha', usuario.senha);
+    await preferences.setString('papel', usuario.papel);
+    await preferences.setInt('status', 1);
   }
 
   static registrarLogout() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setString('login', '');
-    preferences.setString('senha', '');
-    preferences.setString('papel', '');
-    preferences.setInt('status', 0);
-    preferences.commit();
+    await preferences.setString('login', '');
+    await preferences.setString('senha', '');
+    await preferences.setString('papel', '');
+    await preferences.setInt('status', 0);
   }
 
   static Future<Usuario> getUsuarioLogado() async {
