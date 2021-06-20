@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:hope/modelos/usuario.dart';
-import 'package:hope/visoes/cadastro_usuario.dart';
+import 'package:hope/visoes/edicao_usuario.dart';
 import 'package:hope/visoes/homepage.dart';
 import 'package:hope/visoes/lista_doencas.dart';
-import 'package:hope/modelos/login.dart';
 import 'package:hope/visoes/lista_perguntas.dart';
+import 'package:hope/visoes/lista_quiz.dart';
 
 
 void main() => runApp(MyApp());
@@ -19,7 +18,7 @@ class MyApp extends StatelessWidget{
       initialRoute: 'home',
       routes: {
         'home': (context) => HomePage(),
-        //'quiz': (context) => Quiz(),
+        'quiz': (context) => ListaQuiz(),
         'listaDoencas': (context) => ListaDoencas(),
         'listaPerguntas': (context) => ListaPerguntas(),
         'perfilUsuario': (context) => EdicaoUsuario()
@@ -28,39 +27,4 @@ class MyApp extends StatelessWidget{
   }
 }
 
-class EdicaoUsuario extends StatefulWidget {
 
-  @override
-  State<StatefulWidget> createState() {
-    return EdicaoUsuarioState();
-  }
-
-}
-
-class EdicaoUsuarioState extends State<EdicaoUsuario> {
-
-  Usuario _usuario;
-
-  @override
-  void initState() {
-    super.initState();
-    Future<Usuario> usuariof = Login.getUsuarioLogado();
-    usuariof.then((value) {
-      setState(() {
-        _usuario = value;
-      });
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    var page;
-    if (_usuario != null)
-      page = CadastroUsuario(_usuario, 'Editar usuário');
-    else
-      page = HomePage();
-
-    return page;
-  }
-
-}
