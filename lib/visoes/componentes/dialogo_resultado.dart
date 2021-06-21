@@ -57,7 +57,7 @@ class DialogoResultado {
           ),
           actions: [
             TextButton(
-              child: const Text('PRÓXIMO'),
+              child: const Text('Próxima'),
               onPressed: () {
                 Navigator.of(context).pop();
                 onNext();

@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:hope/modelos/quiz.dart';
-import 'package:hope/repositorios/quiz_repositorio.dart';
 import 'package:hope/visoes/lista_quiz.dart';
+import 'package:hope/visoes/menu_estudante.dart';
 
 class DialogoTermino {
-
-  QuizRepositorio _quizRepositorio;
 
   static Future show(
     BuildContext contexto, {
@@ -64,10 +61,8 @@ class DialogoTermino {
           ),
           actions: [
             TextButton(
-              child: const Text('JOGAR NOVAMENTE'),
-              onPressed: () async {
-                QuizRepositorio repositorio = new QuizRepositorio();
-                await repositorio.inserirQuiz(quiz);
+              child: const Text('Novo quiz'),
+              onPressed: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => ListaQuiz()),
@@ -75,19 +70,18 @@ class DialogoTermino {
               },
             ),
             TextButton(
-              child: const Text('SAIR'),
+              child: const Text('Sair'),
               onPressed: () {
-                SystemNavigator.pop();
+                Navigator.push(context, MaterialPageRoute(builder: (BuildContext context){
+                  return MenuEstudante();
+                }));
+
               },
             )
           ],
         );
       },
     );
-  }
-
-  _salvarEncerrar(BuildContext context, Quiz quiz) async {
-
   }
 
 }

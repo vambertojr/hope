@@ -60,6 +60,19 @@ class QuizRepositorio {
   }
 
   Future<List<Quiz>> getListaQuizByUser() async {
+    List<Quiz> quizSelecionados = <Quiz>[];
+    Usuario usuario = await Login.getUsuarioLogado();
+    List<Quiz> todosQuiz = await getListaQuiz();
+    for(int i=0; i<todosQuiz.length; i++){
+      if(todosQuiz[i].usuario == usuario){
+        quizSelecionados.add(todosQuiz[i]);
+      }
+    }
+    return quizSelecionados;
+  }
+
+/*
+  Future<List<Quiz>> getListaQuizByUser() async {
     List<Quiz> listaQuiz = <Quiz>[];
     var quizMapList = await getQuizMapListByUser();
     int count = quizMapList.length;
@@ -82,5 +95,5 @@ class QuizRepositorio {
         orderBy: '${ConstanteRepositorio.quizTabela_colId} DESC');
     return result;
   }
-
+*/
 }

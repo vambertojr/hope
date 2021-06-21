@@ -2,12 +2,14 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:hope/modelos/doenca.dart';
+import 'package:hope/modelos/login.dart';
 import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/modelos/quiz.dart';
 import 'package:hope/modelos/resposta.dart';
 import 'package:hope/repositorios/doenca_repositorio.dart';
 import 'package:hope/repositorios/pergunta_repositorio.dart';
 import 'package:hope/repositorios/quiz_repositorio.dart';
+import 'package:hope/visoes/homepage.dart';
 import 'package:hope/visoes/responder_quiz.dart';
 
 
@@ -73,6 +75,14 @@ class QuizInfoState extends State<QuizInfo> {
                   _voltarParaUltimaTela();
                 }
             ),
+            actions: <Widget>[
+              IconButton(
+                onPressed: () {
+                  _logout(context);
+                },
+                icon: Icon(Icons.logout),
+              )
+            ],
           ),
 
           body: Padding(
@@ -212,7 +222,11 @@ class QuizInfoState extends State<QuizInfo> {
   }
 
   void _atualizarQuantidadePerguntas() {
-   _quiz.totalPerguntas = int.parse(this._quantidadePerguntasController.text);
+    if(this._quantidadePerguntasController.text == null || this._quantidadePerguntasController.text.isEmpty){
+      _quiz.totalPerguntas = 0;
+    } else {
+      _quiz.totalPerguntas = int.parse(this._quantidadePerguntasController.text);
+    }
   }
 
   void _criarQuiz() async {
@@ -227,12 +241,14 @@ class QuizInfoState extends State<QuizInfo> {
         _showAlertDialog('Status', 'Erro ao atualizar quiz');
       }
     } else {
-      await _sortearPerguntas();
-      Navigator.push(context, MaterialPageRoute(builder: (context) {
-        String mensagem = '${_quiz.titulo} (${_quiz.totalPerguntas} perguntas)';
-        if(_quiz.totalPerguntas==1) mensagem = '${_quiz.titulo} (${_quiz.totalPerguntas} pergunta)';
-        return ResponderQuiz(_quiz, mensagem);
-      }));
+      bool exibirQuiz = await _sortearPerguntas();
+      if(exibirQuiz){
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          String mensagem = '${_quiz.titulo} (${_quiz.totalPerguntas} perguntas)';
+          if(_quiz.totalPerguntas==1) mensagem = '${_quiz.titulo} (${_quiz.totalPerguntas} pergunta)';
+          return ResponderQuiz(_quiz, mensagem);
+        }));
+      } else return;
     }
   }
 
@@ -255,7 +271,8 @@ class QuizInfoState extends State<QuizInfo> {
     return respostas;
   }
 
-  _sortearPerguntas() async {
+  Future<bool> _sortearPerguntas() async {
+    bool exibirQuiz = true;
     List<Pergunta> todasAsPerguntas;
     if(_quiz.doenca.id != null){
       todasAsPerguntas = await _perguntasRepositorio.getListaPerguntasPorDoenca(_quiz.doenca);
@@ -263,11 +280,12 @@ class QuizInfoState extends State<QuizInfo> {
       todasAsPerguntas = await _perguntasRepositorio.getListaPerguntas();
     }
 
-    print("Total de perguntas: ${todasAsPerguntas.length}");
+    print("Total de perguntas: ${await todasAsPerguntas.length}");
 
     if(todasAsPerguntas==null || todasAsPerguntas.isEmpty){
       _showAlertDialog('Status', 'Não é possível gerar quiz porque não há perguntas cadastradas.');
-      return;
+      exibirQuiz = false;
+      return exibirQuiz;
     } else if(todasAsPerguntas.length<_quiz.totalPerguntas){
       _showAlertDialog('Status', 'Não há perguntas cadastradas suficientes. O quiz será gerado com as perguntas existentes.');
       _quiz.perguntas = _converterParaListaRespostas(_shuffle(todasAsPerguntas));
@@ -285,6 +303,7 @@ class QuizInfoState extends State<QuizInfo> {
         }
       }
     }
+    return exibirQuiz;
   }
 
   void _showAlertDialog(String title, String message) {
@@ -299,4 +318,10 @@ class QuizInfoState extends State<QuizInfo> {
     );
   }
 
+  void _logout(context) async {
+    Login.registrarLogout();
+    await Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return HomePage();
+    }));
+  }
 }

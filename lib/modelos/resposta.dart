@@ -47,4 +47,17 @@ class Resposta {
   set pergunta(Pergunta value) {
     _pergunta = value;
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Resposta &&
+          runtimeType == other.runtimeType &&
+          _id == other._id &&
+          _valor == other._valor &&
+          _pergunta == other._pergunta;
+
+  @override
+  int get hashCode => _id.hashCode ^ _valor.hashCode ^ _pergunta.hashCode;
+
 }

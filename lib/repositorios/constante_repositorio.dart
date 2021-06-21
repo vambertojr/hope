@@ -25,6 +25,7 @@ class ConstanteRepositorio {
 
   static String quizTabela = 'tabela_quiz';
   static String quizTabela_colId = 'id';
+  static String quizTabela_colTitulo = 'titulo';
   static String quizTabela_colPerguntas = 'perguntas';
   static String quizTabela_colPontuacao = 'pontuacao';
   static String quizTabela_colTotalPerguntas = 'totalPerguntas';

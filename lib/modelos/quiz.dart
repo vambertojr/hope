@@ -14,7 +14,6 @@ class Quiz {
   int _totalPerguntas;
   List<Resposta> _perguntas;
   int _pontuacao;
-  int status; //0 - a iniciar, 1 - em andamento, 2 - finalizado
 
   Quiz(this._titulo, this._usuario, this._doenca, this._totalPerguntas, this._perguntas, this._pontuacao):
         _data = DateTime.now();
@@ -25,11 +24,11 @@ class Quiz {
   Quiz.fromJson(Map<String, dynamic> json)
       : _id = json['id'] as int,
         _titulo = json['titulo'] as String,
-        _data = json['data'] as DateTime,
+        _data = DateTime.fromMillisecondsSinceEpoch(json['data']),
         _usuario = json['usuario'] == null ? null : Usuario.fromJson(jsonDecode(json['usuario'])),
         _doenca = json['doenca'] == null ? null : Doenca.fromJson(jsonDecode(json['doenca'])),
         _totalPerguntas = json['totalPerguntas'] as int,
-        _perguntas = json['perguntas'] == null ? null : _initPerguntas(json['perguntas']),
+        _perguntas = json['perguntas'] == null ? null : _initPerguntas(json),
         _pontuacao = json['pontuacao'] as int;
 
   Map<String, dynamic> toJson() => _$QuizToJson(this);
@@ -37,7 +36,7 @@ class Quiz {
   Map<String, dynamic> _$QuizToJson(Quiz instance) => <String, dynamic>{
     'id': instance._id,
     'titulo': instance._titulo,
-    'data': instance._data,
+    'data': instance._data.millisecondsSinceEpoch,
     'usuario': jsonEncode(instance._usuario),
     'doenca': jsonEncode(instance._doenca),
     'totalPerguntas': instance._totalPerguntas,
@@ -46,7 +45,7 @@ class Quiz {
   };
 
   static _initPerguntas(json) {
-    List<Resposta>.from(json.decode(json).map((x) => Resposta.fromJson(x)));
+    List<Resposta>.from(jsonDecode(json['perguntas']).map((x) => Resposta.fromJson(x)));
   }
 
   Doenca get doenca => _doenca;

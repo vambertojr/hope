@@ -3,9 +3,11 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/modelos/quiz.dart';
 import 'package:hope/modelos/resposta.dart';
+import 'package:hope/repositorios/database_helper.dart';
+import 'package:hope/repositorios/quiz_repositorio.dart';
 import 'package:hope/visoes/componentes/caixa_dialogo.dart';
 import 'package:hope/visoes/componentes/dialogo_termino.dart';
-import 'package:hope/visoes/componentes/result_dialog.dart';
+import 'package:hope/visoes/componentes/dialogo_resultado.dart';
 
 class ResponderQuiz extends StatefulWidget {
 
@@ -135,8 +137,9 @@ class ResponderQuizState extends State<ResponderQuiz> {
     );
   }
 
-  _corrigirQuestao(Resposta resposta){
+  _corrigirQuestao(Resposta resposta) {
     bool acertou = resposta.eCorreta();
+    if(acertou) _quiz.pontuacao++;
 
     DialogoResultado.show(
       context,
@@ -154,6 +157,7 @@ class ResponderQuizState extends State<ResponderQuiz> {
           if (_scoreKeeper.length < _quiz.perguntas.length) {
             _indiceQuestao++;
           } else {
+            _salvarQuiz();
             DialogoTermino.show(
                 context,
                 totalAcertos: _quiz.pontuacao,
@@ -173,6 +177,20 @@ class ResponderQuizState extends State<ResponderQuiz> {
         children: _scoreKeeper,
       ),
     );
+  }
+
+  _salvarQuiz() async {
+    /*print ("chamou salvarQuiz");
+    DatabaseHelper helper =  new DatabaseHelper();
+    helper.apagarTabelaQuiz(await helper.database);
+    helper.criarTabelaQuiz(await helper.database);*/
+    QuizRepositorio repositorio = new QuizRepositorio();
+    var resultado = await repositorio.inserirQuiz(_quiz);
+    if (resultado != 0) {
+     print('Quiz salvo com sucesso');
+    } else {
+      print('Erro ao salvar quiz');
+    }
   }
 
 }

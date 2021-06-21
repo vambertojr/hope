@@ -43,7 +43,7 @@ class PerguntaRepositorio {
     var perguntasMapList = await getPerguntasMapList();
     int count = perguntasMapList.length;
 
-    List<Pergunta> listaPerguntas = List<Pergunta>();
+    List<Pergunta> listaPerguntas = <Pergunta>[];
     for (int i = 0; i < count; i++) {
       listaPerguntas.add(Pergunta.fromJson(perguntasMapList[i]));
     }
@@ -58,7 +58,21 @@ class PerguntaRepositorio {
     return result;
   }
 
-  Future<List<Map<String, dynamic>>> getPerguntasMapListPorDoenca(Doenca doenca) async {
+  //Deve ser usado no lugar de último método da classe, que não funciona
+  Future<List<Pergunta>> getListaPerguntasPorDoenca(Doenca doenca) async {
+    List<Pergunta> perguntasSelecionadas = [];
+    var todasPerguntas = await getListaPerguntas();
+    for(int i=0; i<todasPerguntas.length; i++){
+      if(todasPerguntas[i].doenca == doenca){
+        perguntasSelecionadas.add(todasPerguntas[i]);
+      }
+    }
+    return perguntasSelecionadas;
+  }
+
+  /*INVESTIGAR
+  //A busca não funciona para filtrar por ID da doença, apenas por ID da pergunta
+  Future<List<Map<String, dynamic>>> _getPerguntasMapListPorDoenca(Doenca doenca) async {
     Database db = await new DatabaseHelper().database;
     var result = await db.query(ConstanteRepositorio.perguntaTabela,
         where: '${ConstanteRepositorio.perguntaTabela_colDoenca} = ? ',
@@ -67,17 +81,18 @@ class PerguntaRepositorio {
     return result;
   }
 
+  //Método não funciona porque o auxiliar não consegue filtra por doença. Investigar depois.
   Future<List<Pergunta>> getListaPerguntasPorDoenca(Doenca doenca) async {
-    var perguntasMapList = await getPerguntasMapListPorDoenca(doenca);
+    var perguntasMapList = await _getPerguntasMapListPorDoenca(doenca);
     int count = perguntasMapList.length;
 
-    List<Pergunta> listaPerguntas = List<Pergunta>();
+    List<Pergunta> listaPerguntas = <Pergunta>[];
     for (int i = 0; i < count; i++) {
       listaPerguntas.add(Pergunta.fromJson(perguntasMapList[i]));
     }
 
     return listaPerguntas;
-  }
+  }*/
 
 
 }

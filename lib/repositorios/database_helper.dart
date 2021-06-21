@@ -73,7 +73,8 @@ class DatabaseHelper {
     await db.execute(
         'CREATE TABLE ${ConstanteRepositorio.quizTabela}('
             '${ConstanteRepositorio.quizTabela_colId} INTEGER PRIMARY KEY AUTOINCREMENT, '
-            '${ConstanteRepositorio.quizTabela_colData} TEXT, '
+            '${ConstanteRepositorio.quizTabela_colTitulo} TEXT, '
+            '${ConstanteRepositorio.quizTabela_colData} INTEGER, '
             '${ConstanteRepositorio.quizTabela_colUsuario} INTEGER, '
             '${ConstanteRepositorio.quizTabela_colDoenca} INTEGER NULL, '
             '${ConstanteRepositorio.quizTabela_colPerguntas} TEXT, '

@@ -4,7 +4,11 @@ import 'package:hope/modelos/login.dart';
 import 'package:hope/modelos/quiz.dart';
 import 'package:hope/modelos/usuario.dart';
 import 'package:hope/repositorios/quiz_repositorio.dart';
+import 'package:hope/visoes/homepage.dart';
+import 'package:hope/visoes/quiz_concluido.dart';
 import 'package:hope/visoes/quiz_info.dart';
+import 'package:hope/visoes/responder_quiz.dart';
+import 'package:intl/intl.dart';
 
 class ListaQuiz extends StatefulWidget {
   @override
@@ -45,6 +49,14 @@ class ListaQuizState extends State<ListaQuiz> {
       appBar: AppBar(
         title: Text("Quiz"),
         backgroundColor: Colors.teal,
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {
+              _logout(context);
+            },
+            icon: Icon(Icons.logout),
+          )
+        ],
       ),
       body: _getListaQuizView(),
       floatingActionButton: FloatingActionButton(
@@ -58,14 +70,15 @@ class ListaQuizState extends State<ListaQuiz> {
     );
   }
 
-  String _configurarNomeDoenca(Quiz quiz){
-    String nome;
+  String _configurarSubtitle(Quiz quiz){
+    String subtitle;
     if(quiz.doenca!=null && quiz.doenca.nome.isNotEmpty){
-      nome = quiz.doenca.nome;
+      subtitle = quiz.doenca.nome;
     } else {
-      nome = 'Nenhuma doença específica';
+      subtitle = 'Nenhuma doença específica';
     }
-    return nome;
+    subtitle += ' (${DateFormat('dd/MM/yyyy').format(quiz.data)})';
+    return subtitle;
   }
 
   ListView _getListaQuizView() {
@@ -83,7 +96,7 @@ class ListaQuizState extends State<ListaQuiz> {
             ),
             title: Text(this._listaQuiz[position].titulo,
                 style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text(_configurarNomeDoenca(this._listaQuiz[position])),
+            subtitle: Text(_configurarSubtitle(this._listaQuiz[position])),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -96,7 +109,7 @@ class ListaQuizState extends State<ListaQuiz> {
               ],
             ),
             onTap: () {
-              _navigateToDetail(this._listaQuiz[position]);
+              _navegarParaRespostas(this._listaQuiz[position]);
             },
           ),
         );
@@ -135,6 +148,12 @@ class ListaQuizState extends State<ListaQuiz> {
     }
   }
 
+  _navegarParaRespostas(Quiz quiz) async {
+    await Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return QuizConcluido(quiz, quiz.titulo);
+    }));
+  }
+
   _atualizarListaQuiz() async {
     Future<List<Quiz>> listaQuizFutura = _databaseHelper.getListaQuizByUser();
     listaQuizFutura.then((listaQuiz) {
@@ -143,6 +162,13 @@ class ListaQuizState extends State<ListaQuiz> {
         this._totalQuiz = listaQuiz.length;
       });
     });
+  }
+
+  void _logout(context) async {
+    Login.registrarLogout();
+    await Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return HomePage();
+    }));
   }
 
 
