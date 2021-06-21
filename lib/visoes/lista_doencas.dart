@@ -1,8 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hope/modelos/doenca.dart';
+import 'package:hope/modelos/login.dart';
 import 'package:hope/visoes/doenca_info.dart';
 import 'package:hope/repositorios/doenca_repositorio.dart';
+import 'package:hope/visoes/homepage.dart';
 
 class ListaDoencas extends StatefulWidget {
   @override
@@ -33,6 +35,14 @@ class ListaDoencasState extends State<ListaDoencas> {
       appBar: AppBar(
         title: Text("Doenças"),
         backgroundColor: Colors.teal,
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {
+              _logout(context);
+            },
+            icon: Icon(Icons.logout),
+          )
+        ],
       ),
       body: _getListaDoencasView(),
       floatingActionButton: FloatingActionButton(
@@ -119,6 +129,13 @@ class ListaDoencasState extends State<ListaDoencas> {
         this._totalDoencas = listaDoencas.length;
       });
     });
+  }
+
+  void _logout(context) async {
+    Login.registrarLogout();
+    await Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return HomePage();
+    }));
   }
 
 

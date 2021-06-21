@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hope/modelos/doenca.dart';
+import 'package:hope/modelos/login.dart';
 import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/repositorios/doenca_repositorio.dart';
 import 'package:hope/repositorios/pergunta_repositorio.dart';
+import 'package:hope/visoes/homepage.dart';
 
 
 class PerguntaInfo extends StatefulWidget {
@@ -74,6 +76,14 @@ class PerguntaInfoState extends State<PerguntaInfo> {
                   _voltarParaUltimaTela();
                 }
             ),
+            actions: <Widget>[
+              IconButton(
+                onPressed: () {
+                  _logout(context);
+                },
+                icon: Icon(Icons.logout),
+              )
+            ],
           ),
 
           body: Padding(
@@ -389,6 +399,13 @@ class PerguntaInfoState extends State<PerguntaInfo> {
         context: context,
         builder: (_) => alertDialog
     );
+  }
+
+  void _logout(context) async {
+    Login.registrarLogout();
+    await Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return HomePage();
+    }));
   }
 
 }

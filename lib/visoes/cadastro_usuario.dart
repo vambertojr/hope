@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hope/modelos/login.dart';
 import 'package:hope/modelos/usuario.dart';
 import 'package:hope/repositorios/usuario_repositorio.dart';
+import 'package:hope/visoes/homepage.dart';
 
 class CadastroUsuario extends StatefulWidget {
 
@@ -66,6 +67,14 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
                   _voltarParaUltimaTela();
                 }
             ),
+            actions: <Widget>[
+              IconButton(
+                onPressed: () {
+                  _logout(context);
+                },
+                icon: Icon(Icons.logout),
+              )
+            ],
           ),
 
           body: Padding(
@@ -250,5 +259,11 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
     return mensagem;
   }
 
+  void _logout(context) async {
+    Login.registrarLogout();
+    await Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return HomePage();
+    }));
+  }
 
 }

@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hope/modelos/doenca.dart';
+import 'package:hope/modelos/login.dart';
 import 'package:hope/modelos/pergunta.dart';
+import 'package:hope/visoes/homepage.dart';
 import 'package:hope/visoes/pergunta_info.dart';
 import 'package:hope/repositorios/pergunta_repositorio.dart';
 
@@ -33,6 +35,14 @@ class ListaPerguntasState extends State<ListaPerguntas> {
       appBar: AppBar(
         title: Text("Perguntas"),
         backgroundColor: Colors.teal,
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {
+              _logout(context);
+            },
+            icon: Icon(Icons.logout),
+          )
+        ],
       ),
       body: getListaPerguntasView(),
       floatingActionButton: FloatingActionButton(
@@ -56,12 +66,12 @@ class ListaPerguntasState extends State<ListaPerguntas> {
           child: ListTile(
             leading: CircleAvatar(
               backgroundColor: Colors.amber,
-              child: Text(getFirstLetter(this._listaPerguntas[position].texto),
+              child: Text(getFirstLetter(this._listaPerguntas[position].doenca.nome),
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ),
             title: Text(this._listaPerguntas[position].texto,
                 style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text(this._listaPerguntas[position].texto),
+            subtitle: Text(this._listaPerguntas[position].doenca.nome),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -116,10 +126,17 @@ class ListaPerguntasState extends State<ListaPerguntas> {
     listaPerguntasFutura.then((listaPerguntas) {
       setState(() {
         this._listaPerguntas = listaPerguntas;
+        this._listaPerguntas.sort((a, b) => a.doenca.nome.compareTo(b.doenca.nome));
         this._totalPerguntas = listaPerguntas.length;
       });
     });
   }
 
+  void _logout(context) async {
+    Login.registrarLogout();
+    await Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return HomePage();
+    }));
+  }
 
 }

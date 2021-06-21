@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hope/modelos/doenca.dart';
+import 'package:hope/modelos/login.dart';
 import 'package:hope/repositorios/doenca_repositorio.dart';
+import 'package:hope/visoes/homepage.dart';
 
 class DoencaInfo extends StatefulWidget {
 
@@ -60,6 +62,14 @@ class DoencaInfoState extends State<DoencaInfo> {
                   _voltarParaUltimaTela();
                 }
             ),
+            actions: <Widget>[
+              IconButton(
+                onPressed: () {
+                  _logout(context);
+                },
+                icon: Icon(Icons.logout),
+              )
+            ],
           ),
 
           body: Padding(
@@ -242,6 +252,13 @@ class DoencaInfoState extends State<DoencaInfo> {
         context: context,
         builder: (_) => alertDialog
     );
+  }
+
+  void _logout(context) async {
+    Login.registrarLogout();
+    await Navigator.push(context, MaterialPageRoute(builder: (context) {
+      return HomePage();
+    }));
   }
 
 }
