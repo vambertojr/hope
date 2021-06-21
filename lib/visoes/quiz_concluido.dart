@@ -21,8 +21,26 @@ class QuizConcluidoState extends State<QuizConcluido> {
 
   String _appBarTitle;
   Quiz _quiz;
+  TextEditingController _quantidadePerguntasController;
+  TextEditingController _tituloController;
+  TextEditingController _doencaController;
+  TextEditingController _pontuacaoController;
+
 
   QuizConcluidoState(this._quiz, this._appBarTitle);
+
+  @override
+  void initState() {
+    super.initState();
+    _quantidadePerguntasController = new TextEditingController(text: _quiz.totalPerguntas.toString());
+    _tituloController = new TextEditingController(text: _quiz.titulo);
+    if(_quiz.doenca==null){
+      _doencaController = new TextEditingController(text: 'Nenhuma doença específica');
+    } else {
+      _doencaController = new TextEditingController(text: _quiz.doenca.nome);
+    }
+    _pontuacaoController = new TextEditingController(text: _quiz.pontuacao.toString());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,51 +77,76 @@ class QuizConcluidoState extends State<QuizConcluido> {
             child: ListView(
               children: <Widget>[
 
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: Text(
-                    'Título: ${_quiz.titulo}',
-                    style: textStyle,
-                  ),
-                ),
+            Padding(
+            padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+            child: TextField(
+              controller: _tituloController,
+              style: textStyle,
+              enabled: false,
+              decoration: InputDecoration(
+                  labelText: 'Título',
+                  labelStyle: textStyle,
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0)
+                  )
+              ),
+            ),
+          ),
 
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: Text(
-                    'Doença: ${_configurarDoenca()}',
-                    style: textStyle,
-                  ),
-                ),
+          Padding(
+            padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+            child: TextField(
+              controller: _doencaController,
+              style: textStyle,
+              enabled: false,
+              decoration: InputDecoration(
+                  labelText: 'Doença',
+                  labelStyle: textStyle,
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0)
+                  )
+              ),
+            ),
+          ),
 
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: Text(
-                    'Número de perguntas: ${_quiz.totalPerguntas.toString()}',
-                    style: textStyle,
-                  ),
-                ),
+          Padding(
+            padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+            child: TextField(
+              controller: _quantidadePerguntasController,
+              style: textStyle,
+              enabled: false,
+              decoration: InputDecoration(
+                  labelText: 'Número de perguntas',
+                  labelStyle: textStyle,
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0)
+                  )
+              ),
+            ),
+          ),
 
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: Text(
-                    'Pontuação: ${_quiz.pontuacao.toString()}',
-                    style: textStyle,
-                  ),
-                ),
+          Padding(
+            padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+            child: TextField(
+              controller: _pontuacaoController,
+              style: textStyle,
+              enabled: false,
+              decoration: InputDecoration(
+                  labelText: 'Pontuação',
+                  labelStyle: textStyle,
+                  border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(5.0)
+                  )
+              ),
+            ),
+          ),
 
+                Container(width: 5.0,),
               ],
             ),
           ),
 
         ));
-  }
-
-  String _configurarDoenca(){
-    if(_quiz.doenca==null){
-      return 'Nenhuma doença específica';
-    } else {
-      return _quiz.doenca.nome;
-    }
   }
 
   _voltarParaUltimaTela() {
