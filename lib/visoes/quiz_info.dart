@@ -60,7 +60,7 @@ class QuizInfoState extends State<QuizInfo> {
     return WillPopScope(
 
         onWillPop: () {
-          _voltarParaUltimaTela();
+          return _voltarParaUltimaTela();
         },
 
         child: Scaffold(
@@ -207,12 +207,12 @@ class QuizInfoState extends State<QuizInfo> {
     _quiz.doenca = _doencaSelecionada;
   }
 
-  void _voltarParaUltimaTela() {
+  _voltarParaUltimaTela() {
     Navigator.pop(context, true);
   }
 
   void _atualizarQuantidadePerguntas() {
-   _quiz.totalPerguntas = this._quantidadePerguntasController.text as int;
+   _quiz.totalPerguntas = int.parse(this._quantidadePerguntasController.text);
   }
 
   void _criarQuiz() async {
@@ -221,21 +221,18 @@ class QuizInfoState extends State<QuizInfo> {
     int result;
     if (_quiz.id != null) {
       result = await _quizRepositorio.atualizarQuiz(_quiz);
+      if (result != 0) {
+        _showAlertDialog('Status', 'Quiz atualizado com sucesso');
+      } else {
+        _showAlertDialog('Status', 'Erro ao atualizar quiz');
+      }
     } else {
-      _sortearPerguntas();
+      await _sortearPerguntas();
       Navigator.push(context, MaterialPageRoute(builder: (context) {
-        return ResponderQuiz(_quiz, _quiz.titulo);
+        String mensagem = '${_quiz.titulo} (${_quiz.totalPerguntas} perguntas)';
+        if(_quiz.totalPerguntas==1) mensagem = '${_quiz.titulo} (${_quiz.totalPerguntas} pergunta)';
+        return ResponderQuiz(_quiz, mensagem);
       }));
-      /*if(_quiz.perguntas!=null && _quiz.perguntas.isNotEmpty){
-        result = await _quizRepositorio.inserirQuiz(_quiz);
-      }*/
-    }
-
-    if (result != 0) {
-      _showAlertDialog('Status', 'Quiz salvo com sucesso');
-      //exibe quiz, mostrando uma pergunta por página; a mensagem deve sair
-    } else { //exibe mensagem explicando o problema
-      _showAlertDialog('Status', 'Erro ao gerar quiz');
     }
   }
 

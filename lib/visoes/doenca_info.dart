@@ -36,7 +36,7 @@ class DoencaInfoState extends State<DoencaInfo> {
     _descricaoController = TextEditingController();
     _nomeController.text = _doenca.nome;
     _descricaoController.text = _doenca.descricao;
-    agenteController = _doenca.agenteEtiologico?.isEmpty ? 'Vírus' : _doenca.agenteEtiologico;
+    agenteController = _doenca.agenteEtiologico.isEmpty ? 'Vírus' : _doenca.agenteEtiologico;
   }
 
   @override
@@ -47,7 +47,7 @@ class DoencaInfoState extends State<DoencaInfo> {
     return WillPopScope(
 
         onWillPop: () {
-          _voltarParaUltimaTela();
+          return _voltarParaUltimaTela();
         },
 
         child: Scaffold(
@@ -182,7 +182,7 @@ class DoencaInfoState extends State<DoencaInfo> {
         ));
   }
 
-  void _voltarParaUltimaTela() {
+  _voltarParaUltimaTela() {
     Navigator.pop(context, true);
   }
 

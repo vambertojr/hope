@@ -53,7 +53,7 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
     return WillPopScope(
 
         onWillPop: () {
-          _voltarParaUltimaTela();
+          return _voltarParaUltimaTela();
         },
 
         child: Scaffold(
@@ -174,7 +174,7 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
         ));
   }
 
-  void _voltarParaUltimaTela() {
+  _voltarParaUltimaTela() {
     Navigator.pop(context, true);
   }
 

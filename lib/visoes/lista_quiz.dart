@@ -5,7 +5,6 @@ import 'package:hope/modelos/quiz.dart';
 import 'package:hope/modelos/usuario.dart';
 import 'package:hope/repositorios/quiz_repositorio.dart';
 import 'package:hope/visoes/quiz_info.dart';
-import 'package:sqflite/sqflite.dart';
 
 class ListaQuiz extends StatefulWidget {
   @override
@@ -51,7 +50,7 @@ class ListaQuizState extends State<ListaQuiz> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.teal,
         onPressed: () {
-          _navigateToDetail(Quiz('', _usuario, null, 10, null, 0));
+          _navigateToDetail(Quiz('', _usuario, null, 10, [], 0));
         },
         tooltip: 'Criar quiz',
         child: Icon(Icons.add, color: Colors.white),
@@ -98,7 +97,6 @@ class ListaQuizState extends State<ListaQuiz> {
             ),
             onTap: () {
               _navigateToDetail(this._listaQuiz[position]);
-              Colors.teal;
             },
           ),
         );
@@ -137,7 +135,7 @@ class ListaQuizState extends State<ListaQuiz> {
     }
   }
 
-  void _atualizarListaQuiz() async {
+  _atualizarListaQuiz() async {
     Future<List<Quiz>> listaQuizFutura = _databaseHelper.getListaQuizByUser();
     listaQuizFutura.then((listaQuiz) {
       setState(() {

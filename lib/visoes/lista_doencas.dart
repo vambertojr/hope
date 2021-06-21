@@ -75,7 +75,6 @@ class ListaDoencasState extends State<ListaDoencas> {
             ),
             onTap: () {
               _navigateToDetail(this._listaDoencas[position], 'Editar doença');
-              Colors.teal;
             },
           ),
         );

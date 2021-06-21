@@ -12,12 +12,10 @@ class HomePage extends StatelessWidget {
   final TextEditingController _tedLogin = TextEditingController();
   final TextEditingController _tedSenha = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  TextStyle textStyle;
-  UsuarioRepositorio _usuarioRepositorio = new UsuarioRepositorio();
+  final UsuarioRepositorio _usuarioRepositorio = new UsuarioRepositorio();
 
   @override
   Widget build(BuildContext context) {
-    textStyle = Theme.of(context).textTheme.headline6;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -41,9 +39,9 @@ class HomePage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         _pageView(),
-                        _textFormFieldLogin(),
+                        _textFormFieldLogin(context),
                         SizedBox(height: 10),
-                        _textFormFieldSenha()
+                        _textFormFieldSenha(context)
                       ],
                   ),
                 ),
@@ -83,7 +81,7 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  TextFormField _textFormFieldLogin() {
+  TextFormField _textFormFieldLogin(BuildContext context) {
     return TextFormField(
           controller: _tedLogin,
           validator: _validarLogin,
@@ -91,13 +89,13 @@ class HomePage extends StatelessWidget {
           style: TextStyle(color: Colors.black),
           decoration: InputDecoration(
               labelText: "Login",
-              labelStyle: textStyle,
+              labelStyle: Theme.of(context).textTheme.headline6,
               hintText: "Informe o login"
           )
     );
   }
 
-  TextFormField _textFormFieldSenha() {
+  TextFormField _textFormFieldSenha(BuildContext context) {
     return TextFormField(
           controller: _tedSenha,
           validator: _validarSenha,
@@ -106,7 +104,7 @@ class HomePage extends StatelessWidget {
           style: TextStyle(color: Colors.black),
           decoration: InputDecoration(
               labelText: "Senha",
-              labelStyle: textStyle,
+              labelStyle: Theme.of(context).textTheme.headline6,
               hintText: "Informe a senha"
           )
         );

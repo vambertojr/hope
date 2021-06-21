@@ -75,7 +75,6 @@ class ListaPerguntasState extends State<ListaPerguntas> {
             ),
             onTap: () {
               navigateToDetail(this._listaPerguntas[position], 'Editar pergunta');
-              Colors.teal;
             },
           ),
         );

@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hope/modelos/doenca.dart';
 import 'package:hope/modelos/pergunta.dart';
-import 'package:hope/repositorios/database_helper.dart';
 import 'package:hope/repositorios/doenca_repositorio.dart';
 import 'package:hope/repositorios/pergunta_repositorio.dart';
-import 'package:sqflite/sqflite.dart';
 
 
 class PerguntaInfo extends StatefulWidget {
@@ -52,18 +50,18 @@ class PerguntaInfoState extends State<PerguntaInfo> {
     _alternativa3Controller = new TextEditingController(text: _pergunta.alternativa3);
     _alternativa4Controller = new TextEditingController(text: _pergunta.alternativa4);
     _alternativa5Controller = new TextEditingController(text: _pergunta.alternativa5);
-    _gabarito = _pergunta.gabarito?.toString()?.isEmpty ? 1 : _pergunta.gabarito;
+    _gabarito = _pergunta.gabarito.toString().isEmpty ? 1 : _pergunta.gabarito;
     _inicializarMenuDoencas();
   }
 
   @override
   Widget build(BuildContext context) {
-    TextStyle textStyle = Theme.of(context).textTheme.title;
+    TextStyle textStyle = Theme.of(context).textTheme.headline6;
 
     return WillPopScope(
 
         onWillPop: () {
-          _voltarParaUltimaTela();
+          return _voltarParaUltimaTela();
         },
 
         child: Scaffold(
@@ -321,7 +319,7 @@ class PerguntaInfoState extends State<PerguntaInfo> {
     _pergunta.doenca = _doencaSelecionada;
   }
 
-  void _voltarParaUltimaTela() {
+  _voltarParaUltimaTela() {
     Navigator.pop(context, true);
   }
 
