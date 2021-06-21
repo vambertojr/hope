@@ -55,7 +55,7 @@ class QuizRepositorio {
   Future<List<Map<String, dynamic>>> getQuizMapList() async {
     Database db = await new DatabaseHelper().database;
     var result = await db.query(ConstanteRepositorio.quizTabela,
-        orderBy: '${ConstanteRepositorio.quizTabela_colId} ASC');
+        orderBy: '${ConstanteRepositorio.quizTabela_colId} DESC');
     return result;
   }
 
