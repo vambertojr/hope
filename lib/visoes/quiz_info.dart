@@ -252,11 +252,11 @@ class QuizInfoState extends State<QuizInfo> {
     }
   }
 
-  List _shuffle(List itens) {
+  List _embaralhar(List<Pergunta> itens) {
     Random random = new Random();
     for (int i=itens.length-1; i>0; i--) {
       int n = random.nextInt(i+1);
-      int temp = itens[i];
+      Pergunta temp = itens[i];
       itens[i] = itens[n];
       itens[n] = temp;
     }
@@ -280,18 +280,16 @@ class QuizInfoState extends State<QuizInfo> {
       todasAsPerguntas = await _perguntasRepositorio.getListaPerguntas();
     }
 
-    print("Total de perguntas: ${await todasAsPerguntas.length}");
-
     if(todasAsPerguntas==null || todasAsPerguntas.isEmpty){
       _showAlertDialog('Status', 'Não é possível gerar quiz porque não há perguntas cadastradas.');
       exibirQuiz = false;
       return exibirQuiz;
     } else if(todasAsPerguntas.length<_quiz.totalPerguntas){
       _showAlertDialog('Status', 'Não há perguntas cadastradas suficientes. O quiz será gerado com as perguntas existentes.');
-      _quiz.perguntas = _converterParaListaRespostas(_shuffle(todasAsPerguntas));
+      _quiz.perguntas = _converterParaListaRespostas(_embaralhar(todasAsPerguntas));
       _quiz.totalPerguntas = _quiz.perguntas.length;
     } else if(todasAsPerguntas.length==_quiz.totalPerguntas){
-      _quiz.perguntas = _converterParaListaRespostas(_shuffle(todasAsPerguntas));
+      _quiz.perguntas = _converterParaListaRespostas(_embaralhar(todasAsPerguntas));
     } else {
       Random random = new Random();
       _quiz.perguntas = [];
