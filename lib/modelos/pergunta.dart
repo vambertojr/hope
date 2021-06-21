@@ -100,6 +100,17 @@ class Pergunta {
     _id = value;
   }
 
+  String getRespostaCorreta(){
+    switch(_gabarito){
+      case 1: return _alternativa1;
+      case 2: return _alternativa2;
+      case 3: return _alternativa3;
+      case 4: return _alternativa4;
+      case 5: return _alternativa5;
+      default: return '';
+    }
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

@@ -14,6 +14,7 @@ class Quiz {
   int _totalPerguntas;
   List<Resposta> _perguntas;
   int _pontuacao;
+  int status; //0 - a iniciar, 1 - em andamento, 2 - finalizado
 
   Quiz(this._titulo, this._usuario, this._doenca, this._totalPerguntas, this._perguntas, this._pontuacao):
         _data = DateTime.now();
