@@ -42,6 +42,10 @@ class QuizInfoState extends State<QuizInfo> {
   TextEditingController _quantidadePerguntasController;
   TextEditingController _tituloController;
 
+  TextStyle textStyle;
+
+  GlobalKey<FormState> _formKey;
+
   QuizInfoState(this._quiz, this._appBarTitle);
 
   @override
@@ -53,11 +57,12 @@ class QuizInfoState extends State<QuizInfo> {
     _quantidadePerguntasController = new TextEditingController(text: _quiz.totalPerguntas.toString());
     _tituloController = new TextEditingController(text: _quiz.titulo);
     _inicializarMenuDoencas();
+    _formKey = GlobalKey<FormState>();
   }
 
   @override
   Widget build(BuildContext context) {
-    TextStyle textStyle = Theme.of(context).textTheme.headline6;
+    textStyle = Theme.of(context).textTheme.headline6;
 
     return WillPopScope(
 
@@ -87,98 +92,131 @@ class QuizInfoState extends State<QuizInfo> {
 
           body: Padding(
             padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
-            child: ListView(
-              children: <Widget>[
-
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: TextField(
-                    controller: _tituloController,
-                    style: textStyle,
-                    onChanged: (value) {
-                      _atualizarTitulo();
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Título',
-                        labelStyle: textStyle,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0)
-                        )
-                    ),
-                  ),
-                ),
-
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: DropdownButtonFormField<Doenca>(
-                    value: _doencaSelecionada,
-                    onChanged: (doenca) {
-                      setState(() {
-                        _atualizarDoenca(doenca);
-                      });
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Doença',
-                        labelStyle: textStyle,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0)
-                        )
-                    ),
-                    items: _menuDoencas,
-                  ),
-                ),
-
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: TextField(
-                    controller: _quantidadePerguntasController,
-                    style: textStyle,
-                    keyboardType: TextInputType.number,
-                    onChanged: (value) {
-                      _atualizarQuantidadePerguntas();
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Número de perguntas',
-                        labelStyle: textStyle,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0)
-                        )
-                    ),
-                  ),
-                ),
-
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        // ignore: deprecated_member_use
-                        child: RaisedButton(
-                          color: Colors.teal,
-                          textColor: Colors.white,
-                          child: Text(
-                            'Criar',
-                            textScaleFactor: 1.5,
-                          ),
-                          onPressed: () {
-                              setState(() {
-                              _criarQuiz();
-                            });
-                          },
-                        ),
-                      ),
-
-                      Container(width: 5.0,),
-
-                    ],
-                  ),
-                ),
-
-              ],
+            child: Form(
+              key: _formKey,
+              child:  ListView(
+                  children: <Widget>[
+                    _configurarExibicaoTitulo(),
+                    _configurarExibicaoDoenca(),
+                    _configurarNumeroPerguntas(),
+                    _configurarBotaoCriar(),
+                  ],
+                )
             ),
           ),
 
         ));
+  }
+
+  _configurarExibicaoTitulo(){
+    return Padding(
+      padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+      child: TextFormField(
+        controller: _tituloController,
+        validator: _validarTitulo,
+        style: textStyle,
+        onChanged: (value) {
+          _atualizarTitulo();
+        },
+        decoration: InputDecoration(
+            labelText: 'Título',
+            labelStyle: textStyle,
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5.0)
+            )
+        ),
+      ),
+    );
+  }
+
+  _configurarExibicaoDoenca(){
+    return Padding(
+      padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+      child: DropdownButtonFormField<Doenca>(
+        value: _doencaSelecionada,
+        onChanged: (doenca) {
+          setState(() {
+            _atualizarDoenca(doenca);
+          });
+        },
+        decoration: InputDecoration(
+            labelText: 'Doença',
+            labelStyle: textStyle,
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5.0)
+            )
+        ),
+        items: _menuDoencas,
+      ),
+    );
+  }
+
+  _configurarNumeroPerguntas(){
+    return Padding(
+      padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+      child: TextFormField(
+        controller: _quantidadePerguntasController,
+        validator: _validarQuantidadePerguntas,
+        style: textStyle,
+        keyboardType: TextInputType.number,
+        onChanged: (value) {
+          _atualizarQuantidadePerguntas();
+        },
+        decoration: InputDecoration(
+            labelText: 'Quantidade de perguntas',
+            labelStyle: textStyle,
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5.0)
+            )
+        ),
+      ),
+    );
+  }
+
+  _configurarBotaoCriar(){
+    return Padding(
+      padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            // ignore: deprecated_member_use
+            child: RaisedButton(
+              color: Colors.teal,
+              textColor: Colors.white,
+              child: Text(
+                'Criar',
+                textScaleFactor: 1.5,
+              ),
+              onPressed: () {
+                setState(() {
+                  _criarQuiz();
+                });
+              },
+            ),
+          ),
+
+          Container(width: 5.0,),
+
+        ],
+      ),
+    );
+  }
+
+  String _validarTitulo(String titulo){
+    print("entrou em validarTitulo");
+    String mensagem;
+    if(titulo.isEmpty){
+      mensagem = "Informe o título";
+    }
+    return mensagem;
+  }
+
+  String _validarQuantidadePerguntas(String quantidade){
+    String mensagem;
+    if(quantidade.isEmpty){
+      mensagem = "Informe a quantidade de perguntas";
+    }
+    return mensagem;
   }
 
   void _atualizarDoencasLista(){
@@ -230,6 +268,11 @@ class QuizInfoState extends State<QuizInfo> {
   }
 
   void _criarQuiz() async {
+
+    if (!_formKey.currentState.validate()) {
+      return;
+    }
+
     _voltarParaUltimaTela();
 
     int result;
@@ -330,4 +373,5 @@ class QuizInfoState extends State<QuizInfo> {
       return HomePage();
     }));
   }
+
 }
