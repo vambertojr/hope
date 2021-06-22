@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:hope/controladores/doenca_info_controller.dart';
 import 'package:hope/modelos/doenca.dart';
 import 'package:hope/modelos/login.dart';
-import 'package:hope/modelos/pergunta.dart';
-import 'package:hope/repositorios/repositorio_doenca.dart';
-import 'package:hope/repositorios/repositorio_pergunta.dart';
 import 'package:hope/visoes/homepage.dart';
 
 class DoencaInfo extends StatefulWidget {
@@ -21,8 +19,7 @@ class DoencaInfo extends StatefulWidget {
 
 class DoencaInfoState extends State<DoencaInfo> {
 
-  RepositorioDoenca _repositorioDoencas;
-  RepositorioPergunta _repositorioPerguntas;
+  DoencaInfoController _doencaInfoController;
 
   String _appBarTitle;
   Doenca _doenca;
@@ -40,8 +37,6 @@ class DoencaInfoState extends State<DoencaInfo> {
   @override
   void initState() {
     super.initState();
-    _repositorioDoencas = RepositorioDoenca();
-    _repositorioPerguntas = RepositorioPergunta();
     _nomeController = TextEditingController();
     _descricaoController = TextEditingController();
     _nomeController.text = _doenca.nome;
@@ -114,7 +109,7 @@ class DoencaInfoState extends State<DoencaInfo> {
       padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
       child: TextFormField(
         controller: _nomeController,
-        validator: _validarNome,
+        validator: _doencaInfoController.validarNome,
         style: textStyle,
         onChanged: (value) {
           _atualizarNome();
@@ -128,14 +123,6 @@ class DoencaInfoState extends State<DoencaInfo> {
         ),
       ),
     );
-  }
-
-  String _validarNome(String nome){
-    String mensagem;
-    if(nome.isEmpty){
-      mensagem = "Informe o nome da doença";
-    }
-    return mensagem;
   }
 
   _configurarDescricao(){
@@ -248,23 +235,17 @@ class DoencaInfoState extends State<DoencaInfo> {
   }
 
   void _salvar() async {
-
     if (!_formKey.currentState.validate()) {
       return;
     }
 
     _voltarParaUltimaTela();
 
-    int result;
-    if (_doenca.id != null) {
-      result = await _repositorioDoencas.atualizarDoenca(_doenca);
-    } else {
-      result = await _repositorioDoencas.inserirDoenca(_doenca);
-    }
+    int resultado = await _doencaInfoController.salvar(_doenca);
 
-    if (result != 0) {
+    if (resultado != 0) {
       _exibirDialogoAlerta('Status', 'Doença salva com sucesso');
-    } else {  // Failure
+    } else {
       _exibirDialogoAlerta('Status', 'Erro ao salvar doença');
     }
   }
@@ -304,15 +285,7 @@ class DoencaInfoState extends State<DoencaInfo> {
   }
 
   void _apagar() async {
-    int resultado;
-    bool existePergunta = await _repositorioPerguntas.existePerguntaSobreDoenca(_doenca);
-
-    if(existePergunta){
-      _doenca.ativa = false;
-      resultado = await _repositorioDoencas.atualizarDoenca(_doenca);
-    } else {
-      resultado = await _repositorioDoencas.apagarDoenca(_doenca.id);
-    }
+    int resultado = await _doencaInfoController.apagar(_doenca);
 
     _voltarParaUltimaTela();
     _voltarParaUltimaTela();
@@ -324,10 +297,10 @@ class DoencaInfoState extends State<DoencaInfo> {
     }
   }
 
-  void _exibirDialogoAlerta(String title, String message) {
+  void _exibirDialogoAlerta(String titulo, String mensagem) {
     AlertDialog alertDialog = AlertDialog(
-      title: Text(title),
-      content: Text(message),
+      title: Text(titulo),
+      content: Text(mensagem),
       backgroundColor: Colors.white,
     );
     showDialog(
