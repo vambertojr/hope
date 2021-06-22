@@ -296,12 +296,20 @@ class QuizInfoState extends State<QuizInfo> {
       while(_quiz.perguntas.length<_quiz.totalPerguntas){
         int indice = random.nextInt(todasAsPerguntas.length);
         Pergunta pergunta = todasAsPerguntas[indice];
-        if(!_quiz.perguntas.contains(pergunta)){
+        if(!_perguntaJaFoiSelecionada(pergunta)){
           _quiz.perguntas.add(new Resposta(0, pergunta));
         }
       }
     }
     return exibirQuiz;
+  }
+
+  bool _perguntaJaFoiSelecionada(Pergunta perguntaDeInteresse){
+    List<Pergunta> perguntas = [];
+    for(int i=0; i<_quiz.perguntas.length; i++){
+      perguntas.add(_quiz.perguntas[i].pergunta);
+    }
+    return perguntas.contains(perguntaDeInteresse);
   }
 
   void _showAlertDialog(String title, String message) {
