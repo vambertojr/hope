@@ -66,6 +66,18 @@ class ResponderQuizState extends State<ResponderQuiz> {
     Navigator.pop(context, true);
   }
 
+  int _getNumeroAlternativas(Pergunta pergunta){
+    int alternativasNull = 0;
+    List<String> alternativas = [pergunta.alternativa1, pergunta.alternativa2,
+      pergunta.alternativa3, pergunta.alternativa4, pergunta.alternativa5];
+
+    for(int i=0; i<alternativas.length; i++){
+      if(alternativas[i] == null || alternativas[i] == '') alternativasNull++;
+    }
+
+    return (5 - alternativasNull);
+  }
+
   _buildQuiz() {
     if (_quiz.perguntas.length == 0)
       return CaixaDialogo('Sem questões', icon: Icons.warning,);
@@ -74,19 +86,33 @@ class ResponderQuizState extends State<ResponderQuiz> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        _exibirPergunta(pergunta.texto),
-        _exibirBotaoResposta(pergunta.alternativa1, 1),
-        _exibirBotaoResposta(pergunta.alternativa2, 2),
-        _exibirBotaoResposta(pergunta.alternativa3, 3),
-        _exibirBotaoResposta(pergunta.alternativa4, 4),
-        _exibirBotaoResposta(pergunta.alternativa5, 5),
-        _buildScoreKeeper(),
-      ],
+      children: _configurarListaWidgets(pergunta),
     );
   }
 
-  _exibirPergunta(String question) {
+  List<Widget> _configurarListaWidgets(Pergunta pergunta){
+    int numeroAlternativas = _getNumeroAlternativas(pergunta);
+
+    List<Widget> widgets = <Widget>[];
+    widgets.add(_configurarExibicaoPergunta(pergunta.texto));
+    widgets.add(_configurarBotaoResposta(pergunta.alternativa1, 1));
+    widgets.add(_configurarBotaoResposta(pergunta.alternativa2, 2));
+
+    if(numeroAlternativas>2){
+      widgets.add(_configurarBotaoResposta(pergunta.alternativa3, 3));
+      widgets.add(_configurarBotaoResposta(pergunta.alternativa4, 4));
+    }
+
+    if(numeroAlternativas==5){
+      widgets.add(_configurarBotaoResposta(pergunta.alternativa5, 5));
+    }
+
+    widgets.add(_configurarExibicaoPontuacaoAtual());
+
+    return widgets;
+  }
+
+  _configurarExibicaoPergunta(String question) {
     return Expanded(
       flex: 5,
       child: Padding(
@@ -105,7 +131,7 @@ class ResponderQuizState extends State<ResponderQuiz> {
     );
   }
 
-  _exibirBotaoResposta(String textoResposta, int indice) {
+  _configurarBotaoResposta(String textoResposta, int indice) {
     Resposta resposta = _quiz.perguntas[_indiceQuestao];
     return Expanded(
       child: Padding(
@@ -170,7 +196,7 @@ class ResponderQuizState extends State<ResponderQuiz> {
     );
   }
 
-  _buildScoreKeeper() {
+  _configurarExibicaoPontuacaoAtual() {
     return Expanded(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -180,10 +206,6 @@ class ResponderQuizState extends State<ResponderQuiz> {
   }
 
   _salvarQuiz() async {
-    /*print ("chamou salvarQuiz");
-    DatabaseHelper helper =  new DatabaseHelper();
-    helper.apagarTabelaQuiz(await helper.database);
-    helper.criarTabelaQuiz(await helper.database);*/
     QuizRepositorio repositorio = new QuizRepositorio();
     var resultado = await repositorio.inserirQuiz(_quiz);
     if (resultado != 0) {
