@@ -26,9 +26,13 @@ class DoencaInfoState extends State<DoencaInfo> {
 
   TextEditingController _nomeController;
   TextEditingController _descricaoController;
-  String agenteController;
+  String _agenteController;
 
   DoencaInfoState(this._doenca, this._appBarTitle);
+
+  GlobalKey<FormState> _formKey;
+
+  TextStyle textStyle;
 
   @override
   void initState() {
@@ -38,13 +42,14 @@ class DoencaInfoState extends State<DoencaInfo> {
     _descricaoController = TextEditingController();
     _nomeController.text = _doenca.nome;
     _descricaoController.text = _doenca.descricao;
-    agenteController = _doenca.agenteEtiologico.isEmpty ? 'Vírus' : _doenca.agenteEtiologico;
+    _agenteController = _doenca.agenteEtiologico.isEmpty ? 'Vírus' : _doenca.agenteEtiologico;
+    _formKey = GlobalKey<FormState>();
   }
 
   @override
   Widget build(BuildContext context) {
 
-    TextStyle textStyle = Theme.of(context).textTheme.headline6;
+    textStyle = Theme.of(context).textTheme.headline6;
 
     return WillPopScope(
 
@@ -74,122 +79,146 @@ class DoencaInfoState extends State<DoencaInfo> {
 
           body: Padding(
             padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
-            child: ListView(
-              children: <Widget>[
+            child: Form(
+              key: _formKey,
+              child:  ListView(
+                children: <Widget>[
+                  _configurarNome(),
+                  _configurarDescricao(),
+                  _configurarAgente(),
 
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: TextField(
-                    controller: _nomeController,
-                    style: textStyle,
-                    onChanged: (value) {
-                      _atualizarNome();
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Nome',
-                        labelStyle: textStyle,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0)
-                        )
+                  Padding(
+                    padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+                    child: Row(
+                      children: <Widget>[
+                        _configurarBotaoSalvar(),
+                        Container(width: 5.0,),
+                        _configurarBotaoDeletar(),
+                      ],
                     ),
                   ),
-                ),
-
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: TextField(
-                    controller: _descricaoController,
-                    style: textStyle,
-                    minLines: 10,
-                    maxLines: 20,
-                    onChanged: (value) {
-                      _atualizarDescricao();
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Descrição',
-                        labelStyle: textStyle,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0)
-                        )
-                    ),
-                  ),
-                ),
-
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: DropdownButtonFormField<String>(
-                    value: agenteController,
-                    onChanged: (value) {
-                      agenteController = value;
-                      _atualizarAgente();
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Agente etiológico',
-                        labelStyle: textStyle,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0)
-                        )
-                    ),
-                    items: <String>['Vírus', 'Bactéria', 'Fungo', 'Protozoário', 'Outros']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ),
-
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        // ignore: deprecated_member_use
-                        child: RaisedButton(
-                          color: Colors.teal,
-                          textColor: Colors.white,
-                          child: Text(
-                            'Salvar',
-                            textScaleFactor: 1.5,
-                          ),
-                          onPressed: () {
-                              setState(() {
-                              _save();
-                            });
-                          },
-                        ),
-                      ),
-
-                      Container(width: 5.0,),
-
-                      Expanded(
-                        // ignore: deprecated_member_use
-                        child: RaisedButton(
-                          color: Colors.teal,
-                          textColor: Colors.white,
-                          child: Text(
-                            'Deletar',
-                            textScaleFactor: 1.5,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _delete();
-                            });
-                          },
-                        ),
-                      ),
-
-                    ],
-                  ),
-                ),
-
-
-              ],
-            ),
+                ],
+              ),
+          )
           ),
 
         ));
+  }
+
+  _configurarNome(){
+    return Padding(
+      padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+      child: TextFormField(
+        controller: _nomeController,
+        validator: _validarNome,
+        style: textStyle,
+        onChanged: (value) {
+          _atualizarNome();
+        },
+        decoration: InputDecoration(
+            labelText: 'Nome',
+            labelStyle: textStyle,
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5.0)
+            )
+        ),
+      ),
+    );
+  }
+
+  String _validarNome(String nome){
+    String mensagem;
+    if(nome.isEmpty){
+      mensagem = "Informe o nome da doença";
+    }
+    return mensagem;
+  }
+
+  _configurarDescricao(){
+    return Padding(
+      padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+      child: TextField(
+        controller: _descricaoController,
+        style: textStyle,
+        minLines: 10,
+        maxLines: 20,
+        onChanged: (value) {
+          _atualizarDescricao();
+        },
+        decoration: InputDecoration(
+            labelText: 'Descrição',
+            labelStyle: textStyle,
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5.0)
+            )
+        ),
+      ),
+    );
+  }
+
+  _configurarAgente(){
+    return Padding(
+      padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+      child: DropdownButtonFormField<String>(
+        value: _agenteController,
+        onChanged: (value) {
+          _agenteController = value;
+          _atualizarAgente();
+        },
+        decoration: InputDecoration(
+            labelText: 'Agente etiológico',
+            labelStyle: textStyle,
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5.0)
+            )
+        ),
+        items: <String>['Vírus', 'Bactéria', 'Fungo', 'Protozoário', 'Outros']
+            .map<DropdownMenuItem<String>>((String value) {
+          return DropdownMenuItem<String>(
+            value: value,
+            child: Text(value),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  _configurarBotaoSalvar(){
+    return Expanded(
+      // ignore: deprecated_member_use
+      child: RaisedButton(
+        color: Colors.teal,
+        textColor: Colors.white,
+        child: Text(
+          'Salvar',
+          textScaleFactor: 1.5,
+        ),
+        onPressed: () {
+          setState(() {
+            _salvar();
+          });
+        },
+      ),
+    );
+  }
+
+  _configurarBotaoDeletar(){
+    return Expanded(
+      // ignore: deprecated_member_use
+      child: RaisedButton(
+        color: Colors.teal,
+        textColor: Colors.white,
+        child: Text(
+          'Deletar',
+          textScaleFactor: 1.5,
+        ),
+        onPressed: () {
+          setState(() {
+            _apagar();
+          });
+        },
+      ),
+    );
   }
 
   _voltarParaUltimaTela() {
@@ -205,11 +234,15 @@ class DoencaInfoState extends State<DoencaInfo> {
   }
 
   void _atualizarAgente(){
-    _doenca.agenteEtiologico = agenteController;
+    _doenca.agenteEtiologico = _agenteController;
   }
 
-  // Save data to database
-  void _save() async {
+  void _salvar() async {
+
+    if (!_formKey.currentState.validate()) {
+      return;
+    }
+
     _voltarParaUltimaTela();
 
     int result;
@@ -220,29 +253,29 @@ class DoencaInfoState extends State<DoencaInfo> {
     }
 
     if (result != 0) {
-      _showAlertDialog('Status', 'Doença salva com sucesso');
+      _exibirDialogoAlerta('Status', 'Doença salva com sucesso');
     } else {  // Failure
-      _showAlertDialog('Status', 'Erro ao salvar doença');
+      _exibirDialogoAlerta('Status', 'Erro ao salvar doença');
     }
   }
 
-  void _delete() async {
+  void _apagar() async {
     _voltarParaUltimaTela();
 
     if (_doenca.id == null) {
-      _showAlertDialog('Status', 'Nenhuma doença foi apagada');
+      _exibirDialogoAlerta('Status', 'Nenhuma doença foi apagada');
       return;
     }
 
     int result = await _helper.apagarDoenca(_doenca.id);
     if (result != 0) {
-      _showAlertDialog('Status', 'Doença apagada com sucesso');
+      _exibirDialogoAlerta('Status', 'Doença apagada com sucesso');
     } else {
-      _showAlertDialog('Status', 'Erro ao apagar doença');
+      _exibirDialogoAlerta('Status', 'Erro ao apagar doença');
     }
   }
 
-  void _showAlertDialog(String title, String message) {
+  void _exibirDialogoAlerta(String title, String message) {
     AlertDialog alertDialog = AlertDialog(
       title: Text(title),
       content: Text(message),
