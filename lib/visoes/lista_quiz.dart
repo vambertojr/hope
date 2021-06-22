@@ -102,7 +102,7 @@ class ListaQuizState extends State<ListaQuiz> {
                 GestureDetector(
                   child: Icon(Icons.delete,color: Colors.red,),
                   onTap: () {
-                    _apagar(context, _listaQuiz[position]);
+                    _dialogoConfirmacaoExclusaoQuiz(context, _listaQuiz[position]);
                   },
                 ),
               ],
@@ -117,21 +117,64 @@ class ListaQuizState extends State<ListaQuiz> {
   }
 
   _getFirstLetter(String title) {
-    return title.substring(0, 2);
+    if(title.length>2) return title.substring(0, 2);
+    else return title.substring(0, 1);
+  }
+
+  void _dialogoConfirmacaoExclusaoQuiz(BuildContext contexto, Quiz quiz){
+    Widget botaoCancelar = ElevatedButton(
+      style: ElevatedButton.styleFrom(primary: Colors.teal),
+      child: Text("Cancelar"),
+      onPressed:  () {
+        Navigator.of(contexto).pop();
+      },
+    );
+
+    Widget botaoContinuar = ElevatedButton(
+      style: ElevatedButton.styleFrom(primary: Colors.teal),
+      child: Text("Continuar"),
+      onPressed:  () {
+        _apagar(contexto, quiz);
+      },
+    );
+
+    AlertDialog alert = AlertDialog(
+      title: Text('Confirmação'),
+      content: Text('Você tem certeza que deseja apagar o quiz?'),
+      actions: [
+        botaoCancelar,
+        botaoContinuar,
+      ],
+    );
+
+    showDialog(
+      context: contexto,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 
   void _apagar(BuildContext context, Quiz quiz) async {
     int resultado = await _databaseHelper.apagarQuiz(quiz.id);
+
+    _voltarParaUltimaTela();
+
     if (resultado != 0) {
       _showSnackBar(context, 'Quiz apagado com sucesso');
       _atualizarListaQuiz();
+    } else {
+      _showSnackBar(context, 'Erro ao apagar quiz');
     }
+  }
+
+  _voltarParaUltimaTela() {
+    Navigator.pop(context, true);
   }
 
   void _showSnackBar(BuildContext context, String message) {
     final snackBar = SnackBar(content: Text(message));
-    // ignore: deprecated_member_use
-    Scaffold.of(context).showSnackBar(snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   void _navigateToDetail(Quiz quiz) async {

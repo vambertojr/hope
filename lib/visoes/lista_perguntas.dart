@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hope/modelos/doenca.dart';
 import 'package:hope/modelos/login.dart';
 import 'package:hope/modelos/pergunta.dart';
+import 'package:hope/repositorios/repositorio_quiz.dart';
 import 'package:hope/visoes/homepage.dart';
 import 'package:hope/visoes/pergunta_info.dart';
 import 'package:hope/repositorios/repositorio_pergunta.dart';
@@ -16,13 +17,16 @@ class ListaPerguntas extends StatefulWidget {
 }
 
 class ListaPerguntasState extends State<ListaPerguntas> {
-  RepositorioPergunta _databaseHelper = RepositorioPergunta();
+  RepositorioPergunta _repositorioPerguntas;
+  RepositorioQuiz _repositorioQuiz;
   List<Pergunta> _listaPerguntas;
   int _totalPerguntas;
 
   @override
   void initState() {
     super.initState();
+    _repositorioPerguntas = RepositorioPergunta();
+    _repositorioQuiz = RepositorioQuiz();
     if (_listaPerguntas == null) {
       _listaPerguntas = [];
       _totalPerguntas = 0;
@@ -106,7 +110,7 @@ class ListaPerguntasState extends State<ListaPerguntas> {
           child: ListTile(
             leading: CircleAvatar(
               backgroundColor: Colors.amber,
-              child: Text(getFirstLetter(this._listaPerguntas[position].doenca.nome),
+              child: Text(_getFirstLetter(this._listaPerguntas[position].doenca.nome),
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ),
             title: Text(this._listaPerguntas[position].texto,
@@ -118,7 +122,7 @@ class ListaPerguntasState extends State<ListaPerguntas> {
                 GestureDetector(
                   child: Icon(Icons.delete,color: Colors.red,),
                   onTap: () {
-                    _apagar(context, _listaPerguntas[position]);
+                    _dialogoConfirmacaoExclusaoPergunta(context, _listaPerguntas[position]);
                   },
                 ),
               ],
@@ -132,23 +136,72 @@ class ListaPerguntasState extends State<ListaPerguntas> {
     );
   }
 
-  getFirstLetter(String title) {
-    return title.substring(0, 2);
+  _getFirstLetter(String title) {
+    if(title.length>2) return title.substring(0, 2);
+    else return title.substring(0, 1);
   }
 
-  void _apagar(BuildContext context, Pergunta pergunta) async {
-    pergunta.ativa = false;
-    int resultado = await _databaseHelper.atualizarPergunta(pergunta);
-    if (resultado != 0) {
-      _showSnackBar(context, 'Pergunta apagada com sucesso');
-      _atualizarListaPerguntas();
+  void _dialogoConfirmacaoExclusaoPergunta(BuildContext context, Pergunta pergunta){
+    Widget botaoCancelar = ElevatedButton(
+      style: ElevatedButton.styleFrom(primary: Colors.teal),
+      child: Text("Cancelar"),
+      onPressed:  () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    Widget botaoContinuar = ElevatedButton(
+      style: ElevatedButton.styleFrom(primary: Colors.teal),
+      child: Text("Continuar"),
+      onPressed:  () {
+        _apagar(context, pergunta);
+      },
+    );
+
+    AlertDialog alert = AlertDialog(
+      title: Text('Confirmação'),
+      content: Text('Você tem certeza que deseja apagar a pergunta?'),
+      actions: [
+        botaoCancelar,
+        botaoContinuar,
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  void _apagar(BuildContext contexto, Pergunta pergunta) async {
+    int resultado;
+    bool existeQuiz = await _repositorioQuiz.existeQuizQueUsaPergunta(pergunta);
+    if(existeQuiz){
+      pergunta.ativa = false;
+      resultado = await _repositorioPerguntas.atualizarPergunta(pergunta);
+    } else {
+      resultado = await _repositorioPerguntas.apagarPergunta(pergunta.id);
     }
+
+    _voltarParaUltimaTela();
+
+    if (resultado != 0) {
+      _showSnackBar(contexto, 'Pergunta apagada com sucesso');
+      _atualizarListaPerguntas();
+    } else {
+      _showSnackBar(contexto, 'Erro ao apagar pergunta');
+    }
+  }
+
+  _voltarParaUltimaTela() {
+    Navigator.pop(context, true);
   }
 
   void _showSnackBar(BuildContext context, String message) {
     final snackBar = SnackBar(content: Text(message));
-    // ignore: deprecated_member_use
-    Scaffold.of(context).showSnackBar(snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   void navigateToDetail(Pergunta pergunta, String titulo) async {
@@ -163,7 +216,7 @@ class ListaPerguntasState extends State<ListaPerguntas> {
   }
 
   void _atualizarListaPerguntas() {
-    Future<List<Pergunta>> listaPerguntasFutura = _databaseHelper.getListaPerguntasAtivas();
+    Future<List<Pergunta>> listaPerguntasFutura = _repositorioPerguntas.getListaPerguntasAtivas();
     listaPerguntasFutura.then((listaPerguntas) {
       setState(() {
         this._listaPerguntas = listaPerguntas;

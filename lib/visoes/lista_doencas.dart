@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hope/modelos/doenca.dart';
 import 'package:hope/modelos/login.dart';
+import 'package:hope/repositorios/repositorio_pergunta.dart';
 import 'package:hope/visoes/doenca_info.dart';
 import 'package:hope/repositorios/repositorio_doenca.dart';
 import 'package:hope/visoes/homepage.dart';
@@ -14,14 +15,16 @@ class ListaDoencas extends StatefulWidget {
 }
 
 class ListaDoencasState extends State<ListaDoencas> {
-  RepositorioDoenca _databaseHelper;
+  RepositorioDoenca _repositorioDoencas;
+  RepositorioPergunta _repositorioPerguntas;
   List<Doenca> _listaDoencas;
   int _totalDoencas;
 
   @override
   void initState() {
     super.initState();
-    _databaseHelper = RepositorioDoenca();
+    _repositorioDoencas = RepositorioDoenca();
+    _repositorioPerguntas = RepositorioPergunta();
     if (_listaDoencas == null) {
       _listaDoencas = [];
       _totalDoencas = 0;
@@ -78,7 +81,7 @@ class ListaDoencasState extends State<ListaDoencas> {
                 GestureDetector(
                   child: Icon(Icons.delete,color: Colors.red,),
                   onTap: () {
-                    _apagar(context, _listaDoencas[position]);
+                    _dialogoConfirmacaoExclusaoDoenca(context, _listaDoencas[position]);
                   },
                 ),
               ],
@@ -93,22 +96,72 @@ class ListaDoencasState extends State<ListaDoencas> {
   }
 
   _getFirstLetter(String title) {
-    return title.substring(0, 2);
+    if(title.length>2) return title.substring(0, 2);
+    else return title.substring(0, 1);
   }
 
-  void _apagar(BuildContext context, Doenca doenca) async {
-    doenca.ativa = false;
-    int resultado = await _databaseHelper.atualizarDoenca(doenca);
-    if (resultado != 0) {
-      _showSnackBar(context, 'Doença apagada com sucesso');
-      _atualizarListaDoencas();
+  void _dialogoConfirmacaoExclusaoDoenca(BuildContext contexto, Doenca doenca){
+    Widget botaoCancelar = ElevatedButton(
+      style: ElevatedButton.styleFrom(primary: Colors.teal),
+      child: Text("Cancelar"),
+      onPressed:  () {
+        Navigator.of(contexto).pop();
+      },
+    );
+
+    Widget botaoContinuar = ElevatedButton(
+      style: ElevatedButton.styleFrom(primary: Colors.teal),
+      child: Text("Continuar"),
+      onPressed:  () {
+        _apagar(contexto, doenca);
+      },
+    );
+
+    AlertDialog alert = AlertDialog(
+      title: Text('Confirmação'),
+      content: Text('Você tem certeza que deseja apagar a doença?'),
+      actions: [
+        botaoCancelar,
+        botaoContinuar,
+      ],
+    );
+
+    showDialog(
+      context: contexto,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
+  void _apagar(BuildContext contexto, Doenca doenca) async {
+    int resultado;
+    bool existePergunta = await _repositorioPerguntas.existePerguntaSobreDoenca(doenca);
+
+    if(existePergunta){
+      doenca.ativa = false;
+      resultado = await _repositorioDoencas.atualizarDoenca(doenca);
+    } else {
+      resultado = await _repositorioDoencas.apagarDoenca(doenca.id);
     }
+
+    _voltarParaUltimaTela();
+
+    if (resultado != 0) {
+      _showSnackBar(contexto, 'Doença apagada com sucesso');
+      _atualizarListaDoencas();
+    } else {
+      _showSnackBar(contexto, 'Erro ao apagar doença');
+    }
+  }
+
+  _voltarParaUltimaTela() {
+    Navigator.pop(context, true);
   }
 
   void _showSnackBar(BuildContext context, String message) {
     final snackBar = SnackBar(content: Text(message));
-    // ignore: deprecated_member_use
-    Scaffold.of(context).showSnackBar(snackBar);
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   void _navigateToDetail(Doenca doenca, String titulo) async {
@@ -123,7 +176,7 @@ class ListaDoencasState extends State<ListaDoencas> {
   }
 
   void _atualizarListaDoencas() {
-    Future<List<Doenca>> listaDoencasFutura = _databaseHelper.getListaDoencasAtivas();
+    Future<List<Doenca>> listaDoencasFutura = _repositorioDoencas.getListaDoencasAtivas();
     listaDoencasFutura.then((listaDoencas) {
       setState(() {
         this._listaDoencas = listaDoencas;
