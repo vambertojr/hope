@@ -231,12 +231,6 @@ class UsuarioInfoState extends State<UsuarioInfo> {
   }
 
   void _dialogoConfirmacaoExclusaoUsuario(){
-    String titulo = 'Confirmação';
-    String mensagem = 'Você tem certeza que deseja apagar sua conta?';
-    _dialogoConfirmacao(titulo, mensagem);
-  }
-
-  void _dialogoConfirmacao(String titulo, String mensagem){
       Widget botaoCancelar = ElevatedButton(
         style: ElevatedButton.styleFrom(primary: Colors.teal),
         child: Text("Cancelar"),
@@ -254,8 +248,8 @@ class UsuarioInfoState extends State<UsuarioInfo> {
       );
 
       AlertDialog alert = AlertDialog(
-        title: Text(titulo),
-        content: Text(mensagem),
+        title: Text('Confirmação'),
+        content: Text('Você tem certeza que deseja apagar sua conta?'),
         actions: [
           botaoCancelar,
           botaoContinuar,
