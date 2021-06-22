@@ -1,12 +1,14 @@
 import 'package:hope/modelos/login.dart';
+import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/modelos/quiz.dart';
+import 'package:hope/modelos/resposta.dart';
 import 'package:hope/modelos/usuario.dart';
 import 'package:hope/repositorios/constante_repositorio.dart';
 import 'package:hope/repositorios/database_helper.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 
-class QuizRepositorio {
+class RepositorioQuiz {
 
   Future<Database> inicializarDatabase() async {
     Database db = await new DatabaseHelper().initializeDatabase();
@@ -69,6 +71,21 @@ class QuizRepositorio {
       }
     }
     return quizSelecionados;
+  }
+
+  Future<bool> existeQuizQueUsaPergunta(Pergunta pergunta) async {
+    bool existe = false;
+    List<Quiz> todosQuiz = await getListaQuiz();
+    for(int i=0; i<todosQuiz.length; i++){
+      List<Resposta> respostas = todosQuiz[i].perguntas;
+      for(int j=0; j<respostas.length; j++){
+        if(respostas[j].pergunta == pergunta){
+          existe = true;
+          return existe;
+        }
+      }
+    }
+    return existe;
   }
 
 /*

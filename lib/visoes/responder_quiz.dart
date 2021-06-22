@@ -4,7 +4,7 @@ import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/modelos/quiz.dart';
 import 'package:hope/modelos/resposta.dart';
 import 'package:hope/repositorios/database_helper.dart';
-import 'package:hope/repositorios/quiz_repositorio.dart';
+import 'package:hope/repositorios/repositorio_quiz.dart';
 import 'package:hope/visoes/componentes/caixa_dialogo.dart';
 import 'package:hope/visoes/componentes/dialogo_termino.dart';
 import 'package:hope/visoes/componentes/dialogo_resultado.dart';
@@ -206,13 +206,8 @@ class ResponderQuizState extends State<ResponderQuiz> {
   }
 
   _salvarQuiz() async {
-    QuizRepositorio repositorio = new QuizRepositorio();
+    RepositorioQuiz repositorio = new RepositorioQuiz();
     var resultado = await repositorio.inserirQuiz(_quiz);
-    if (resultado != 0) {
-     print('Quiz salvo com sucesso');
-    } else {
-      print('Erro ao salvar quiz');
-    }
   }
 
 }

@@ -5,12 +5,7 @@ import 'dart:async';
 import 'package:hope/modelos/doenca.dart';
 
 
-class DoencaRepositorio {
-
-  Future<Database> inicializarDatabase() async {
-    Database db = await new DatabaseHelper().initializeDatabase();
-    return db;
-  }
+class RepositorioDoenca {
 
   Future<int> inserirDoenca(Doenca doenca) async {
     Database db = await new DatabaseHelper().database;
@@ -32,18 +27,11 @@ class DoencaRepositorio {
     return result;
   }
 
-  Future<int> getTotalDoencas() async {
-    Database db = await new DatabaseHelper().database;
-    List<Map<String, dynamic>> x = await db.rawQuery('SELECT COUNT (*) from ${ConstanteRepositorio.doencaTabela}');
-    int result = Sqflite.firstIntValue(x);
-    return result;
-  }
-
-  Future<List<Doenca>> getListaDoencas() async {
-    var doencasMapList = await getDoencasMapList();
+  Future<List<Doenca>> getListaDoencasAtivas() async {
+    var doencasMapList = await _getDoencasAtivasMapList();
     int count = doencasMapList.length;
 
-    List<Doenca> listaDoencas = List<Doenca>();
+    List<Doenca> listaDoencas = <Doenca>[];
     for (int i = 0; i < count; i++) {
       listaDoencas.add(Doenca.fromJson(doencasMapList[i]));
     }
@@ -51,9 +39,11 @@ class DoencaRepositorio {
     return listaDoencas;
   }
 
-  Future<List<Map<String, dynamic>>> getDoencasMapList() async {
+  Future<List<Map<String, dynamic>>> _getDoencasAtivasMapList() async {
     Database db = await new DatabaseHelper().database;
     var result = await db.query(ConstanteRepositorio.doencaTabela,
+        where: '${ConstanteRepositorio.doencaTabela_colAtiva} = ?',
+        whereArgs: [1],
         orderBy: '${ConstanteRepositorio.doencaTabela_colNome} ASC');
     return result;
   }

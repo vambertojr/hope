@@ -5,6 +5,7 @@ class ConstanteRepositorio {
   static String doencaTabela_colNome = 'nome';
   static String doencaTabela_colDescricao = 'descricao';
   static String doencaTabela_colAgente = 'agenteEtiologico';
+  static String doencaTabela_colAtiva = 'ativa';
 
   static String perguntaTabela = 'tabela_perguntas';
   static String perguntaTabela_colId = 'id';
@@ -16,12 +17,14 @@ class ConstanteRepositorio {
   static String perguntaTabela_colAlternativa4 = 'alternativa4';
   static String perguntaTabela_colAlternativa5 = 'alternativa5';
   static String perguntaTabela_colGabarito = 'gabarito';
+  static String perguntaTabela_colAtiva = 'ativa';
 
   static String usuarioTabela = 'tabela_usuarios';
   static String usuarioTabela_colId = 'id';
   static String usuarioTabela_colLogin = 'login';
   static String usuarioTabela_colSenha = 'senha';
   static String usuarioTabela_colPapel = 'papel';
+  static String usuarioTabela_colAtivo = 'ativo';
 
   static String quizTabela = 'tabela_quiz';
   static String quizTabela_colId = 'id';

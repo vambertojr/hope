@@ -43,6 +43,7 @@ class DatabaseHelper {
         '${ConstanteRepositorio.doencaTabela_colNome} TEXT, '
         '${ConstanteRepositorio.doencaTabela_colDescricao} TEXT, '
         '${ConstanteRepositorio.doencaTabela_colAgente} TEXT, '
+        '${ConstanteRepositorio.doencaTabela_colAtiva} INTEGER, '
         'UNIQUE(${ConstanteRepositorio.doencaTabela_colNome}) ON CONFLICT IGNORE)'
     );
 
@@ -57,6 +58,7 @@ class DatabaseHelper {
         '${ConstanteRepositorio.perguntaTabela_colAlternativa4} TEXT, '
         '${ConstanteRepositorio.perguntaTabela_colAlternativa5} TEXT, '
         '${ConstanteRepositorio.perguntaTabela_colGabarito} INTEGER, '
+        '${ConstanteRepositorio.perguntaTabela_colAtiva} INTEGER, '
         'FOREIGN KEY(${ConstanteRepositorio.perguntaTabela_colDoenca}) REFERENCES '
         '${ConstanteRepositorio.doencaTabela}(${ConstanteRepositorio.doencaTabela_colId}))'
     );
@@ -67,6 +69,7 @@ class DatabaseHelper {
             '${ConstanteRepositorio.usuarioTabela_colLogin} TEXT, '
             '${ConstanteRepositorio.usuarioTabela_colSenha} TEXT, '
             '${ConstanteRepositorio.usuarioTabela_colPapel} TEXT, '
+            '${ConstanteRepositorio.usuarioTabela_colAtivo} INTEGER, '
             'UNIQUE(${ConstanteRepositorio.usuarioTabela_colLogin}) ON CONFLICT IGNORE)'
     );
 

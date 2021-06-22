@@ -5,12 +5,7 @@ import 'package:hope/repositorios/database_helper.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 
-class PerguntaRepositorio {
-
-  Future<Database> inicializarDatabase() async {
-    Database db = await new DatabaseHelper().initializeDatabase();
-    return db;
-  }
+class RepositorioPergunta {
 
   Future<int> inserirPergunta(Pergunta pergunta) async {
     Database db = await new DatabaseHelper().database;
@@ -32,15 +27,8 @@ class PerguntaRepositorio {
     return result;
   }
 
-  Future<int> getTotalPerguntas() async {
-    Database db = await new DatabaseHelper().database;
-    List<Map<String, dynamic>> x = await db.rawQuery('SELECT COUNT (*) from ${ConstanteRepositorio.perguntaTabela}');
-    int result = Sqflite.firstIntValue(x);
-    return result;
-  }
-
-  Future<List<Pergunta>> getListaPerguntas() async {
-    var perguntasMapList = await getPerguntasMapList();
+  Future<List<Pergunta>> getListaPerguntasAtivas() async {
+    var perguntasMapList = await _getPerguntasAtivasMapList();
     int count = perguntasMapList.length;
 
     List<Pergunta> listaPerguntas = <Pergunta>[];
@@ -51,23 +39,56 @@ class PerguntaRepositorio {
     return listaPerguntas;
   }
 
-  Future<List<Map<String, dynamic>>> getPerguntasMapList() async {
+  Future<List<Map<String, dynamic>>> _getPerguntasAtivasMapList() async {
     Database db = await new DatabaseHelper().database;
     var result = await db.query(ConstanteRepositorio.perguntaTabela,
+        where: '${ConstanteRepositorio.perguntaTabela_colAtiva} = ?',
+        whereArgs: [1],
         orderBy: '${ConstanteRepositorio.perguntaTabela_colId} ASC');
     return result;
   }
 
   //Deve ser usado no lugar de último método da classe, que não funciona
-  Future<List<Pergunta>> getListaPerguntasPorDoenca(Doenca doenca) async {
+  Future<List<Pergunta>> getListaPerguntasAtivasPorDoenca(Doenca doenca) async {
     List<Pergunta> perguntasSelecionadas = [];
-    var todasPerguntas = await getListaPerguntas();
+    var todasPerguntas = await getListaPerguntasAtivas();
     for(int i=0; i<todasPerguntas.length; i++){
       if(todasPerguntas[i].doenca == doenca){
         perguntasSelecionadas.add(todasPerguntas[i]);
       }
     }
     return perguntasSelecionadas;
+  }
+
+  Future<List<Pergunta>> _getListaPerguntas() async {
+    var perguntasMapList = await _getPerguntasMapList();
+    int count = perguntasMapList.length;
+
+    List<Pergunta> listaPerguntas = <Pergunta>[];
+    for (int i = 0; i < count; i++) {
+      listaPerguntas.add(Pergunta.fromJson(perguntasMapList[i]));
+    }
+
+    return listaPerguntas;
+  }
+
+  Future<List<Map<String, dynamic>>> _getPerguntasMapList() async {
+    Database db = await new DatabaseHelper().database;
+    var result = await db.query(ConstanteRepositorio.perguntaTabela,
+        orderBy: '${ConstanteRepositorio.perguntaTabela_colId} ASC');
+    return result;
+  }
+
+  Future<bool> existePerguntaSobreDoenca(Doenca doenca) async {
+    bool existe = false;
+    var todasPerguntas = await _getListaPerguntas();
+    for(int i=0; i<todasPerguntas.length; i++){
+      if(todasPerguntas[i].doenca == doenca){
+        existe = true;
+        return existe;
+      }
+    }
+    return existe;
   }
 
   /*INVESTIGAR

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hope/modelos/doenca.dart';
 import 'package:hope/modelos/login.dart';
-import 'package:hope/repositorios/doenca_repositorio.dart';
+import 'package:hope/modelos/pergunta.dart';
+import 'package:hope/repositorios/repositorio_doenca.dart';
+import 'package:hope/repositorios/repositorio_pergunta.dart';
 import 'package:hope/visoes/homepage.dart';
 
 class DoencaInfo extends StatefulWidget {
@@ -19,7 +21,8 @@ class DoencaInfo extends StatefulWidget {
 
 class DoencaInfoState extends State<DoencaInfo> {
 
-  DoencaRepositorio _helper;
+  RepositorioDoenca _repositorioDoencas;
+  RepositorioPergunta _repositorioPerguntas;
 
   String _appBarTitle;
   Doenca _doenca;
@@ -37,7 +40,8 @@ class DoencaInfoState extends State<DoencaInfo> {
   @override
   void initState() {
     super.initState();
-    _helper = DoencaRepositorio();
+    _repositorioDoencas = RepositorioDoenca();
+    _repositorioPerguntas = RepositorioPergunta();
     _nomeController = TextEditingController();
     _descricaoController = TextEditingController();
     _nomeController.text = _doenca.nome;
@@ -247,9 +251,9 @@ class DoencaInfoState extends State<DoencaInfo> {
 
     int result;
     if (_doenca.id != null) {
-      result = await _helper.atualizarDoenca(_doenca);
+      result = await _repositorioDoencas.atualizarDoenca(_doenca);
     } else {
-      result = await _helper.inserirDoenca(_doenca);
+      result = await _repositorioDoencas.inserirDoenca(_doenca);
     }
 
     if (result != 0) {
@@ -267,8 +271,16 @@ class DoencaInfoState extends State<DoencaInfo> {
       return;
     }
 
-    int result = await _helper.apagarDoenca(_doenca.id);
-    if (result != 0) {
+    int resultado;
+    bool existePergunta = await _repositorioPerguntas.existePerguntaSobreDoenca(_doenca);
+    if(existePergunta){
+      _doenca.ativa = false;
+      resultado = await _repositorioDoencas.atualizarDoenca(_doenca);
+    } else {
+      resultado = await _repositorioDoencas.apagarDoenca(_doenca.id);
+    }
+
+    if (resultado != 0) {
       _exibirDialogoAlerta('Status', 'Doença apagada com sucesso');
     } else {
       _exibirDialogoAlerta('Status', 'Erro ao apagar doença');

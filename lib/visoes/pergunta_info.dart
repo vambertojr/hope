@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:hope/modelos/doenca.dart';
 import 'package:hope/modelos/login.dart';
 import 'package:hope/modelos/pergunta.dart';
-import 'package:hope/repositorios/doenca_repositorio.dart';
-import 'package:hope/repositorios/pergunta_repositorio.dart';
+import 'package:hope/modelos/quiz.dart';
+import 'package:hope/repositorios/repositorio_doenca.dart';
+import 'package:hope/repositorios/repositorio_pergunta.dart';
+import 'package:hope/repositorios/repositorio_quiz.dart';
 import 'package:hope/visoes/homepage.dart';
 
 
@@ -22,8 +24,9 @@ class PerguntaInfo extends StatefulWidget {
 
 class PerguntaInfoState extends State<PerguntaInfo> {
 
-  PerguntaRepositorio _perguntasRepositorio;
-  DoencaRepositorio _doencasRepositorio;
+  RepositorioPergunta _repositorioPerguntas;
+  RepositorioDoenca _repositorioDoencas;
+  RepositorioQuiz _repositorioQuiz;
 
   String _appBarTitle;
   Pergunta _pergunta;
@@ -49,8 +52,9 @@ class PerguntaInfoState extends State<PerguntaInfo> {
   @override
   void initState() {
     super.initState();
-    _perguntasRepositorio = PerguntaRepositorio();
-    _doencasRepositorio = DoencaRepositorio();
+    _repositorioPerguntas = RepositorioPergunta();
+    _repositorioDoencas = RepositorioDoenca();
+    _repositorioQuiz = RepositorioQuiz();
     _textoController = new TextEditingController(text: _pergunta.texto);
     _alternativa1Controller = new TextEditingController(text: _pergunta.alternativa1);
     _alternativa2Controller = new TextEditingController(text: _pergunta.alternativa2);
@@ -319,7 +323,7 @@ class PerguntaInfoState extends State<PerguntaInfo> {
 
   void _inicializarMenuDoencas() async {
       this._doencasLista = [];
-      Future<List<Doenca>> listaDoencasFutura = _doencasRepositorio.getListaDoencas();
+      Future<List<Doenca>> listaDoencasFutura = _repositorioDoencas.getListaDoencasAtivas();
       listaDoencasFutura.then((listaDoencas) {
         setState(() {
           this._doencasLista = listaDoencas;
@@ -378,9 +382,9 @@ class PerguntaInfoState extends State<PerguntaInfo> {
 
     int result;
     if (_pergunta.id != null) {
-      result = await _perguntasRepositorio.atualizarPergunta(_pergunta);
+      result = await _repositorioPerguntas.atualizarPergunta(_pergunta);
     } else {
-      result = await _perguntasRepositorio.inserirPergunta(_pergunta);
+      result = await _repositorioPerguntas.inserirPergunta(_pergunta);
     }
 
     if (result != 0) {
@@ -398,8 +402,16 @@ class PerguntaInfoState extends State<PerguntaInfo> {
       return;
     }
 
-    int result = await _perguntasRepositorio.apagarPergunta(_pergunta.id);
-    if (result != 0) {
+    int resultado;
+    bool existeQuiz = await _repositorioQuiz.existeQuizQueUsaPergunta(_pergunta);
+    if(existeQuiz){
+      _pergunta.ativa = false;
+      resultado = await _repositorioPerguntas.atualizarPergunta(_pergunta);
+    } else {
+      resultado = await _repositorioPerguntas.apagarPergunta(_pergunta.id);
+    }
+
+    if (resultado != 0) {
       _exibirDialogoAlerta('Status', 'Pergunta apagada com sucesso');
     } else {
       _exibirDialogoAlerta('Status', 'Erro ao apagar pergunta');

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hope/modelos/doenca.dart';
 import 'package:hope/modelos/login.dart';
 import 'package:hope/visoes/doenca_info.dart';
-import 'package:hope/repositorios/doenca_repositorio.dart';
+import 'package:hope/repositorios/repositorio_doenca.dart';
 import 'package:hope/visoes/homepage.dart';
 
 class ListaDoencas extends StatefulWidget {
@@ -14,14 +14,14 @@ class ListaDoencas extends StatefulWidget {
 }
 
 class ListaDoencasState extends State<ListaDoencas> {
-  DoencaRepositorio _databaseHelper;
+  RepositorioDoenca _databaseHelper;
   List<Doenca> _listaDoencas;
   int _totalDoencas;
 
   @override
   void initState() {
     super.initState();
-    _databaseHelper = DoencaRepositorio();
+    _databaseHelper = RepositorioDoenca();
     if (_listaDoencas == null) {
       _listaDoencas = [];
       _totalDoencas = 0;
@@ -78,7 +78,7 @@ class ListaDoencasState extends State<ListaDoencas> {
                 GestureDetector(
                   child: Icon(Icons.delete,color: Colors.red,),
                   onTap: () {
-                    _delete(context, _listaDoencas[position]);
+                    _apagar(context, _listaDoencas[position]);
                   },
                 ),
               ],
@@ -96,9 +96,10 @@ class ListaDoencasState extends State<ListaDoencas> {
     return title.substring(0, 2);
   }
 
-  void _delete(BuildContext context, Doenca doenca) async {
-    int result = await _databaseHelper.apagarDoenca(doenca.id);
-    if (result != 0) {
+  void _apagar(BuildContext context, Doenca doenca) async {
+    doenca.ativa = false;
+    int resultado = await _databaseHelper.atualizarDoenca(doenca);
+    if (resultado != 0) {
       _showSnackBar(context, 'Doença apagada com sucesso');
       _atualizarListaDoencas();
     }
@@ -122,7 +123,7 @@ class ListaDoencasState extends State<ListaDoencas> {
   }
 
   void _atualizarListaDoencas() {
-    Future<List<Doenca>> listaDoencasFutura = _databaseHelper.getListaDoencas();
+    Future<List<Doenca>> listaDoencasFutura = _databaseHelper.getListaDoencasAtivas();
     listaDoencasFutura.then((listaDoencas) {
       setState(() {
         this._listaDoencas = listaDoencas;

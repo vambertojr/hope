@@ -1,15 +1,9 @@
-import 'package:flutter/cupertino.dart';
 import 'package:hope/modelos/usuario.dart';
 import 'package:hope/repositorios/constante_repositorio.dart';
 import 'package:hope/repositorios/database_helper.dart';
 import 'package:sqflite/sqflite.dart';
 
-class UsuarioRepositorio {
-
-  Future<Database> inicializarDatabase() async {
-    Database db = await new DatabaseHelper().initializeDatabase();
-    return db;
-  }
+class RepositorioUsuario {
 
   Future<int> inserirUsuario(Usuario usuario) async {
     Database db = await new DatabaseHelper().database;
@@ -35,10 +29,11 @@ class UsuarioRepositorio {
     var db = await new DatabaseHelper().database;
     var result = await db.query(ConstanteRepositorio.usuarioTabela,
         where: '${ConstanteRepositorio.usuarioTabela_colLogin} = ? AND '
-            '${ConstanteRepositorio.usuarioTabela_colSenha} = ?',
-        whereArgs: [usuario.login, usuario.senha]);
+            '${ConstanteRepositorio.usuarioTabela_colSenha} = ? AND '
+            '${ConstanteRepositorio.usuarioTabela_colAtivo} = ?',
+        whereArgs: [usuario.login, usuario.senha, 1]);
     int count = result.length;
-    List<Usuario> listaUsuarios = List<Usuario>();
+    List<Usuario> listaUsuarios = <Usuario>[];
     for (int i = 0; i < count; i++) {
       listaUsuarios.add(Usuario.fromJson(result[i]));
     }
@@ -47,13 +42,14 @@ class UsuarioRepositorio {
     else return listaUsuarios[0];
   }
 
-  Future<bool> existeUsuarioComLogin(Usuario usuario) async {
+  Future<bool> existeUsuarioAtivoComLogin(Usuario usuario) async {
     var db = await new DatabaseHelper().database;
     var result = await db.query(ConstanteRepositorio.usuarioTabela,
-        where: '${ConstanteRepositorio.usuarioTabela_colLogin} = ?',
-        whereArgs: [usuario.login]);
+        where: '${ConstanteRepositorio.usuarioTabela_colLogin} = ? AND '
+            '${ConstanteRepositorio.usuarioTabela_colAtivo} = ?',
+        whereArgs: [usuario.login, 1]);
     int count = result.length;
-    List<Usuario> listaUsuarios = List<Usuario>();
+    List<Usuario> listaUsuarios = <Usuario>[];
     for (int i = 0; i < count; i++) {
       listaUsuarios.add(Usuario.fromJson(result[i]));
     }

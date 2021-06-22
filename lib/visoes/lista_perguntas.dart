@@ -5,7 +5,7 @@ import 'package:hope/modelos/login.dart';
 import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/visoes/homepage.dart';
 import 'package:hope/visoes/pergunta_info.dart';
-import 'package:hope/repositorios/pergunta_repositorio.dart';
+import 'package:hope/repositorios/repositorio_pergunta.dart';
 import 'package:unicorndial/unicorndial.dart';
 
 class ListaPerguntas extends StatefulWidget {
@@ -16,7 +16,7 @@ class ListaPerguntas extends StatefulWidget {
 }
 
 class ListaPerguntasState extends State<ListaPerguntas> {
-  PerguntaRepositorio _databaseHelper = PerguntaRepositorio();
+  RepositorioPergunta _databaseHelper = RepositorioPergunta();
   List<Pergunta> _listaPerguntas;
   int _totalPerguntas;
 
@@ -118,7 +118,7 @@ class ListaPerguntasState extends State<ListaPerguntas> {
                 GestureDetector(
                   child: Icon(Icons.delete,color: Colors.red,),
                   onTap: () {
-                    _delete(context, _listaPerguntas[position]);
+                    _apagar(context, _listaPerguntas[position]);
                   },
                 ),
               ],
@@ -136,9 +136,10 @@ class ListaPerguntasState extends State<ListaPerguntas> {
     return title.substring(0, 2);
   }
 
-  void _delete(BuildContext context, Pergunta pergunta) async {
-    int result = await _databaseHelper.apagarPergunta(pergunta.id);
-    if (result != 0) {
+  void _apagar(BuildContext context, Pergunta pergunta) async {
+    pergunta.ativa = false;
+    int resultado = await _databaseHelper.atualizarPergunta(pergunta);
+    if (resultado != 0) {
       _showSnackBar(context, 'Pergunta apagada com sucesso');
       _atualizarListaPerguntas();
     }
@@ -162,7 +163,7 @@ class ListaPerguntasState extends State<ListaPerguntas> {
   }
 
   void _atualizarListaPerguntas() {
-    Future<List<Pergunta>> listaPerguntasFutura = _databaseHelper.getListaPerguntas();
+    Future<List<Pergunta>> listaPerguntasFutura = _databaseHelper.getListaPerguntasAtivas();
     listaPerguntasFutura.then((listaPerguntas) {
       setState(() {
         this._listaPerguntas = listaPerguntas;

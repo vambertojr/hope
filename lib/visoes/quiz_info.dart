@@ -6,9 +6,9 @@ import 'package:hope/modelos/login.dart';
 import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/modelos/quiz.dart';
 import 'package:hope/modelos/resposta.dart';
-import 'package:hope/repositorios/doenca_repositorio.dart';
-import 'package:hope/repositorios/pergunta_repositorio.dart';
-import 'package:hope/repositorios/quiz_repositorio.dart';
+import 'package:hope/repositorios/repositorio_doenca.dart';
+import 'package:hope/repositorios/repositorio_pergunta.dart';
+import 'package:hope/repositorios/repositorio_quiz.dart';
 import 'package:hope/visoes/homepage.dart';
 import 'package:hope/visoes/responder_quiz.dart';
 
@@ -28,9 +28,9 @@ class QuizInfo extends StatefulWidget {
 
 class QuizInfoState extends State<QuizInfo> {
 
-  PerguntaRepositorio _perguntasRepositorio;
-  DoencaRepositorio _doencasRepositorio;
-  QuizRepositorio _quizRepositorio;
+  RepositorioPergunta _perguntasRepositorio;
+  RepositorioDoenca _doencasRepositorio;
+  RepositorioQuiz _quizRepositorio;
 
   String _appBarTitle;
   Quiz _quiz;
@@ -51,9 +51,9 @@ class QuizInfoState extends State<QuizInfo> {
   @override
   void initState() {
     super.initState();
-    _perguntasRepositorio = PerguntaRepositorio();
-    _doencasRepositorio = DoencaRepositorio();
-    _quizRepositorio = QuizRepositorio();
+    _perguntasRepositorio = RepositorioPergunta();
+    _doencasRepositorio = RepositorioDoenca();
+    _quizRepositorio = RepositorioQuiz();
     _quantidadePerguntasController = new TextEditingController(text: _quiz.totalPerguntas.toString());
     _tituloController = new TextEditingController(text: _quiz.titulo);
     _inicializarMenuDoencas();
@@ -203,7 +203,6 @@ class QuizInfoState extends State<QuizInfo> {
   }
 
   String _validarTitulo(String titulo){
-    print("entrou em validarTitulo");
     String mensagem;
     if(titulo.isEmpty){
       mensagem = "Informe o título";
@@ -229,7 +228,7 @@ class QuizInfoState extends State<QuizInfo> {
 
   void _inicializarMenuDoencas() async {
       this._doencasLista = [new Doenca('Nenhuma doença específica', '', '')];
-      Future<List<Doenca>> listaDoencasFutura = _doencasRepositorio.getListaDoencas();
+      Future<List<Doenca>> listaDoencasFutura = _doencasRepositorio.getListaDoencasAtivas();
       listaDoencasFutura.then((listaDoencas) {
         setState(() {
           this._doencasLista += listaDoencas;
@@ -318,9 +317,9 @@ class QuizInfoState extends State<QuizInfo> {
     bool exibirQuiz = true;
     List<Pergunta> todasAsPerguntas;
     if(_quiz.doenca.id != null){
-      todasAsPerguntas = await _perguntasRepositorio.getListaPerguntasPorDoenca(_quiz.doenca);
+      todasAsPerguntas = await _perguntasRepositorio.getListaPerguntasAtivasPorDoenca(_quiz.doenca);
     } else {
-      todasAsPerguntas = await _perguntasRepositorio.getListaPerguntas();
+      todasAsPerguntas = await _perguntasRepositorio.getListaPerguntasAtivas();
     }
 
     if(todasAsPerguntas==null || todasAsPerguntas.isEmpty){

@@ -1,5 +1,5 @@
 import 'package:hope/modelos/usuario.dart';
-import 'package:hope/repositorios/usuario_repositorio.dart';
+import 'package:hope/repositorios/repositorio_usuario.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Login {
@@ -28,7 +28,7 @@ class Login {
     var status = preferences.getInt('status');
 
     if (login != null && status == 1) {
-      UsuarioRepositorio usuarioRepositorio = new UsuarioRepositorio();
+      RepositorioUsuario usuarioRepositorio = new RepositorioUsuario();
       usuarioEncontrado =
       await usuarioRepositorio.getUsuario(new Usuario(login, senha, ''));
     }

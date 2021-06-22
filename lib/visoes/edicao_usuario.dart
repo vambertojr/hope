@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hope/modelos/login.dart';
 import 'package:hope/modelos/usuario.dart';
-import 'package:hope/visoes/cadastro_usuario.dart';
+import 'package:hope/visoes/usuario_info.dart';
 import 'package:hope/visoes/homepage.dart';
 
 class EdicaoUsuario extends StatefulWidget {
@@ -32,8 +32,7 @@ class EdicaoUsuarioState extends State<EdicaoUsuario> {
   Widget build(BuildContext context) {
     var page;
     if (_usuario != null) {
-      print("usuario logado em edicao: ${_usuario.login}; ${_usuario.senha}");
-      page = CadastroUsuario(_usuario, 'Editar usuário');
+      page = UsuarioInfo(_usuario, 'Editar usuário');
     } else {
       page = HomePage();
     }

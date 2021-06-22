@@ -13,13 +13,16 @@ class Pergunta {
   String _alternativa4;
   String _alternativa5;
   int _gabarito;
+  bool _ativa;
 
   Pergunta(this._doenca, this._texto, this._alternativa1, this._alternativa2,
-      this._alternativa3, this._alternativa4, this._alternativa5, this._gabarito);
+      this._alternativa3, this._alternativa4, this._alternativa5, this._gabarito):
+        _ativa = true;
 
   Pergunta.withId(this._id, this._doenca, this._texto, this._alternativa1,
       this._alternativa2, this._alternativa3, this._alternativa4,
-      this._alternativa5, this._gabarito);
+      this._alternativa5, this._gabarito):
+        _ativa = true;
 
   Pergunta.fromJson(Map<String, dynamic> json)
     : _doenca = json['doenca'] == null ? null : Doenca.fromJson(jsonDecode(json['doenca'])),
@@ -30,7 +33,8 @@ class Pergunta {
       _alternativa4 = json['alternativa4'] as String,
       _alternativa5 = json['alternativa5'] as String,
       _gabarito = json['gabarito'] as int,
-      _id = json['id'] as int;
+      _id = json['id'] as int,
+      _ativa = _converterFlagParaBool(json);
 
   Map<String, dynamic> toJson() => _$PerguntaToJson(this);
 
@@ -44,7 +48,13 @@ class Pergunta {
     'alternativa4': instance._alternativa4,
     'alternativa5': instance._alternativa5,
     'gabarito': instance._gabarito,
+    'ativa': instance._ativa ? 1 : 0,
   };
+
+  static bool _converterFlagParaBool(Map<String, dynamic> json){
+    int valor = json['ativa'] as int;
+    return valor==0 ? false : true;
+  }
 
   int get gabarito => _gabarito;
 
@@ -100,6 +110,12 @@ class Pergunta {
     _id = value;
   }
 
+  bool get ativa => _ativa;
+
+  set ativa(bool value) {
+    _ativa = value;
+  }
+
   String getRespostaCorreta(){
     switch(_gabarito){
       case 1: return _alternativa1;
@@ -124,7 +140,8 @@ class Pergunta {
           _alternativa3 == other._alternativa3 &&
           _alternativa4 == other._alternativa4 &&
           _alternativa5 == other._alternativa5 &&
-          _gabarito == other._gabarito;
+          _gabarito == other._gabarito &&
+          _ativa == other._ativa;
 
   @override
   int get hashCode =>
@@ -136,7 +153,8 @@ class Pergunta {
       _alternativa3.hashCode ^
       _alternativa4.hashCode ^
       _alternativa5.hashCode ^
-      _gabarito.hashCode;
+      _gabarito.hashCode ^
+      _ativa.hashCode;
 
 }
 

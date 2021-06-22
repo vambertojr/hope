@@ -3,11 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:hope/modelos/login.dart';
 import 'package:hope/modelos/quiz.dart';
 import 'package:hope/modelos/usuario.dart';
-import 'package:hope/repositorios/quiz_repositorio.dart';
+import 'package:hope/repositorios/repositorio_quiz.dart';
 import 'package:hope/visoes/homepage.dart';
 import 'package:hope/visoes/quiz_concluido.dart';
 import 'package:hope/visoes/quiz_info.dart';
-import 'package:hope/visoes/responder_quiz.dart';
 import 'package:intl/intl.dart';
 
 class ListaQuiz extends StatefulWidget {
@@ -19,7 +18,7 @@ class ListaQuiz extends StatefulWidget {
 
 class ListaQuizState extends State<ListaQuiz> {
 
-  QuizRepositorio _databaseHelper;
+  RepositorioQuiz _databaseHelper;
   List<Quiz> _listaQuiz;
   int _totalQuiz;
   Usuario _usuario;
@@ -34,7 +33,7 @@ class ListaQuizState extends State<ListaQuiz> {
       });
     });
 
-    _databaseHelper = QuizRepositorio();
+    _databaseHelper = RepositorioQuiz();
 
     if (_listaQuiz == null) {
       _listaQuiz = [];
@@ -103,7 +102,7 @@ class ListaQuizState extends State<ListaQuiz> {
                 GestureDetector(
                   child: Icon(Icons.delete,color: Colors.red,),
                   onTap: () {
-                    _delete(context, _listaQuiz[position]);
+                    _apagar(context, _listaQuiz[position]);
                   },
                 ),
               ],
@@ -121,9 +120,9 @@ class ListaQuizState extends State<ListaQuiz> {
     return title.substring(0, 2);
   }
 
-  void _delete(BuildContext context, Quiz quiz) async {
-    int result = await _databaseHelper.apagarQuiz(quiz.id);
-    if (result != 0) {
+  void _apagar(BuildContext context, Quiz quiz) async {
+    int resultado = await _databaseHelper.apagarQuiz(quiz.id);
+    if (resultado != 0) {
       _showSnackBar(context, 'Quiz apagado com sucesso');
       _atualizarListaQuiz();
     }

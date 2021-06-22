@@ -4,16 +4,20 @@ class Usuario {
   String _login;
   String _senha;
   String _papel;
+  bool _ativo;
 
-  Usuario(this._login, this._senha, this._papel);
+  Usuario(this._login, this._senha, this._papel):
+        _ativo = true;
 
-  Usuario.withId(this._id, this._login, this._senha, this._papel);
+  Usuario.withId(this._id, this._login, this._senha, this._papel):
+        _ativo = true;
 
   Usuario.fromJson(Map<String, dynamic> json)
       : _id = json['id'] as int,
         _login = json['login'] as String,
         _senha = json['senha'] as String,
-        _papel = json['papel'] as String;
+        _papel = json['papel'] as String,
+        _ativo = _converterFlagParaBool(json);
 
   Map<String, dynamic> toJson() => _$UsuarioToJson(this);
 
@@ -22,7 +26,13 @@ class Usuario {
     'login': instance._login,
     'senha': instance._senha,
     'papel': instance._papel,
+    'ativo': instance._ativo ? 1 : 0,
   };
+
+  static bool _converterFlagParaBool(Map<String, dynamic> json){
+    int valor = json['ativo'] as int;
+    return valor==0 ? false : true;
+  }
 
   int get id => _id;
 
@@ -48,6 +58,12 @@ class Usuario {
     _papel = value;
   }
 
+  bool get ativo => _ativo;
+
+  set ativo(bool value) {
+    _ativo = value;
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -56,10 +72,15 @@ class Usuario {
           _id == other._id &&
           _login == other._login &&
           _senha == other._senha &&
-          _papel == other._papel;
+          _papel == other._papel &&
+          _ativo == other._ativo;
 
   @override
   int get hashCode =>
-      _id.hashCode ^ _login.hashCode ^ _senha.hashCode ^ _papel.hashCode;
+      _id.hashCode ^
+      _login.hashCode ^
+      _senha.hashCode ^
+      _papel.hashCode ^
+      _ativo.hashCode;
 
 }

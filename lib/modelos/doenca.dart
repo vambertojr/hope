@@ -4,16 +4,20 @@ class Doenca {
   String _nome;
   String _descricao;
   String _agenteEtiologico; //causada por bactéria, fungo, vírus, protozoário
+  bool _ativa;
 
-  Doenca(this._nome, this._agenteEtiologico, [this._descricao]);
+  Doenca(this._nome, this._agenteEtiologico, [this._descricao]):
+        _ativa = true;
 
-  Doenca.withId(this._id, this._nome, this._agenteEtiologico, [this._descricao]);
+  Doenca.withId(this._id, this._nome, this._agenteEtiologico, [this._descricao]):
+        _ativa = true;
 
   Doenca.fromJson(Map<String, dynamic> json)
     : _nome = json['nome'] as String,
       _agenteEtiologico = json['agenteEtiologico'] as String,
       _descricao = json['descricao'] as String,
-      _id = json['id'] as int;
+      _id = json['id'] as int,
+      _ativa = _converterFlagParaBool(json);
 
   Map<String, dynamic> toJson() => _$DoencaToJson(this);
 
@@ -22,7 +26,13 @@ class Doenca {
     'nome': instance._nome,
     'descricao': instance._descricao,
     'agenteEtiologico': instance._agenteEtiologico,
+    'ativa': instance._ativa ? 1 : 0,
   };
+
+  static bool _converterFlagParaBool(Map<String, dynamic> json){
+    int valor = json['ativa'] as int;
+    return valor==0 ? false : true;
+  }
 
   int get id => _id;
 
@@ -50,6 +60,12 @@ class Doenca {
     }
   }
 
+  bool get ativa => _ativa;
+
+  set ativa(bool value) {
+    _ativa = value;
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -58,14 +74,17 @@ class Doenca {
           _id == other._id &&
           _nome == other._nome &&
           _descricao == other._descricao &&
-          _agenteEtiologico == other._agenteEtiologico;
+          _agenteEtiologico == other._agenteEtiologico &&
+          _ativa == other._ativa;
 
   @override
   int get hashCode =>
       _id.hashCode ^
       _nome.hashCode ^
       _descricao.hashCode ^
-      _agenteEtiologico.hashCode;
+      _agenteEtiologico.hashCode ^
+      _ativa.hashCode;
+
 }
 
 

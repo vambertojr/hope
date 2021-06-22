@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hope/modelos/usuario.dart';
-import 'package:hope/repositorios/usuario_repositorio.dart';
-import 'package:hope/visoes/cadastro_usuario.dart';
+import 'package:hope/repositorios/repositorio_usuario.dart';
+import 'package:hope/visoes/usuario_info.dart';
 import 'package:hope/modelos/login.dart';
 import 'package:hope/visoes/menu.dart';
 import 'package:hope/visoes/menu_estudante.dart';
@@ -12,7 +12,7 @@ class HomePage extends StatelessWidget {
   final TextEditingController _tedLogin = TextEditingController();
   final TextEditingController _tedSenha = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final UsuarioRepositorio _usuarioRepositorio = new UsuarioRepositorio();
+  final RepositorioUsuario _usuarioRepositorio = new RepositorioUsuario();
 
   @override
   Widget build(BuildContext context) {
@@ -187,7 +187,7 @@ class HomePage extends StatelessWidget {
 
   void navigateToDetail(Usuario usuario, String titulo, context) async {
     await Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return CadastroUsuario(usuario, titulo);
+      return UsuarioInfo(usuario, titulo);
     }));
 
   }
