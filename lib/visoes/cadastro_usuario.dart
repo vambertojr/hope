@@ -239,21 +239,21 @@ class CadastroUsuarioState extends State<CadastroUsuario> {
     );
   }
 
-  String _validarLogin(String text){
+  String _validarLogin(String login){
     String mensagem;
-    if(text.isEmpty){
+    if(login.isEmpty){
       mensagem = "Informe o login";
-    } else if(text.length<4){
+    } else if(login.length<4){
       mensagem = "O login deve ter pelo menos 4 caracteres";
     }
     return mensagem;
   }
 
-  String _validarSenha(String text){
+  String _validarSenha(String senha){
     String mensagem;
-    if(text.isEmpty){
+    if(senha.isEmpty){
       mensagem = "Informe a senha";
-    } else if(text.length<8){
+    } else if(senha.length<8){
       mensagem = "A senha deve ter pelo menos 8 caracteres";
     }
     return mensagem;
