@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:hope/controladores/pergunta_info_controller.dart';
 import 'package:hope/modelos/doenca.dart';
 import 'package:hope/modelos/login.dart';
 import 'package:hope/modelos/pergunta.dart';
-import 'package:hope/modelos/quiz.dart';
 import 'package:hope/repositorios/repositorio_doenca.dart';
-import 'package:hope/repositorios/repositorio_pergunta.dart';
-import 'package:hope/repositorios/repositorio_quiz.dart';
 import 'package:hope/visoes/homepage.dart';
 
 
@@ -24,9 +22,8 @@ class PerguntaInfo extends StatefulWidget {
 
 class PerguntaInfoState extends State<PerguntaInfo> {
 
-  RepositorioPergunta _repositorioPerguntas;
+  PerguntaInfoController _perguntaInfoController;
   RepositorioDoenca _repositorioDoencas;
-  RepositorioQuiz _repositorioQuiz;
 
   String _appBarTitle;
   Pergunta _pergunta;
@@ -52,9 +49,8 @@ class PerguntaInfoState extends State<PerguntaInfo> {
   @override
   void initState() {
     super.initState();
-    _repositorioPerguntas = RepositorioPergunta();
+    _perguntaInfoController = PerguntaInfoController();
     _repositorioDoencas = RepositorioDoenca();
-    _repositorioQuiz = RepositorioQuiz();
     _textoController = new TextEditingController(text: _pergunta.texto);
     _alternativa1Controller = new TextEditingController(text: _pergunta.alternativa1);
     _alternativa2Controller = new TextEditingController(text: _pergunta.alternativa2);
@@ -149,7 +145,7 @@ class PerguntaInfoState extends State<PerguntaInfo> {
       padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
       child: TextFormField(
         controller: _textoController,
-        validator: _validarTexto,
+        validator: _perguntaInfoController.validarTexto,
         style: textStyle,
         minLines: 3,
         maxLines: 10,
@@ -188,42 +184,26 @@ class PerguntaInfoState extends State<PerguntaInfo> {
     );
   }
 
-  String _validarAlternativa(String alternativa){
-    String mensagem;
-    if(alternativa.isEmpty){
-      mensagem = "Informe a alternativa";
-    }
-    return mensagem;
-  }
-
-  String _validarTexto(String texto){
-    String mensagem;
-    if(texto.isEmpty){
-      mensagem = "Informe o texto da pergunta";
-    }
-    return mensagem;
-  }
-
   List<Widget> configurarBody(){
     var componentesParte1 = <Widget>[
       _configurarSelecaoDoenca(),
       _configurarTexto(),
-      _configurarAlternativa(1, _alternativa1Controller, _validarAlternativa),
-      _configurarAlternativa(2, _alternativa2Controller, _validarAlternativa)
+      _configurarAlternativa(1, _alternativa1Controller,  _perguntaInfoController.validarAlternativa),
+      _configurarAlternativa(2, _alternativa2Controller,  _perguntaInfoController.validarAlternativa)
     ];
 
     if(_numeroAlternativas>=4){
       componentesParte1.add(
-          _configurarAlternativa(3, _alternativa3Controller, _validarAlternativa)
+          _configurarAlternativa(3, _alternativa3Controller,  _perguntaInfoController.validarAlternativa)
       );
       componentesParte1.add(
-          _configurarAlternativa(4, _alternativa4Controller, _validarAlternativa)
+          _configurarAlternativa(4, _alternativa4Controller,  _perguntaInfoController.validarAlternativa)
       );
     }
 
     if(_numeroAlternativas==5){
       componentesParte1.add(
-          _configurarAlternativa(5, _alternativa5Controller, _validarAlternativa)
+          _configurarAlternativa(5, _alternativa5Controller,  _perguntaInfoController.validarAlternativa)
       );
     }
 
@@ -386,14 +366,9 @@ class PerguntaInfoState extends State<PerguntaInfo> {
 
     _voltarParaUltimaTela();
 
-    int result;
-    if (_pergunta.id != null) {
-      result = await _repositorioPerguntas.atualizarPergunta(_pergunta);
-    } else {
-      result = await _repositorioPerguntas.inserirPergunta(_pergunta);
-    }
+    int resultado = await _perguntaInfoController.salvar(_pergunta);
 
-    if (result != 0) {
+    if (resultado != 0) {
       _exibirDialogoAlerta('Status', 'Pergunta salva com sucesso');
     } else {
       _exibirDialogoAlerta('Status', 'Erro ao salvar pergunta');
@@ -435,15 +410,7 @@ class PerguntaInfoState extends State<PerguntaInfo> {
   }
 
   void _apagar() async {
-    int resultado;
-    bool existeQuiz = await _repositorioQuiz.existeQuizQueUsaPergunta(_pergunta);
-
-    if(existeQuiz){
-      _pergunta.ativa = false;
-      resultado = await _repositorioPerguntas.atualizarPergunta(_pergunta);
-    } else {
-      resultado = await _repositorioPerguntas.apagarPergunta(_pergunta.id);
-    }
+    int resultado = await _perguntaInfoController.apagar(_pergunta);
 
     _voltarParaUltimaTela();
     _voltarParaUltimaTela();
