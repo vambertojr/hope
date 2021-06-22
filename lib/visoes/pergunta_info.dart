@@ -255,6 +255,10 @@ class PerguntaInfoState extends State<PerguntaInfo> {
       );
     }
 
+    List<int> opcoesGabarito = [1, 2, 3, 4, 5];
+    if(_numeroAlternativas==2) opcoesGabarito = [1, 2];
+    if(_numeroAlternativas==4) opcoesGabarito = [1, 2, 3, 4];
+
     var componentesParte2 = <Widget>[
       Padding(
         padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
@@ -271,7 +275,7 @@ class PerguntaInfoState extends State<PerguntaInfo> {
                   borderRadius: BorderRadius.circular(5.0)
               )
           ),
-          items: <int>[1, 2, 3, 4, 5]
+          items: opcoesGabarito
               .map<DropdownMenuItem<int>>((int value) {
             return DropdownMenuItem<int>(
               value: value,
