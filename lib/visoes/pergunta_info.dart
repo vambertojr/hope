@@ -306,7 +306,13 @@ class PerguntaInfoState extends State<PerguntaInfo> {
         ),
         onPressed: () {
           setState(() {
-            _apagar();
+            if (_pergunta.id == null) {
+              _voltarParaUltimaTela();
+              _exibirDialogoAlerta('Status', 'Nenhuma pergunta foi apagada');
+              return;
+            } else {
+              _dialogoConfirmacaoExclusaoPergunta();
+            }
           });
         },
       ),
@@ -394,16 +400,44 @@ class PerguntaInfoState extends State<PerguntaInfo> {
     }
   }
 
+  void _dialogoConfirmacaoExclusaoPergunta(){
+    Widget botaoCancelar = ElevatedButton(
+      style: ElevatedButton.styleFrom(primary: Colors.teal),
+      child: Text("Cancelar"),
+      onPressed:  () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    Widget botaoContinuar = ElevatedButton(
+      style: ElevatedButton.styleFrom(primary: Colors.teal),
+      child: Text("Continuar"),
+      onPressed:  () {
+        _apagar();
+      },
+    );
+
+    AlertDialog alert = AlertDialog(
+      title: Text('Confirmação'),
+      content: Text('Você tem certeza que deseja apagar a pergunta?'),
+      actions: [
+        botaoCancelar,
+        botaoContinuar,
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   void _apagar() async {
-    _voltarParaUltimaTela();
-
-    if (_pergunta.id == null) {
-      _exibirDialogoAlerta('Status', 'Nenhuma pergunta foi apagada');
-      return;
-    }
-
     int resultado;
     bool existeQuiz = await _repositorioQuiz.existeQuizQueUsaPergunta(_pergunta);
+
     if(existeQuiz){
       _pergunta.ativa = false;
       resultado = await _repositorioPerguntas.atualizarPergunta(_pergunta);
@@ -411,8 +445,11 @@ class PerguntaInfoState extends State<PerguntaInfo> {
       resultado = await _repositorioPerguntas.apagarPergunta(_pergunta.id);
     }
 
+    _voltarParaUltimaTela();
+    _voltarParaUltimaTela();
+
     if (resultado != 0) {
-      _exibirDialogoAlerta('Status', 'Pergunta apagada com sucesso');
+      _exibirDialogoAlerta('Status', 'Pergunta foi apagada com sucesso');
     } else {
       _exibirDialogoAlerta('Status', 'Erro ao apagar pergunta');
     }

@@ -218,7 +218,13 @@ class DoencaInfoState extends State<DoencaInfo> {
         ),
         onPressed: () {
           setState(() {
-            _apagar();
+            if (_doenca.id == null) {
+              _voltarParaUltimaTela();
+              _exibirDialogoAlerta('Status', 'Nenhuma doença foi apagada');
+              return;
+            } else {
+              _dialogoConfirmacaoExclusaoDoenca();
+            }
           });
         },
       ),
@@ -263,22 +269,53 @@ class DoencaInfoState extends State<DoencaInfo> {
     }
   }
 
+  void _dialogoConfirmacaoExclusaoDoenca(){
+    Widget botaoCancelar = ElevatedButton(
+      style: ElevatedButton.styleFrom(primary: Colors.teal),
+      child: Text("Cancelar"),
+      onPressed:  () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    Widget botaoContinuar = ElevatedButton(
+      style: ElevatedButton.styleFrom(primary: Colors.teal),
+      child: Text("Continuar"),
+      onPressed:  () {
+        _apagar();
+      },
+    );
+
+    AlertDialog alert = AlertDialog(
+      title: Text('Confirmação'),
+      content: Text('Você tem certeza que deseja apagar a doença?'),
+      actions: [
+        botaoCancelar,
+        botaoContinuar,
+      ],
+    );
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   void _apagar() async {
-    _voltarParaUltimaTela();
-
-    if (_doenca.id == null) {
-      _exibirDialogoAlerta('Status', 'Nenhuma doença foi apagada');
-      return;
-    }
-
     int resultado;
     bool existePergunta = await _repositorioPerguntas.existePerguntaSobreDoenca(_doenca);
+
     if(existePergunta){
       _doenca.ativa = false;
       resultado = await _repositorioDoencas.atualizarDoenca(_doenca);
     } else {
       resultado = await _repositorioDoencas.apagarDoenca(_doenca.id);
     }
+
+    _voltarParaUltimaTela();
+    _voltarParaUltimaTela();
 
     if (resultado != 0) {
       _exibirDialogoAlerta('Status', 'Doença apagada com sucesso');
