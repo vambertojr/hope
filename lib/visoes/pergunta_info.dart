@@ -40,6 +40,8 @@ class PerguntaInfoState extends State<PerguntaInfo> {
   TextEditingController _alternativa4Controller;
   TextEditingController _alternativa5Controller;
 
+  GlobalKey<FormState> _formKey;
+
   TextStyle textStyle;
 
   PerguntaInfoState(this._pergunta, this._appBarTitle);
@@ -58,6 +60,7 @@ class PerguntaInfoState extends State<PerguntaInfo> {
     _gabarito = _pergunta.gabarito.toString().isEmpty ? 1 : _pergunta.gabarito;
     _inicializarMenuDoencas();
     _inicializarNumeroAlternativas();
+    _formKey = GlobalKey<FormState>();
   }
 
   void _inicializarNumeroAlternativas(){
@@ -104,233 +107,206 @@ class PerguntaInfoState extends State<PerguntaInfo> {
 
           body: Padding(
             padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
-            child: ListView(
-              children: configurarBody(),
-            ),
+            child: Form(
+              key: _formKey,
+              child:  ListView(
+                children: configurarBody(),
+              ),
+            )
           ),
 
         ));
   }
 
+  _configurarSelecaoDoenca(){
+    return Padding(
+      padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+      child: DropdownButtonFormField<Doenca>(
+        value: _doencaSelecionada,
+        onChanged: (doenca) {
+          setState(() {
+            atualizarDoenca(doenca);
+          });
+        },
+        decoration: InputDecoration(
+            labelText: 'Doença',
+            labelStyle: textStyle,
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5.0)
+            )
+        ),
+        items: _menuDoencas,
+      ),
+    );
+  }
+
+  _configurarTexto(){
+    return Padding(
+      padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+      child: TextFormField(
+        controller: _textoController,
+        validator: _validarTexto,
+        style: textStyle,
+        minLines: 3,
+        maxLines: 10,
+        onChanged: (value) {
+          _atualizarTexto();
+        },
+        decoration: InputDecoration(
+            labelText: 'Texto',
+            labelStyle: textStyle,
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5.0)
+            )
+        ),
+      ),
+    );
+  }
+
+  _configurarAlternativa(int indice, TextEditingController controller, validator){
+    return Padding(
+      padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+      child: TextFormField(
+        controller: controller,
+        validator: validator,
+        style: textStyle,
+        onChanged: (value) {
+          _atualizarAlternativa(indice, controller);
+        },
+        decoration: InputDecoration(
+            labelText: 'Alternativa $indice',
+            labelStyle: textStyle,
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5.0)
+            )
+        ),
+      ),
+    );
+  }
+
+  String _validarAlternativa(String alternativa){
+    String mensagem;
+    if(alternativa.isEmpty){
+      mensagem = "Informe a alternativa";
+    }
+    return mensagem;
+  }
+
+  String _validarTexto(String texto){
+    String mensagem;
+    if(texto.isEmpty){
+      mensagem = "Informe o texto da pergunta";
+    }
+    return mensagem;
+  }
+
   List<Widget> configurarBody(){
     var componentesParte1 = <Widget>[
-      Padding(
-        padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-        child: DropdownButtonFormField<Doenca>(
-          value: _doencaSelecionada,
-          onChanged: (doenca) {
-            setState(() {
-              atualizarDoenca(doenca);
-            });
-          },
-          decoration: InputDecoration(
-              labelText: 'Doença',
-              labelStyle: textStyle,
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5.0)
-              )
-          ),
-          items: _menuDoencas,
-        ),
-      ),
-
-      Padding(
-        padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-        child: TextField(
-          controller: _textoController,
-          style: textStyle,
-          minLines: 3,
-          maxLines: 10,
-          onChanged: (value) {
-            _atualizarTexto();
-          },
-          decoration: InputDecoration(
-              labelText: 'Texto',
-              labelStyle: textStyle,
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5.0)
-              )
-          ),
-        ),
-      ),
-
-      Padding(
-        padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-        child: TextField(
-          controller: _alternativa1Controller,
-          style: textStyle,
-          onChanged: (value) {
-            _atualizarAlternativa(1, _alternativa1Controller);
-          },
-          decoration: InputDecoration(
-              labelText: 'Alternativa 1',
-              labelStyle: textStyle,
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5.0)
-              )
-          ),
-        ),
-      ),
-
-      Padding(
-        padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-        child: TextField(
-          controller: _alternativa2Controller,
-          style: textStyle,
-          onChanged: (value) {
-            _atualizarAlternativa(2, _alternativa2Controller);
-          },
-          decoration: InputDecoration(
-              labelText: 'Alternativa 2',
-              labelStyle: textStyle,
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5.0)
-              )
-          ),
-        ),
-      ),
+      _configurarSelecaoDoenca(),
+      _configurarTexto(),
+      _configurarAlternativa(1, _alternativa1Controller, _validarAlternativa),
+      _configurarAlternativa(2, _alternativa2Controller, _validarAlternativa)
     ];
 
     if(_numeroAlternativas>=4){
       componentesParte1.add(
-        Padding(
-          padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-          child: TextField(
-            controller: _alternativa3Controller,
-            style: textStyle,
-            onChanged: (value) {
-              _atualizarAlternativa(3, _alternativa3Controller);
-            },
-            decoration: InputDecoration(
-                labelText: 'Alternativa 3',
-                labelStyle: textStyle,
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0)
-                )
-            ),
-          ),
-        )
+          _configurarAlternativa(3, _alternativa3Controller, _validarAlternativa)
       );
-
-      componentesParte1.add (
-        Padding(
-          padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-          child: TextField(
-            controller: _alternativa4Controller,
-            style: textStyle,
-            onChanged: (value) {
-              _atualizarAlternativa(4, _alternativa4Controller);
-            },
-            decoration: InputDecoration(
-                labelText: 'Alternativa 4',
-                labelStyle: textStyle,
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0)
-                )
-            ),
-          ),
-        ),
+      componentesParte1.add(
+          _configurarAlternativa(4, _alternativa4Controller, _validarAlternativa)
       );
     }
 
     if(_numeroAlternativas==5){
       componentesParte1.add(
-        Padding(
-          padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-          child: TextField(
-            controller: _alternativa5Controller,
-            style: textStyle,
-            onChanged: (value) {
-              _atualizarAlternativa(5, _alternativa5Controller);
-            },
-            decoration: InputDecoration(
-                labelText: 'Alternativa 5',
-                labelStyle: textStyle,
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(5.0)
-                )
-            ),
-          ),
-        ),
+          _configurarAlternativa(5, _alternativa5Controller, _validarAlternativa)
       );
     }
 
-    List<int> opcoesGabarito = [1, 2, 3, 4, 5];
-    if(_numeroAlternativas==2) opcoesGabarito = [1, 2];
-    if(_numeroAlternativas==4) opcoesGabarito = [1, 2, 3, 4];
-
     var componentesParte2 = <Widget>[
-      Padding(
-        padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-        child: DropdownButtonFormField<int>(
-          value: _gabarito,
-          onChanged: (value) {
-            _gabarito = value;
-            _atualizarGabarito();
-          },
-          decoration: InputDecoration(
-              labelText: 'Gabarito',
-              labelStyle: textStyle,
-              border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(5.0)
-              )
-          ),
-          items: opcoesGabarito
-              .map<DropdownMenuItem<int>>((int value) {
-            return DropdownMenuItem<int>(
-              value: value,
-              child: Text(value.toString()),
-            );
-          }).toList(),
-        ),
-      ),
-
+      _configurarSelecaoGabarito(),
       Padding(
         padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
         child: Row(
           children: <Widget>[
-            Expanded(
-              // ignore: deprecated_member_use
-              child: RaisedButton(
-                color: Colors.teal,
-                textColor: Colors.white,
-                child: Text(
-                  'Salvar',
-                  textScaleFactor: 1.5,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _save();
-                  });
-                },
-              ),
-            ),
-
+            _configurarBotaoSalvar(),
             Container(width: 5.0,),
-
-            Expanded(
-              // ignore: deprecated_member_use
-              child: RaisedButton(
-                color: Colors.teal,
-                textColor: Colors.white,
-                child: Text(
-                  'Deletar',
-                  textScaleFactor: 1.5,
-                ),
-                onPressed: () {
-                  setState(() {
-                    _delete();
-                  });
-                },
-              ),
-            ),
-
+            _configurarBotaoDeletar(),
           ],
         ),
       ),
     ];
 
     return componentesParte1+componentesParte2;
+  }
+
+  _configurarSelecaoGabarito(){
+    List<int> opcoesGabarito = [1, 2, 3, 4, 5];
+    if(_numeroAlternativas==2) opcoesGabarito = [1, 2];
+    if(_numeroAlternativas==4) opcoesGabarito = [1, 2, 3, 4];
+
+    return Padding(
+      padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+      child: DropdownButtonFormField<int>(
+        value: _gabarito,
+        onChanged: (value) {
+          _gabarito = value;
+          _atualizarGabarito();
+        },
+        decoration: InputDecoration(
+            labelText: 'Gabarito',
+            labelStyle: textStyle,
+            border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(5.0)
+            )
+        ),
+        items: opcoesGabarito
+            .map<DropdownMenuItem<int>>((int value) {
+          return DropdownMenuItem<int>(
+            value: value,
+            child: Text(value.toString()),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  _configurarBotaoSalvar(){
+    return Expanded(
+      // ignore: deprecated_member_use
+      child: RaisedButton(
+        color: Colors.teal,
+        textColor: Colors.white,
+        child: Text(
+          'Salvar',
+          textScaleFactor: 1.5,
+        ),
+        onPressed: () {
+          setState(() {
+            _salvar();
+          });
+        },
+      ),
+    );
+  }
+
+  _configurarBotaoDeletar(){
+    return Expanded(
+      // ignore: deprecated_member_use
+      child: RaisedButton(
+        color: Colors.teal,
+        textColor: Colors.white,
+        child: Text(
+          'Deletar',
+          textScaleFactor: 1.5,
+        ),
+        onPressed: () {
+          setState(() {
+            _apagar();
+          });
+        },
+      ),
+    );
   }
 
   void _atualizarDoencasLista(){
@@ -392,7 +368,12 @@ class PerguntaInfoState extends State<PerguntaInfo> {
     _pergunta.gabarito = _gabarito;
   }
 
-  void _save() async {
+  void _salvar() async {
+
+    if (!_formKey.currentState.validate()) {
+      return;
+    }
+
     _voltarParaUltimaTela();
 
     int result;
@@ -403,29 +384,29 @@ class PerguntaInfoState extends State<PerguntaInfo> {
     }
 
     if (result != 0) {
-      _showAlertDialog('Status', 'Pergunta salva com sucesso');
+      _exibirDialogoAlerta('Status', 'Pergunta salva com sucesso');
     } else {
-      _showAlertDialog('Status', 'Erro ao salvar pergunta');
+      _exibirDialogoAlerta('Status', 'Erro ao salvar pergunta');
     }
   }
 
-  void _delete() async {
+  void _apagar() async {
     _voltarParaUltimaTela();
 
     if (_pergunta.id == null) {
-      _showAlertDialog('Status', 'Nenhuma pergunta foi apagada');
+      _exibirDialogoAlerta('Status', 'Nenhuma pergunta foi apagada');
       return;
     }
 
     int result = await _perguntasRepositorio.apagarPergunta(_pergunta.id);
     if (result != 0) {
-      _showAlertDialog('Status', 'Pergunta apagada com sucesso');
+      _exibirDialogoAlerta('Status', 'Pergunta apagada com sucesso');
     } else {
-      _showAlertDialog('Status', 'Erro ao apagar pergunta');
+      _exibirDialogoAlerta('Status', 'Erro ao apagar pergunta');
     }
   }
 
-  void _showAlertDialog(String title, String message) {
+  void _exibirDialogoAlerta(String title, String message) {
     AlertDialog alertDialog = AlertDialog(
       title: Text(title),
       content: Text(message),
