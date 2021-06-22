@@ -6,6 +6,7 @@ import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/visoes/homepage.dart';
 import 'package:hope/visoes/pergunta_info.dart';
 import 'package:hope/repositorios/pergunta_repositorio.dart';
+import 'package:unicorndial/unicorndial.dart';
 
 class ListaPerguntas extends StatefulWidget {
   @override
@@ -31,6 +32,47 @@ class ListaPerguntasState extends State<ListaPerguntas> {
 
   @override
   Widget build(BuildContext context) {
+    var childButtons = <UnicornButton>[];
+
+    childButtons.add(UnicornButton(
+        hasLabel: true,
+        labelText: "2 alternativas",
+        currentButton: FloatingActionButton(
+          heroTag: "2",
+          backgroundColor: Colors.teal,
+          mini: true,
+          child: Text('2'),
+          onPressed: () {
+            navigateToDetail(Pergunta(new Doenca('','',''), '', '', '', null, null, null, 1), 'Adicionar pergunta');
+          },
+        )));
+
+    childButtons.add(UnicornButton(
+        hasLabel: true,
+        labelText: "4 alternativas",
+        currentButton: FloatingActionButton(
+            heroTag: "4",
+            backgroundColor: Colors.teal,
+            mini: true,
+            child: Text('4'),
+            onPressed: () {
+              navigateToDetail(Pergunta(new Doenca('','',''), '', '', '', '', '', null, 1), 'Adicionar pergunta');
+            },
+        )));
+
+    childButtons.add(UnicornButton(
+        hasLabel: true,
+        labelText: "5 alternativas",
+        currentButton: FloatingActionButton(
+            heroTag: "5",
+            backgroundColor: Colors.teal,
+            mini: true,
+            child: Text('5'),
+            onPressed: () {
+              navigateToDetail(Pergunta(new Doenca('','',''), '', '', '', '', '', '', 1), 'Adicionar pergunta');
+            },
+        )));
+
     return Scaffold(
       appBar: AppBar(
         title: Text("Perguntas"),
@@ -45,14 +87,12 @@ class ListaPerguntasState extends State<ListaPerguntas> {
         ],
       ),
       body: getListaPerguntasView(),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.teal,
-        onPressed: () {
-          navigateToDetail(Pergunta(new Doenca('','',''), '', '', '', '', '', '', 1), 'Adicionar pergunta');
-        },
-        tooltip: 'Adicionar pergunta',
-        child: Icon(Icons.add, color: Colors.white),
-      ),
+      floatingActionButton: UnicornDialer(
+          backgroundColor: Colors.black45,
+          parentButtonBackground: Colors.teal,
+          orientation: UnicornOrientation.VERTICAL,
+          parentButton: Icon(Icons.add),
+          childButtons: childButtons),
     );
   }
 

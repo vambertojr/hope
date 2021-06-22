@@ -31,6 +31,7 @@ class PerguntaInfoState extends State<PerguntaInfo> {
   Doenca _doencaSelecionada;
   int _gabarito;
   List<DropdownMenuItem<Doenca>> _menuDoencas;
+  int _numeroAlternativas;
 
   TextEditingController _textoController;
   TextEditingController _alternativa1Controller;
@@ -38,6 +39,8 @@ class PerguntaInfoState extends State<PerguntaInfo> {
   TextEditingController _alternativa3Controller;
   TextEditingController _alternativa4Controller;
   TextEditingController _alternativa5Controller;
+
+  TextStyle textStyle;
 
   PerguntaInfoState(this._pergunta, this._appBarTitle);
 
@@ -54,11 +57,24 @@ class PerguntaInfoState extends State<PerguntaInfo> {
     _alternativa5Controller = new TextEditingController(text: _pergunta.alternativa5);
     _gabarito = _pergunta.gabarito.toString().isEmpty ? 1 : _pergunta.gabarito;
     _inicializarMenuDoencas();
+    _inicializarNumeroAlternativas();
+  }
+
+  void _inicializarNumeroAlternativas(){
+    int alternativasNull = 0;
+    List<String> alternativas = [_pergunta.alternativa1, _pergunta.alternativa2,
+      _pergunta.alternativa3, _pergunta.alternativa4, _pergunta.alternativa5];
+
+    for(int i=0; i<alternativas.length; i++){
+      if(alternativas[i] == null) alternativasNull++;
+    }
+
+    _numeroAlternativas = 5 - alternativasNull;
   }
 
   @override
   Widget build(BuildContext context) {
-    TextStyle textStyle = Theme.of(context).textTheme.headline6;
+    textStyle = Theme.of(context).textTheme.headline6;
 
     return WillPopScope(
 
@@ -89,212 +105,228 @@ class PerguntaInfoState extends State<PerguntaInfo> {
           body: Padding(
             padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
             child: ListView(
-              children: <Widget>[
-
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: DropdownButtonFormField<Doenca>(
-                    value: _doencaSelecionada,
-                    onChanged: (doenca) {
-                      setState(() {
-                        atualizarDoenca(doenca);
-                      });
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Doença',
-                        labelStyle: textStyle,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0)
-                        )
-                    ),
-                    items: _menuDoencas,
-                  ),
-                ),
-
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: TextField(
-                    controller: _textoController,
-                    style: textStyle,
-                    minLines: 3,
-                    maxLines: 10,
-                    onChanged: (value) {
-                      _atualizarTexto();
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Texto',
-                        labelStyle: textStyle,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0)
-                        )
-                    ),
-                  ),
-                ),
-
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: TextField(
-                    controller: _alternativa1Controller,
-                    style: textStyle,
-                    onChanged: (value) {
-                      _atualizarAlternativa(1, _alternativa1Controller);
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Alternativa 1',
-                        labelStyle: textStyle,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0)
-                        )
-                    ),
-                  ),
-                ),
-
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: TextField(
-                    controller: _alternativa2Controller,
-                    style: textStyle,
-                    onChanged: (value) {
-                      _atualizarAlternativa(2, _alternativa2Controller);
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Alternativa 2',
-                        labelStyle: textStyle,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0)
-                        )
-                    ),
-                  ),
-                ),
-
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: TextField(
-                    controller: _alternativa3Controller,
-                    style: textStyle,
-                    onChanged: (value) {
-                      _atualizarAlternativa(3, _alternativa3Controller);
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Alternativa 3',
-                        labelStyle: textStyle,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0)
-                        )
-                    ),
-                  ),
-                ),
-
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: TextField(
-                    controller: _alternativa4Controller,
-                    style: textStyle,
-                    onChanged: (value) {
-                      _atualizarAlternativa(4, _alternativa4Controller);
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Alternativa 4',
-                        labelStyle: textStyle,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0)
-                        )
-                    ),
-                  ),
-                ),
-
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: TextField(
-                    controller: _alternativa5Controller,
-                    style: textStyle,
-                    onChanged: (value) {
-                      _atualizarAlternativa(5, _alternativa5Controller);
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Alternativa 5',
-                        labelStyle: textStyle,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0)
-                        )
-                    ),
-                  ),
-                ),
-
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: DropdownButtonFormField<int>(
-                    value: _gabarito,
-                    onChanged: (value) {
-                      _gabarito = value;
-                      _atualizarGabarito();
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Gabarito',
-                        labelStyle: textStyle,
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0)
-                        )
-                    ),
-                    items: <int>[1, 2, 3, 4, 5]
-                        .map<DropdownMenuItem<int>>((int value) {
-                      return DropdownMenuItem<int>(
-                        value: value,
-                        child: Text(value.toString()),
-                      );
-                    }).toList(),
-                  ),
-                ),
-
-                Padding(
-                  padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        // ignore: deprecated_member_use
-                        child: RaisedButton(
-                          color: Colors.teal,
-                          textColor: Colors.white,
-                          child: Text(
-                            'Salvar',
-                            textScaleFactor: 1.5,
-                          ),
-                          onPressed: () {
-                              setState(() {
-                              _save();
-                            });
-                          },
-                        ),
-                      ),
-
-                      Container(width: 5.0,),
-
-                      Expanded(
-                        // ignore: deprecated_member_use
-                        child: RaisedButton(
-                          color: Colors.teal,
-                          textColor: Colors.white,
-                          child: Text(
-                            'Deletar',
-                            textScaleFactor: 1.5,
-                          ),
-                          onPressed: () {
-                            setState(() {
-                              _delete();
-                            });
-                          },
-                        ),
-                      ),
-
-                    ],
-                  ),
-                ),
-
-              ],
+              children: configurarBody(),
             ),
           ),
 
         ));
+  }
+
+  List<Widget> configurarBody(){
+    var componentesParte1 = <Widget>[
+      Padding(
+        padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+        child: DropdownButtonFormField<Doenca>(
+          value: _doencaSelecionada,
+          onChanged: (doenca) {
+            setState(() {
+              atualizarDoenca(doenca);
+            });
+          },
+          decoration: InputDecoration(
+              labelText: 'Doença',
+              labelStyle: textStyle,
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0)
+              )
+          ),
+          items: _menuDoencas,
+        ),
+      ),
+
+      Padding(
+        padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+        child: TextField(
+          controller: _textoController,
+          style: textStyle,
+          minLines: 3,
+          maxLines: 10,
+          onChanged: (value) {
+            _atualizarTexto();
+          },
+          decoration: InputDecoration(
+              labelText: 'Texto',
+              labelStyle: textStyle,
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0)
+              )
+          ),
+        ),
+      ),
+
+      Padding(
+        padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+        child: TextField(
+          controller: _alternativa1Controller,
+          style: textStyle,
+          onChanged: (value) {
+            _atualizarAlternativa(1, _alternativa1Controller);
+          },
+          decoration: InputDecoration(
+              labelText: 'Alternativa 1',
+              labelStyle: textStyle,
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0)
+              )
+          ),
+        ),
+      ),
+
+      Padding(
+        padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+        child: TextField(
+          controller: _alternativa2Controller,
+          style: textStyle,
+          onChanged: (value) {
+            _atualizarAlternativa(2, _alternativa2Controller);
+          },
+          decoration: InputDecoration(
+              labelText: 'Alternativa 2',
+              labelStyle: textStyle,
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0)
+              )
+          ),
+        ),
+      ),
+    ];
+
+    if(_numeroAlternativas>=4){
+      componentesParte1.add(
+        Padding(
+          padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+          child: TextField(
+            controller: _alternativa3Controller,
+            style: textStyle,
+            onChanged: (value) {
+              _atualizarAlternativa(3, _alternativa3Controller);
+            },
+            decoration: InputDecoration(
+                labelText: 'Alternativa 3',
+                labelStyle: textStyle,
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5.0)
+                )
+            ),
+          ),
+        )
+      );
+
+      componentesParte1.add (
+        Padding(
+          padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+          child: TextField(
+            controller: _alternativa4Controller,
+            style: textStyle,
+            onChanged: (value) {
+              _atualizarAlternativa(4, _alternativa4Controller);
+            },
+            decoration: InputDecoration(
+                labelText: 'Alternativa 4',
+                labelStyle: textStyle,
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5.0)
+                )
+            ),
+          ),
+        ),
+      );
+    }
+
+    if(_numeroAlternativas==5){
+      componentesParte1.add(
+        Padding(
+          padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+          child: TextField(
+            controller: _alternativa5Controller,
+            style: textStyle,
+            onChanged: (value) {
+              _atualizarAlternativa(5, _alternativa5Controller);
+            },
+            decoration: InputDecoration(
+                labelText: 'Alternativa 5',
+                labelStyle: textStyle,
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(5.0)
+                )
+            ),
+          ),
+        ),
+      );
+    }
+
+    var componentesParte2 = <Widget>[
+      Padding(
+        padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+        child: DropdownButtonFormField<int>(
+          value: _gabarito,
+          onChanged: (value) {
+            _gabarito = value;
+            _atualizarGabarito();
+          },
+          decoration: InputDecoration(
+              labelText: 'Gabarito',
+              labelStyle: textStyle,
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(5.0)
+              )
+          ),
+          items: <int>[1, 2, 3, 4, 5]
+              .map<DropdownMenuItem<int>>((int value) {
+            return DropdownMenuItem<int>(
+              value: value,
+              child: Text(value.toString()),
+            );
+          }).toList(),
+        ),
+      ),
+
+      Padding(
+        padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
+        child: Row(
+          children: <Widget>[
+            Expanded(
+              // ignore: deprecated_member_use
+              child: RaisedButton(
+                color: Colors.teal,
+                textColor: Colors.white,
+                child: Text(
+                  'Salvar',
+                  textScaleFactor: 1.5,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _save();
+                  });
+                },
+              ),
+            ),
+
+            Container(width: 5.0,),
+
+            Expanded(
+              // ignore: deprecated_member_use
+              child: RaisedButton(
+                color: Colors.teal,
+                textColor: Colors.white,
+                child: Text(
+                  'Deletar',
+                  textScaleFactor: 1.5,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _delete();
+                  });
+                },
+              ),
+            ),
+
+          ],
+        ),
+      ),
+    ];
+
+    return componentesParte1+componentesParte2;
   }
 
   void _atualizarDoencasLista(){
