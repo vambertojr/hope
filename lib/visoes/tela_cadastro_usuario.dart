@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hope/controladores/usuario_controller.dart';
 import 'package:hope/modelos/usuario.dart';
-import 'package:hope/repositorios/repositorio_usuario.dart';
 import 'package:hope/visoes/componentes/dialogo_alerta.dart';
 import 'package:hope/visoes/componentes/dialogo_confirmacao_exclusao.dart';
 import 'package:hope/visoes/componentes/componentes_util.dart';
@@ -23,7 +23,6 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
 
   ComponentesUtil _gerenciadorComponentes;
   GlobalKey<FormState> _formKey;
-  RepositorioUsuario _repositorioUsuarios;
   String _tituloAppBar;
   TextEditingController _tecLogin;
   TextEditingController _tecSenha;
@@ -38,7 +37,6 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
     super.initState();
     _gerenciadorComponentes = ComponentesUtil();
     _formKey = GlobalKey<FormState>();
-    _repositorioUsuarios = RepositorioUsuario();
     _tecLogin = new TextEditingController(text: _usuario.login);
     _tecSenha = new TextEditingController(text: _usuario.senha);
     if(_usuario.papel.isEmpty){
@@ -90,7 +88,7 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
       padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
       child: TextFormField(
         controller: _tecLogin,
-        validator: validarCadastroLogin,
+        validator: _validarCadastroLogin,
         style: textStyle,
         onChanged: (value) {
           _atualizarLogin();
@@ -106,7 +104,7 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
     );
   }
 
-  String validarCadastroLogin(String login){
+  String _validarCadastroLogin(String login){
     String mensagem;
     if(login.isEmpty){
       mensagem = "Informe o login";
@@ -116,7 +114,7 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
     return mensagem;
   }
 
-  String validarCadastroSenha(String senha){
+  String _validarCadastroSenha(String senha){
     String mensagem;
     if(senha.isEmpty){
       mensagem = "Informe a senha";
@@ -131,7 +129,7 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
       padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
       child: TextFormField(
         controller: _tecSenha,
-        validator: validarCadastroSenha,
+        validator: _validarCadastroSenha,
         obscureText: true,
         style: textStyle,
         onChanged: (value) {
@@ -233,8 +231,8 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
       return;
     }
 
-    _usuario.ativo = false;
-    int resultado = await _repositorioUsuarios.atualizarUsuario(_usuario);
+    UsuarioController usuarioController = UsuarioController(_usuario);
+    int resultado = await usuarioController.apagar();
 
     if (resultado != 0) {
       _gerenciadorComponentes.logout(context);
@@ -246,23 +244,18 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
   }
 
   void _salvar() async {
-    int resultado;
-
     if (!_formKey.currentState.validate()) {
       return;
     }
 
-    if (_usuario.id != null) {
-      resultado = await _repositorioUsuarios.atualizarUsuario(_usuario);
-    } else {
-      resultado = await _repositorioUsuarios.inserirUsuario(_usuario);
-    }
+    UsuarioController usuarioController = UsuarioController(_usuario);
+    int resultado = await usuarioController.salvar();
 
     if (resultado != 0) {
       Navigator.pop(context, true);
       DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Usuário salvo com sucesso');
     } else {
-      bool existe = await _repositorioUsuarios.existeUsuarioAtivoComLogin(_usuario);
+      bool existe = await usuarioController.existe();
       if(existe){
         DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Já existe um usuário com esse login');
       } else {

@@ -22,6 +22,7 @@ class TelaCadastroPergunta extends StatefulWidget {
 }
 
 class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
+
   ComponentesUtil _gerenciadorComponentes;
   RepositorioDoenca _repositorioDoencas;
   String _tituloAppBar;
@@ -75,7 +76,7 @@ class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
             child: Form(
               key: _formKey,
               child:  ListView(
-                children: configurarBody(),
+                children: _configurarBody(),
               ),
             )
           ),
@@ -84,15 +85,8 @@ class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
   }
 
   void _inicializarNumeroAlternativas(){
-    int alternativasNull = 0;
-    List<String> alternativas = [_pergunta.alternativa1, _pergunta.alternativa2,
-      _pergunta.alternativa3, _pergunta.alternativa4, _pergunta.alternativa5];
-
-    for(int i=0; i<alternativas.length; i++){
-      if(alternativas[i] == null) alternativasNull++;
-    }
-
-    _numeroAlternativas = 5 - alternativasNull;
+    _numeroAlternativas = _pergunta.getNumeroAlternativasSemNull();
+    print("numero alternativas: ${_numeroAlternativas}");
   }
 
   _configurarSelecaoDoenca(){
@@ -177,7 +171,7 @@ class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
     return mensagem;
   }
 
-  List<Widget> configurarBody(){
+  List<Widget> _configurarBody(){
     var componentesParte1 = <Widget>[
       _configurarSelecaoDoenca(),
       _configurarTexto(),

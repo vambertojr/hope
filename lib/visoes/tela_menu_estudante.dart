@@ -4,7 +4,7 @@ import 'package:hope/visoes/componentes/componentes_util.dart';
 class TelaMenuEstudante extends StatelessWidget {
 
   @override
-  Widget build(BuildContext contexto) {
+  Widget build(BuildContext context) {
     ComponentesUtil gerenciadorComponentes = ComponentesUtil();
 
     return Scaffold(
@@ -14,7 +14,7 @@ class TelaMenuEstudante extends StatelessWidget {
         actions: <Widget>[
           IconButton(
             onPressed: () {
-              gerenciadorComponentes.logout(contexto);
+              gerenciadorComponentes.logout(context);
             },
             icon: Icon(Icons.logout),
           )
@@ -23,7 +23,7 @@ class TelaMenuEstudante extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: (
-            _configurarGridView(contexto)
+            _configurarGridView(context)
         ),
       ),
 

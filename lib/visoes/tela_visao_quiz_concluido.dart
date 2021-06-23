@@ -17,6 +17,7 @@ class TelaVisaoQuizConcluido extends StatefulWidget {
 }
 
 class TelaVisaoQuizConcluidoState extends State<TelaVisaoQuizConcluido> {
+
   ComponentesUtil _gerenciadorComponentes;
   String _tituloAppBar;
   Quiz _quiz;

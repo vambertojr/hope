@@ -4,6 +4,7 @@ import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/modelos/quiz.dart';
 import 'package:hope/modelos/resposta.dart';
 import 'package:hope/repositorios/repositorio_pergunta.dart';
+import 'package:hope/repositorios/repositorio_quiz.dart';
 
 class QuizController {
 
@@ -75,6 +76,11 @@ class QuizController {
       perguntas.add(_quiz.perguntas[i].pergunta);
     }
     return perguntas.contains(perguntaDeInteresse);
+  }
+
+  Future<int> apagar() async {
+    RepositorioQuiz repositorioQuiz = RepositorioQuiz();
+    return await repositorioQuiz.apagarQuiz(quiz.id);
   }
 
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:hope/controladores/quiz_controller.dart';
 import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/modelos/quiz.dart';
 import 'package:hope/modelos/resposta.dart';
@@ -24,6 +25,7 @@ class TelaResponderQuiz extends StatefulWidget {
 }
 
 class TelaResponderQuizState extends State<TelaResponderQuiz> {
+
   ComponentesUtil _gerenciadorComponentes;
   String _tituloAppBar;
   Quiz _quiz;
@@ -53,18 +55,6 @@ class TelaResponderQuizState extends State<TelaResponderQuiz> {
         ));
   }
 
-  int _getNumeroAlternativas(Pergunta pergunta){
-    int alternativasNull = 0;
-    List<String> alternativas = [pergunta.alternativa1, pergunta.alternativa2,
-      pergunta.alternativa3, pergunta.alternativa4, pergunta.alternativa5];
-
-    for(int i=0; i<alternativas.length; i++){
-      if(alternativas[i] == null || alternativas[i] == '') alternativasNull++;
-    }
-
-    return (5 - alternativasNull);
-  }
-
   _configurarQuiz() {
     if (_quiz.perguntas.length == 0)
       return Dialogo('Sem questões', icon: Icons.warning,);
@@ -78,7 +68,7 @@ class TelaResponderQuizState extends State<TelaResponderQuiz> {
   }
 
   List<Widget> _configurarListaWidgets(Pergunta pergunta){
-    int numeroAlternativas = _getNumeroAlternativas(pergunta);
+    int numeroAlternativas = pergunta.getNumeroAlternativasSemNullEVazio();
 
     List<Widget> widgets = <Widget>[];
     widgets.add(_configurarExibicaoPergunta(pergunta.texto));

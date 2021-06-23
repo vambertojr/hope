@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:hope/controladores/doenca_controller.dart';
 import 'package:hope/modelos/doenca.dart';
-import 'package:hope/repositorios/repositorio_pergunta.dart';
 import 'package:hope/visoes/componentes/dialogo_confirmacao_exclusao.dart';
 import 'package:hope/visoes/componentes/componentes_util.dart';
 import 'package:hope/visoes/tela_cadastro_doenca.dart';
@@ -15,9 +15,9 @@ class TelaListagemDoencas extends StatefulWidget {
 }
 
 class TelaListagemDoencasState extends State<TelaListagemDoencas> {
+
   ComponentesUtil _gerenciadorComponentes;
   RepositorioDoenca _repositorioDoencas;
-  RepositorioPergunta _repositorioPerguntas;
   List<Doenca> _listaDoencas;
   int _totalDoencas;
 
@@ -26,7 +26,6 @@ class TelaListagemDoencasState extends State<TelaListagemDoencas> {
     super.initState();
     _gerenciadorComponentes = ComponentesUtil();
     _repositorioDoencas = RepositorioDoenca();
-    _repositorioPerguntas = RepositorioPergunta();
 
     if (_listaDoencas == null) {
       _listaDoencas = [];
@@ -36,9 +35,9 @@ class TelaListagemDoencasState extends State<TelaListagemDoencas> {
   }
 
   @override
-  Widget build(BuildContext contexto) {
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _gerenciadorComponentes.appBar("Doenças", contexto),
+      appBar: _gerenciadorComponentes.appBar("Doenças", context),
       body: _getListaDoencasView(),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.teal,
@@ -66,7 +65,6 @@ class TelaListagemDoencasState extends State<TelaListagemDoencas> {
             ),
             title: Text(this._listaDoencas[position].nome,
                 style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text(this._listaDoencas[position].descricao),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -91,27 +89,20 @@ class TelaListagemDoencasState extends State<TelaListagemDoencas> {
 
   void _apagar(Object object) async {
     Doenca doenca = object;
-    int resultado;
-    bool existePergunta = await _repositorioPerguntas.existePerguntaSobreDoenca(doenca);
-
-    if(existePergunta){
-      doenca.ativa = false;
-      resultado = await _repositorioDoencas.atualizarDoenca(doenca);
-    } else {
-      resultado = await _repositorioDoencas.apagarDoenca(doenca.id);
-    }
+    DoencaController doencaController = DoencaController(doenca);
+    int resultado = await doencaController.apagar();
 
     Navigator.pop(context, true);
 
     if (resultado != 0) {
-      _exibirSnackBar(context, 'Doença apagada com sucesso');
+      _exibirSnackBar('Doença apagada com sucesso');
       _atualizarListaDoencas();
     } else {
-      _exibirSnackBar(context, 'Erro ao apagar doença');
+      _exibirSnackBar('Erro ao apagar doença');
     }
   }
 
-  void _exibirSnackBar(BuildContext context, String message) {
+  void _exibirSnackBar(String message) {
     final snackBar = SnackBar(content: Text(message));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }

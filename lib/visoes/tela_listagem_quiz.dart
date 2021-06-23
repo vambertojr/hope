@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hope/controladores/login_controller.dart';
+import 'package:hope/controladores/quiz_controller.dart';
 import 'package:hope/modelos/quiz.dart';
 import 'package:hope/modelos/usuario.dart';
 import 'package:hope/repositorios/repositorio_quiz.dart';
@@ -18,6 +19,7 @@ class TelaListagemQuiz extends StatefulWidget {
 }
 
 class TelaListagemQuizState extends State<TelaListagemQuiz> {
+
   ComponentesUtil _gerenciadorComponentes;
   RepositorioQuiz _repositorioQuiz;
   List<Quiz> _listaQuiz;
@@ -45,9 +47,9 @@ class TelaListagemQuizState extends State<TelaListagemQuiz> {
   }
 
   @override
-  Widget build(BuildContext contexto) {
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _gerenciadorComponentes.appBar("Quiz", contexto),
+      appBar: _gerenciadorComponentes.appBar("Quiz", context),
       body: _getListaQuizView(),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.teal,
@@ -111,7 +113,8 @@ class TelaListagemQuizState extends State<TelaListagemQuiz> {
 
   void _apagar(Object object) async {
     Quiz quiz = object;
-    int resultado = await _repositorioQuiz.apagarQuiz(quiz.id);
+    QuizController quizController = QuizController(quiz);
+    int resultado = await quizController.apagar();
 
     Navigator.pop(context, true);
 

@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:hope/controladores/pergunta_controller.dart';
 import 'package:hope/modelos/doenca.dart';
 import 'package:hope/modelos/pergunta.dart';
-import 'package:hope/repositorios/repositorio_quiz.dart';
 import 'package:hope/visoes/componentes/dialogo_confirmacao_exclusao.dart';
 import 'package:hope/visoes/tela_cadastro_pergunta.dart';
 import 'package:hope/repositorios/repositorio_pergunta.dart';
@@ -17,9 +17,9 @@ class TelaListagemPerguntas extends StatefulWidget {
 }
 
 class TelaListagemPerguntasState extends State<TelaListagemPerguntas> {
+
   ComponentesUtil _gerenciadorComponentes;
   RepositorioPergunta _repositorioPerguntas;
-  RepositorioQuiz _repositorioQuiz;
   List<Pergunta> _listaPerguntas;
   int _totalPerguntas;
 
@@ -28,7 +28,6 @@ class TelaListagemPerguntasState extends State<TelaListagemPerguntas> {
     super.initState();
     _gerenciadorComponentes = ComponentesUtil();
     _repositorioPerguntas = RepositorioPergunta();
-    _repositorioQuiz = RepositorioQuiz();
     if (_listaPerguntas == null) {
       _listaPerguntas = [];
       _totalPerguntas = 0;
@@ -37,7 +36,7 @@ class TelaListagemPerguntasState extends State<TelaListagemPerguntas> {
   }
 
   @override
-  Widget build(BuildContext contexto) {
+  Widget build(BuildContext context) {
     var botoes = <UnicornButton>[];
 
     Pergunta pergunta = Pergunta(new Doenca('','',''), '', '', '', null, null, null, 1);
@@ -50,7 +49,7 @@ class TelaListagemPerguntasState extends State<TelaListagemPerguntas> {
     botoes.add(_configurarBotaoUnicorn('5 alternativas', '5', pergunta));
 
     return Scaffold(
-      appBar: _gerenciadorComponentes.appBar("Perguntas", contexto),
+      appBar: _gerenciadorComponentes.appBar("Perguntas", context),
       body: _getListaPerguntasView(),
       floatingActionButton: UnicornDialer(
           backgroundColor: Colors.black45,
@@ -116,14 +115,8 @@ class TelaListagemPerguntasState extends State<TelaListagemPerguntas> {
 
   void _apagar(Object object) async {
     Pergunta pergunta = object;
-    int resultado;
-    bool existeQuiz = await _repositorioQuiz.existeQuizQueUsaPergunta(pergunta);
-    if(existeQuiz){
-      pergunta.ativa = false;
-      resultado = await _repositorioPerguntas.atualizarPergunta(pergunta);
-    } else {
-      resultado = await _repositorioPerguntas.apagarPergunta(pergunta.id);
-    }
+    PerguntaController perguntaController = PerguntaController(pergunta);
+    int resultado = await perguntaController.apagar();
 
     Navigator.pop(context, true);
 

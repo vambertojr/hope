@@ -127,6 +127,30 @@ class Pergunta {
     }
   }
 
+  int getNumeroAlternativasSemNullEVazio(){
+    int alternativasNull = 0;
+    List<String> alternativas = [this._alternativa1, this._alternativa2,
+      this._alternativa3, this._alternativa4, this._alternativa5];
+
+    for(int i=0; i<alternativas.length; i++){
+      if(alternativas[i] == null || alternativas[i] == '') alternativasNull++;
+    }
+
+    return (5 - alternativasNull);
+  }
+
+  int getNumeroAlternativasSemNull(){
+    int alternativasNull = 0;
+    List<String> alternativas = [this._alternativa1, this._alternativa2,
+      this._alternativa3, this._alternativa4, this._alternativa5];
+
+    for(int i=0; i<alternativas.length; i++){
+      if(alternativas[i] == null) alternativasNull++;
+    }
+
+    return (5 - alternativasNull);
+  }
+
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||

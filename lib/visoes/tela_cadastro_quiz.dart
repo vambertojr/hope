@@ -73,7 +73,7 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
                     _configurarExibicaoTitulo(),
                     _configurarExibicaoDoenca(),
                     _configurarNumeroPerguntas(),
-                    _configurarBotaoCriar(context),
+                    _configurarBotaoCriar(),
                   ],
                 )
             ),
@@ -147,7 +147,7 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
     );
   }
 
-  _configurarBotaoCriar(BuildContext contexto){
+  _configurarBotaoCriar(){
     return Padding(
       padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
       child: Row(

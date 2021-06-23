@@ -1,8 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hope/controladores/login_controller.dart';
+import 'package:hope/controladores/usuario_controller.dart';
 import 'package:hope/modelos/usuario.dart';
-import 'package:hope/repositorios/repositorio_usuario.dart';
 import 'package:hope/visoes/componentes/componentes_util.dart';
 import 'package:hope/visoes/componentes/dialogo_alerta.dart';
 import 'package:hope/visoes/tela_cadastro_usuario.dart';
@@ -11,11 +10,9 @@ import 'package:hope/visoes/tela_menu_estudante.dart';
 
 class TelaInicial extends StatelessWidget {
 
-  final LoginController _loginController = LoginController();
   final TextEditingController _tecLogin = TextEditingController();
   final TextEditingController _tecSenha = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final RepositorioUsuario _repositorioUsuarios = RepositorioUsuario();
 
   @override
   Widget build(BuildContext context) {
@@ -84,55 +81,55 @@ class TelaInicial extends StatelessWidget {
     );
   }
 
-  TextFormField _configurarLogin(BuildContext contexto) {
+  TextFormField _configurarLogin(BuildContext context) {
     return TextFormField(
           controller: _tecLogin,
-          validator: validarLogin,
+          validator: _validarLogin,
           keyboardType: TextInputType.text,
           style: TextStyle(color: Colors.black),
           decoration: InputDecoration(
               labelText: "Login",
-              labelStyle: Theme.of(contexto).textTheme.headline6,
+              labelStyle: Theme.of(context).textTheme.headline6,
               hintText: "Informe o login"
           )
     );
   }
 
-  String validarLogin(String login){
+  String _validarLogin(String login){
     if(login.isEmpty){
       return "Informe o login";
     }
     return null;
   }
 
-  TextFormField _configurarSenha(BuildContext contexto) {
+  TextFormField _configurarSenha(BuildContext context) {
     return TextFormField(
           controller: _tecSenha,
-          validator: validarSenha,
+          validator: _validarSenha,
           obscureText: true,
           keyboardType: TextInputType.text,
           style: TextStyle(color: Colors.black),
           decoration: InputDecoration(
               labelText: "Senha",
-              labelStyle: Theme.of(contexto).textTheme.headline6,
+              labelStyle: Theme.of(context).textTheme.headline6,
               hintText: "Informe a senha"
           )
         );
   }
 
-  String validarSenha(String senha){
+  String _validarSenha(String senha){
     if(senha.isEmpty){
       return "Informe a senha";
     }
     return null;
   }
 
-  _configurarBotaoEntrar(BuildContext contexto) {
+  _configurarBotaoEntrar(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(primary: Colors.teal),
       child: Text("Entrar"),
       onPressed: () {
-          _entrar(contexto);
+          _entrar(context);
         },
     );
   }
@@ -143,15 +140,14 @@ class TelaInicial extends StatelessWidget {
     }
 
     Usuario usuario = new Usuario(_tecLogin.text, _tecSenha.text, '');
-    Usuario usuarioEncontrado = await _repositorioUsuarios.getUsuario(usuario);
+    UsuarioController usuarioController = UsuarioController(usuario);
+    Usuario usuarioEncontrado = await usuarioController.autenticar();
 
     if(usuarioEncontrado == null) {
       DialogoAlerta.show(contexto, titulo: 'Aviso', mensagem: 'Usuário não encontrado');
       return;
     }
     else {
-      _loginController.registrarLogin(usuarioEncontrado);
-
       Navigator.push(contexto, MaterialPageRoute(builder: (BuildContext context){
         if(usuarioEncontrado.papel == ComponentesUtil.papelAdmin){
           return TelaMenu();
@@ -163,12 +159,12 @@ class TelaInicial extends StatelessWidget {
 
   }
 
-  _configurarBotaoCadastrar(BuildContext contexto) {
+  _configurarBotaoCadastrar(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(primary: Colors.teal),
       child: Text("Cadastrar"),
       onPressed: () {
-        _navegarParaTelaCadastro(Usuario('', '', ''), 'Adicionar usuário', contexto);
+        _navegarParaTelaCadastro(Usuario('', '', ''), 'Adicionar usuário', context);
       },
     );
   }
@@ -177,7 +173,6 @@ class TelaInicial extends StatelessWidget {
     await Navigator.push(contexto, MaterialPageRoute(builder: (context) {
       return TelaCadastroUsuario(usuario, titulo);
     }));
-
   }
 
 }

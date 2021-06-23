@@ -36,8 +36,8 @@ class ComponentesUtil {
     );
   }
 
-  voltarParaUltimaTela(BuildContext contexto) {
-    Navigator.pop(contexto, true);
+  voltarParaUltimaTela(BuildContext context) {
+    Navigator.pop(context, true);
   }
 
   String getPrimeirasLetras(String titulo) {
