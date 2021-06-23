@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
+import 'package:hope/visoes/componentes/componentes_util.dart';
 
 class TelaMenuEstudante extends StatelessWidget {
 
   @override
   Widget build(BuildContext contexto) {
-    GerenciadorComponentes gerenciadorComponentes = GerenciadorComponentes();
+    ComponentesUtil gerenciadorComponentes = ComponentesUtil();
 
     return Scaffold(
       appBar: AppBar

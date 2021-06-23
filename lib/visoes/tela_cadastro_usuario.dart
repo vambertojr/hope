@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hope/modelos/usuario.dart';
 import 'package:hope/repositorios/repositorio_usuario.dart';
+import 'package:hope/visoes/componentes/dialogo_alerta.dart';
 import 'package:hope/visoes/componentes/dialogo_confirmacao_exclusao.dart';
-import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
+import 'package:hope/visoes/componentes/componentes_util.dart';
 
 class TelaCadastroUsuario extends StatefulWidget {
 
@@ -20,7 +21,7 @@ class TelaCadastroUsuario extends StatefulWidget {
 
 class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
 
-  GerenciadorComponentes _gerenciadorComponentes;
+  ComponentesUtil _gerenciadorComponentes;
   GlobalKey<FormState> _formKey;
   RepositorioUsuario _repositorioUsuarios;
   String _tituloAppBar;
@@ -35,13 +36,13 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
   @override
   void initState() {
     super.initState();
-    _gerenciadorComponentes = GerenciadorComponentes();
+    _gerenciadorComponentes = ComponentesUtil();
     _formKey = GlobalKey<FormState>();
     _repositorioUsuarios = RepositorioUsuario();
     _tecLogin = new TextEditingController(text: _usuario.login);
     _tecSenha = new TextEditingController(text: _usuario.senha);
     if(_usuario.papel.isEmpty){
-      _usuario.papel = GerenciadorComponentes.papelAdmin;
+      _usuario.papel = ComponentesUtil.papelAdmin;
     }
     _papel = _usuario.papel;
   }
@@ -56,7 +57,7 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
         },
 
         child: Scaffold(
-          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, context),
+          appBar: _gerenciadorComponentes.appBar(_tituloAppBar, context),
 
           body: Padding(
             padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
@@ -163,7 +164,7 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
                 borderRadius: BorderRadius.circular(5.0)
             )
         ),
-        items: <String>[GerenciadorComponentes.papelAdmin, GerenciadorComponentes.papelUsuario]
+        items: <String>[ComponentesUtil.papelAdmin, ComponentesUtil.papelUsuario]
             .map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
             value: value,
@@ -228,7 +229,7 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
   void _apagar() async {
     if (_usuario.id == null) {
       Navigator.pop(context, true);
-      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Nenhum usuário foi apagado', context);
+      DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Nenhum usuário foi apagado');
       return;
     }
 
@@ -237,10 +238,10 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
 
     if (resultado != 0) {
       _gerenciadorComponentes.logout(context);
-      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Usuário apagado com sucesso', context);
+      DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Usuário apagado com sucesso');
     } else {
       Navigator.pop(context, true);
-      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Erro ao apagar usuário', context);
+      DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Erro ao apagar usuário');
     }
   }
 
@@ -259,15 +260,14 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
 
     if (resultado != 0) {
       Navigator.pop(context, true);
-      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Usuário salvo com sucesso', context);
+      DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Usuário salvo com sucesso');
     } else {
       bool existe = await _repositorioUsuarios.existeUsuarioAtivoComLogin(_usuario);
       if(existe){
-        _gerenciadorComponentes.exibirDialogoAlerta('Status',
-            'Já existe um usuário com esse login', context);
+        DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Já existe um usuário com esse login');
       } else {
         Navigator.pop(context, true);
-        _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Erro ao salvar usuário', context);
+        DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Erro ao salvar usuário');
       }
     }
 

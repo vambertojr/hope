@@ -6,7 +6,7 @@ import 'package:hope/repositorios/repositorio_quiz.dart';
 import 'package:hope/visoes/componentes/dialogo_confirmacao_exclusao.dart';
 import 'package:hope/visoes/tela_cadastro_pergunta.dart';
 import 'package:hope/repositorios/repositorio_pergunta.dart';
-import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
+import 'package:hope/visoes/componentes/componentes_util.dart';
 import 'package:unicorndial/unicorndial.dart';
 
 class TelaListagemPerguntas extends StatefulWidget {
@@ -17,7 +17,7 @@ class TelaListagemPerguntas extends StatefulWidget {
 }
 
 class TelaListagemPerguntasState extends State<TelaListagemPerguntas> {
-  GerenciadorComponentes _gerenciadorComponentes;
+  ComponentesUtil _gerenciadorComponentes;
   RepositorioPergunta _repositorioPerguntas;
   RepositorioQuiz _repositorioQuiz;
   List<Pergunta> _listaPerguntas;
@@ -26,7 +26,7 @@ class TelaListagemPerguntasState extends State<TelaListagemPerguntas> {
   @override
   void initState() {
     super.initState();
-    _gerenciadorComponentes = GerenciadorComponentes();
+    _gerenciadorComponentes = ComponentesUtil();
     _repositorioPerguntas = RepositorioPergunta();
     _repositorioQuiz = RepositorioQuiz();
     if (_listaPerguntas == null) {
@@ -50,7 +50,7 @@ class TelaListagemPerguntasState extends State<TelaListagemPerguntas> {
     botoes.add(_configurarBotaoUnicorn('5 alternativas', '5', pergunta));
 
     return Scaffold(
-      appBar: _gerenciadorComponentes.configurarAppBar("Perguntas", contexto),
+      appBar: _gerenciadorComponentes.appBar("Perguntas", contexto),
       body: _getListaPerguntasView(),
       floatingActionButton: UnicornDialer(
           backgroundColor: Colors.black45,

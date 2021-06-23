@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hope/modelos/doenca.dart';
 import 'package:hope/repositorios/repositorio_pergunta.dart';
 import 'package:hope/visoes/componentes/dialogo_confirmacao_exclusao.dart';
-import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
+import 'package:hope/visoes/componentes/componentes_util.dart';
 import 'package:hope/visoes/tela_cadastro_doenca.dart';
 import 'package:hope/repositorios/repositorio_doenca.dart';
 
@@ -15,7 +15,7 @@ class TelaListagemDoencas extends StatefulWidget {
 }
 
 class TelaListagemDoencasState extends State<TelaListagemDoencas> {
-  GerenciadorComponentes _gerenciadorComponentes;
+  ComponentesUtil _gerenciadorComponentes;
   RepositorioDoenca _repositorioDoencas;
   RepositorioPergunta _repositorioPerguntas;
   List<Doenca> _listaDoencas;
@@ -24,7 +24,7 @@ class TelaListagemDoencasState extends State<TelaListagemDoencas> {
   @override
   void initState() {
     super.initState();
-    _gerenciadorComponentes = GerenciadorComponentes();
+    _gerenciadorComponentes = ComponentesUtil();
     _repositorioDoencas = RepositorioDoenca();
     _repositorioPerguntas = RepositorioPergunta();
 
@@ -38,7 +38,7 @@ class TelaListagemDoencasState extends State<TelaListagemDoencas> {
   @override
   Widget build(BuildContext contexto) {
     return Scaffold(
-      appBar: _gerenciadorComponentes.configurarAppBar("Doenças", contexto),
+      appBar: _gerenciadorComponentes.appBar("Doenças", contexto),
       body: _getListaDoencasView(),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.teal,

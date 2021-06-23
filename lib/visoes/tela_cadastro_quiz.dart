@@ -4,7 +4,8 @@ import 'package:hope/modelos/doenca.dart';
 import 'package:hope/modelos/quiz.dart';
 import 'package:hope/repositorios/repositorio_doenca.dart';
 import 'package:hope/repositorios/repositorio_quiz.dart';
-import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
+import 'package:hope/visoes/componentes/componentes_util.dart';
+import 'package:hope/visoes/componentes/dialogo_alerta.dart';
 import 'package:hope/visoes/tela_responder_quiz.dart';
 
 
@@ -23,7 +24,7 @@ class TelaCadastroQuiz extends StatefulWidget {
 
 class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
 
-  GerenciadorComponentes _gerenciadorComponentes;
+  ComponentesUtil _gerenciadorComponentes;
   RepositorioDoenca _doencasRepositorio;
   RepositorioQuiz _quizRepositorio;
   String _tituloAppBar;
@@ -41,7 +42,7 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
   @override
   void initState() {
     super.initState();
-    _gerenciadorComponentes = GerenciadorComponentes();
+    _gerenciadorComponentes = ComponentesUtil();
     _doencasRepositorio = RepositorioDoenca();
     _quizRepositorio = RepositorioQuiz();
     _tecQuantidadePerguntas = new TextEditingController(text: _quiz.totalPerguntas.toString());
@@ -60,7 +61,7 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
         },
 
         child: Scaffold(
-          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, context),
+          appBar: _gerenciadorComponentes.appBar(_tituloAppBar, context),
 
           body: Padding(
             padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
@@ -244,11 +245,9 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
       result = await _quizRepositorio.atualizarQuiz(_quiz);
       Navigator.pop(context, true);
       if (result != 0) {
-        _gerenciadorComponentes.exibirDialogoAlerta('Status',
-            'Quiz atualizado com sucesso', context);
+        DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Quiz atualizado com sucesso');
       } else {
-        _gerenciadorComponentes.exibirDialogoAlerta('Status',
-            'Erro ao atualizar quiz', context);
+        DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Erro ao atualizar quiz');
       }
     } else {
       QuizController quizController = QuizController(_quiz);
@@ -256,8 +255,8 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
 
       if(resultado == 0){ //não gerou quiz
         Navigator.pop(context, true);
-        _gerenciadorComponentes.exibirDialogoAlerta('Status',
-            'Não é possível gerar quiz porque não há perguntas cadastradas.', context);
+        DialogoAlerta.show(context, titulo: 'Aviso',
+            mensagem: 'Não é possível gerar quiz porque não há perguntas cadastradas');
       } else if(resultado == 1){ //gerou sem alerta
         _navegarParaTelaResponderQuiz();
       } else if(resultado == 2){ //gerou com alerta

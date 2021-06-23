@@ -5,7 +5,7 @@ import 'package:hope/modelos/quiz.dart';
 import 'package:hope/modelos/usuario.dart';
 import 'package:hope/repositorios/repositorio_quiz.dart';
 import 'package:hope/visoes/componentes/dialogo_confirmacao_exclusao.dart';
-import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
+import 'package:hope/visoes/componentes/componentes_util.dart';
 import 'package:hope/visoes/tela_visao_quiz_concluido.dart';
 import 'package:hope/visoes/tela_cadastro_quiz.dart';
 import 'package:intl/intl.dart';
@@ -18,7 +18,7 @@ class TelaListagemQuiz extends StatefulWidget {
 }
 
 class TelaListagemQuizState extends State<TelaListagemQuiz> {
-  GerenciadorComponentes _gerenciadorComponentes;
+  ComponentesUtil _gerenciadorComponentes;
   RepositorioQuiz _repositorioQuiz;
   List<Quiz> _listaQuiz;
   int _totalQuiz;
@@ -27,7 +27,7 @@ class TelaListagemQuizState extends State<TelaListagemQuiz> {
   @override
   void initState() {
     super.initState();
-    _gerenciadorComponentes = GerenciadorComponentes();
+    _gerenciadorComponentes = ComponentesUtil();
     Future<Usuario> usuariof = LoginController.getUsuarioLogado();
     usuariof.then((value) {
       setState(() {
@@ -47,7 +47,7 @@ class TelaListagemQuizState extends State<TelaListagemQuiz> {
   @override
   Widget build(BuildContext contexto) {
     return Scaffold(
-      appBar: _gerenciadorComponentes.configurarAppBar("Quiz", contexto),
+      appBar: _gerenciadorComponentes.appBar("Quiz", contexto),
       body: _getListaQuizView(),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.teal,

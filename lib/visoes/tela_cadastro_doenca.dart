@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hope/modelos/doenca.dart';
 import 'package:hope/repositorios/repositorio_doenca.dart';
 import 'package:hope/repositorios/repositorio_pergunta.dart';
+import 'package:hope/visoes/componentes/dialogo_alerta.dart';
 import 'package:hope/visoes/componentes/dialogo_confirmacao_exclusao.dart';
-import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
+import 'package:hope/visoes/componentes/componentes_util.dart';
 
 class TelaCadastroDoenca extends StatefulWidget {
 
@@ -20,7 +21,7 @@ class TelaCadastroDoenca extends StatefulWidget {
 
 class TelaCadastroDoencaState extends State<TelaCadastroDoenca> {
 
-  GerenciadorComponentes _gerenciadorComponentes;
+  ComponentesUtil _gerenciadorComponentes;
   RepositorioDoenca _repositorioDoencas;
   RepositorioPergunta _repositorioPerguntas;
   String _tituloAppBar;
@@ -35,7 +36,7 @@ class TelaCadastroDoencaState extends State<TelaCadastroDoenca> {
   @override
   void initState() {
     super.initState();
-    _gerenciadorComponentes = GerenciadorComponentes();
+    _gerenciadorComponentes = ComponentesUtil();
     _repositorioDoencas = RepositorioDoenca();
     _repositorioPerguntas = RepositorioPergunta();
     _tecNome = TextEditingController();
@@ -57,7 +58,7 @@ class TelaCadastroDoencaState extends State<TelaCadastroDoenca> {
         },
 
         child: Scaffold(
-          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, context),
+          appBar: _gerenciadorComponentes.appBar(_tituloAppBar, context),
 
           body: Padding(
             padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
@@ -198,7 +199,7 @@ class TelaCadastroDoencaState extends State<TelaCadastroDoenca> {
           setState(() {
             if (_doenca.id == null) {
               Navigator.pop(context, true);
-              _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Nenhuma doença foi apagada', context);
+              DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Nenhuma doença foi apagada');
               return;
             } else {
               String mensagem = 'Você tem certeza que deseja apagar a doença?';
@@ -237,9 +238,9 @@ class TelaCadastroDoencaState extends State<TelaCadastroDoenca> {
     }
 
     if (resultado != 0) {
-      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Doença salva com sucesso', context);
+      DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Doença salva com sucesso');
     } else {
-      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Erro ao salvar doença', context);
+      DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Erro ao salvar doença');
     }
   }
 
@@ -257,9 +258,9 @@ class TelaCadastroDoencaState extends State<TelaCadastroDoenca> {
     Navigator.pop(context, true);
 
     if (resultado != 0) {
-      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Doença apagada com sucesso', context);
+      DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Doença apagada com sucesso');
     } else {
-      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Erro ao apagar doença', context);
+      DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Erro ao apagar doença');
     }
   }
 

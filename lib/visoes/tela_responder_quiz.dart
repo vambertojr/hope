@@ -8,7 +8,7 @@ import 'package:hope/repositorios/repositorio_quiz.dart';
 import 'package:hope/visoes/componentes/dialogo.dart';
 import 'package:hope/visoes/componentes/dialogo_fim_quiz.dart';
 import 'package:hope/visoes/componentes/dialogo_resultado_por_pergunta.dart';
-import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
+import 'package:hope/visoes/componentes/componentes_util.dart';
 
 class TelaResponderQuiz extends StatefulWidget {
 
@@ -24,7 +24,7 @@ class TelaResponderQuiz extends StatefulWidget {
 }
 
 class TelaResponderQuizState extends State<TelaResponderQuiz> {
-  GerenciadorComponentes _gerenciadorComponentes;
+  ComponentesUtil _gerenciadorComponentes;
   String _tituloAppBar;
   Quiz _quiz;
   int _indiceQuestao;
@@ -35,7 +35,7 @@ class TelaResponderQuizState extends State<TelaResponderQuiz> {
   @override
   void initState() {
     super.initState();
-    _gerenciadorComponentes = GerenciadorComponentes();
+    _gerenciadorComponentes = ComponentesUtil();
     _indiceQuestao = 0;
     _scoreKeeper = [];
   }
@@ -48,7 +48,7 @@ class TelaResponderQuizState extends State<TelaResponderQuiz> {
         },
 
         child: Scaffold(
-          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, context),
+          appBar: _gerenciadorComponentes.appBar(_tituloAppBar, context),
           body: _configurarQuiz()
         ));
   }

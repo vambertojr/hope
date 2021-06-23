@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hope/controladores/login_controller.dart';
 import 'package:hope/visoes/tela_inicial.dart';
 
-class GerenciadorComponentes {
+class ComponentesUtil {
 
   static String papelAdmin = 'Administrador';
   static String papelUsuario = 'Usuário';
@@ -15,7 +15,7 @@ class GerenciadorComponentes {
     }));
   }
 
-  AppBar configurarAppBar(String titulo, BuildContext context){
+  Widget appBar(String titulo, BuildContext context){
     return AppBar(
       title: Text(titulo),
       backgroundColor: Colors.teal,
@@ -38,42 +38,6 @@ class GerenciadorComponentes {
 
   voltarParaUltimaTela(BuildContext contexto) {
     Navigator.pop(contexto, true);
-  }
-
-  void exibirDialogoAlerta(String titulo, String mensagem, BuildContext contexto) {
-    AlertDialog alertDialog = AlertDialog(
-      title: Text(titulo),
-      content: Text(mensagem),
-      backgroundColor: Colors.white,
-    );
-    showDialog(
-        context: contexto,
-        builder: (_) => alertDialog
-    );
-  }
-
-  void exibirDialogoAlertaComBotao(String titulo, String mensagem, BuildContext contexto) {
-    Widget botaoOk = ElevatedButton(
-      style: ElevatedButton.styleFrom(primary: Colors.teal),
-      child: Text("Ok"),
-      onPressed:  () {
-        Navigator.of(contexto).pop();
-      },
-    );
-
-    AlertDialog alertDialog = AlertDialog(
-      title: Text(titulo),
-      content: Text(mensagem),
-      backgroundColor: Colors.white,
-      actions: [
-        botaoOk,
-      ],
-    );
-
-    showDialog(
-        context: contexto,
-        builder: (_) => alertDialog
-    );
   }
 
   String getPrimeirasLetras(String titulo) {

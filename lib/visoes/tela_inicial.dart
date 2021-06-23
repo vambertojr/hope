@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:hope/controladores/login_controller.dart';
 import 'package:hope/modelos/usuario.dart';
 import 'package:hope/repositorios/repositorio_usuario.dart';
-import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
+import 'package:hope/visoes/componentes/componentes_util.dart';
+import 'package:hope/visoes/componentes/dialogo_alerta.dart';
 import 'package:hope/visoes/tela_cadastro_usuario.dart';
 import 'package:hope/visoes/tela_menu.dart';
 import 'package:hope/visoes/tela_menu_estudante.dart';
@@ -14,7 +15,6 @@ class TelaInicial extends StatelessWidget {
   final TextEditingController _tecLogin = TextEditingController();
   final TextEditingController _tecSenha = TextEditingController();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  final GerenciadorComponentes _gerenciadorComponentes = GerenciadorComponentes();
   final RepositorioUsuario _repositorioUsuarios = RepositorioUsuario();
 
   @override
@@ -146,14 +146,14 @@ class TelaInicial extends StatelessWidget {
     Usuario usuarioEncontrado = await _repositorioUsuarios.getUsuario(usuario);
 
     if(usuarioEncontrado == null) {
-      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Usuário não encontrado', contexto);
+      DialogoAlerta.show(contexto, titulo: 'Aviso', mensagem: 'Usuário não encontrado');
       return;
     }
     else {
       _loginController.registrarLogin(usuarioEncontrado);
 
       Navigator.push(contexto, MaterialPageRoute(builder: (BuildContext context){
-        if(usuarioEncontrado.papel == GerenciadorComponentes.papelAdmin){
+        if(usuarioEncontrado.papel == ComponentesUtil.papelAdmin){
           return TelaMenu();
         } else {
           return TelaMenuEstudante();

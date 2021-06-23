@@ -4,8 +4,9 @@ import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/repositorios/repositorio_doenca.dart';
 import 'package:hope/repositorios/repositorio_pergunta.dart';
 import 'package:hope/repositorios/repositorio_quiz.dart';
+import 'package:hope/visoes/componentes/dialogo_alerta.dart';
 import 'package:hope/visoes/componentes/dialogo_confirmacao_exclusao.dart';
-import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
+import 'package:hope/visoes/componentes/componentes_util.dart';
 
 
 class TelaCadastroPergunta extends StatefulWidget {
@@ -22,7 +23,7 @@ class TelaCadastroPergunta extends StatefulWidget {
 }
 
 class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
-  GerenciadorComponentes _gerenciadorComponentes;
+  ComponentesUtil _gerenciadorComponentes;
   RepositorioPergunta _repositorioPerguntas;
   RepositorioQuiz _repositorioQuiz;
   RepositorioDoenca _repositorioDoencas;
@@ -47,7 +48,7 @@ class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
   @override
   void initState() {
     super.initState();
-    _gerenciadorComponentes = GerenciadorComponentes();
+    _gerenciadorComponentes = ComponentesUtil();
     _repositorioPerguntas = RepositorioPergunta();
     _repositorioQuiz = RepositorioQuiz();
     _repositorioDoencas = RepositorioDoenca();
@@ -73,7 +74,7 @@ class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
         },
 
         child: Scaffold(
-          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, context),
+          appBar: _gerenciadorComponentes.appBar(_tituloAppBar, context),
           body: Padding(
             padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
             child: Form(
@@ -285,7 +286,7 @@ class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
           setState(() {
             if (_pergunta.id == null) {
               Navigator.pop(context, true);
-              _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Nenhuma pergunta foi apagada', context);
+              DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Nenhuma pergunta foi apagada');
               return;
             } else {
               String mensagem = 'Você tem certeza que deseja apagar a pergunta?';
@@ -367,9 +368,9 @@ class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
     }
 
     if (resultado != 0) {
-      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Pergunta salva com sucesso', context);
+      DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Pergunta salva com sucesso');
     } else {
-      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Erro ao salvar pergunta', context);
+      DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Erro ao salvar pergunta');
     }
   }
 
@@ -388,9 +389,9 @@ class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
     Navigator.pop(context, true);
 
     if (resultado != 0) {
-      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Pergunta foi apagada com sucesso', context);
+      DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Pergunta foi apagada com sucesso');
     } else {
-      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Erro ao apagar pergunta', context);
+      DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Erro ao apagar pergunta');
     }
   }
 

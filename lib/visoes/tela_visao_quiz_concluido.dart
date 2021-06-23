@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hope/modelos/quiz.dart';
-import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
+import 'package:hope/visoes/componentes/componentes_util.dart';
 
 
 class TelaVisaoQuizConcluido extends StatefulWidget {
@@ -17,7 +17,7 @@ class TelaVisaoQuizConcluido extends StatefulWidget {
 }
 
 class TelaVisaoQuizConcluidoState extends State<TelaVisaoQuizConcluido> {
-  GerenciadorComponentes _gerenciadorComponentes;
+  ComponentesUtil _gerenciadorComponentes;
   String _tituloAppBar;
   Quiz _quiz;
   TextEditingController _quantidadePerguntasController;
@@ -31,7 +31,7 @@ class TelaVisaoQuizConcluidoState extends State<TelaVisaoQuizConcluido> {
   @override
   void initState() {
     super.initState();
-    _gerenciadorComponentes = GerenciadorComponentes();
+    _gerenciadorComponentes = ComponentesUtil();
     _quantidadePerguntasController = new TextEditingController(text: _quiz.totalPerguntas.toString());
     _tituloController = new TextEditingController(text: _quiz.titulo);
     if(_quiz.doenca==null){
@@ -52,7 +52,7 @@ class TelaVisaoQuizConcluidoState extends State<TelaVisaoQuizConcluido> {
         },
 
         child: Scaffold(
-          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, context),
+          appBar: _gerenciadorComponentes.appBar(_tituloAppBar, context),
           body: Padding(
             padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
             child: ListView(
