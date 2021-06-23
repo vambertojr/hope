@@ -4,6 +4,9 @@ import 'package:hope/visoes/tela_inicial.dart';
 
 class GerenciadorComponentes {
 
+  static String papelAdmin = 'Administrador';
+  static String papelUsuario = 'Usuário';
+
   logout(BuildContext contexto) async {
     LoginController loginController = LoginController();
     loginController.registrarLogout();

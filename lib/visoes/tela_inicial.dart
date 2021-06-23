@@ -153,7 +153,7 @@ class TelaInicial extends StatelessWidget {
       _loginController.registrarLogin(usuarioEncontrado);
 
       Navigator.push(contexto, MaterialPageRoute(builder: (BuildContext context){
-        if(usuarioEncontrado.papel == 'Médico'){
+        if(usuarioEncontrado.papel == GerenciadorComponentes.papelAdmin){
           return TelaMenu();
         } else {
           return TelaMenuEstudante();

@@ -40,7 +40,7 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
     _tecLogin = new TextEditingController(text: _usuario.login);
     _tecSenha = new TextEditingController(text: _usuario.senha);
     if(_usuario.papel.isEmpty){
-      _usuario.papel = 'Médico';
+      _usuario.papel = GerenciadorComponentes.papelAdmin;
     }
     _papel = _usuario.papel;
   }
@@ -162,7 +162,7 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
                 borderRadius: BorderRadius.circular(5.0)
             )
         ),
-        items: <String>['Médico', 'Estudante']
+        items: <String>[GerenciadorComponentes.papelAdmin, GerenciadorComponentes.papelUsuario]
             .map<DropdownMenuItem<String>>((String value) {
           return DropdownMenuItem<String>(
             value: value,
