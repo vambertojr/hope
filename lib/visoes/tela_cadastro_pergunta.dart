@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hope/controladores/pergunta_controller.dart';
 import 'package:hope/modelos/doenca.dart';
 import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/repositorios/repositorio_doenca.dart';
-import 'package:hope/repositorios/repositorio_pergunta.dart';
-import 'package:hope/repositorios/repositorio_quiz.dart';
 import 'package:hope/visoes/componentes/dialogo_alerta.dart';
 import 'package:hope/visoes/componentes/dialogo_confirmacao_exclusao.dart';
 import 'package:hope/visoes/componentes/componentes_util.dart';
@@ -24,8 +23,6 @@ class TelaCadastroPergunta extends StatefulWidget {
 
 class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
   ComponentesUtil _gerenciadorComponentes;
-  RepositorioPergunta _repositorioPerguntas;
-  RepositorioQuiz _repositorioQuiz;
   RepositorioDoenca _repositorioDoencas;
   String _tituloAppBar;
   Pergunta _pergunta;
@@ -49,8 +46,6 @@ class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
   void initState() {
     super.initState();
     _gerenciadorComponentes = ComponentesUtil();
-    _repositorioPerguntas = RepositorioPergunta();
-    _repositorioQuiz = RepositorioQuiz();
     _repositorioDoencas = RepositorioDoenca();
     _tecTexto = new TextEditingController(text: _pergunta.texto);
     _tecAlternativa1 = new TextEditingController(text: _pergunta.alternativa1);
@@ -360,12 +355,8 @@ class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
 
     Navigator.pop(context, true);
 
-    int resultado;
-    if (_pergunta.id != null) {
-      resultado = await _repositorioPerguntas.atualizarPergunta(_pergunta);
-    } else {
-      resultado = await _repositorioPerguntas.inserirPergunta(_pergunta);
-    }
+    PerguntaController perguntaController = PerguntaController(_pergunta);
+    int resultado = await perguntaController.salvar();
 
     if (resultado != 0) {
       DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Pergunta salva com sucesso');
@@ -375,15 +366,8 @@ class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
   }
 
   void _apagar() async {
-    int resultado;
-    bool existeQuiz = await _repositorioQuiz.existeQuizQueUsaPergunta(_pergunta);
-
-    if(existeQuiz){
-      _pergunta.ativa = false;
-      resultado = await _repositorioPerguntas.atualizarPergunta(_pergunta);
-    } else {
-      resultado = await _repositorioPerguntas.apagarPergunta(_pergunta.id);
-    }
+    PerguntaController perguntaController = PerguntaController(_pergunta);
+    int resultado = await perguntaController.apagar();
 
     Navigator.pop(context, true);
     Navigator.pop(context, true);

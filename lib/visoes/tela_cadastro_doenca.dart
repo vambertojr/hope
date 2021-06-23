@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:hope/controladores/doenca_controller.dart';
 import 'package:hope/modelos/doenca.dart';
-import 'package:hope/repositorios/repositorio_doenca.dart';
-import 'package:hope/repositorios/repositorio_pergunta.dart';
 import 'package:hope/visoes/componentes/dialogo_alerta.dart';
 import 'package:hope/visoes/componentes/dialogo_confirmacao_exclusao.dart';
 import 'package:hope/visoes/componentes/componentes_util.dart';
@@ -22,8 +21,6 @@ class TelaCadastroDoenca extends StatefulWidget {
 class TelaCadastroDoencaState extends State<TelaCadastroDoenca> {
 
   ComponentesUtil _gerenciadorComponentes;
-  RepositorioDoenca _repositorioDoencas;
-  RepositorioPergunta _repositorioPerguntas;
   String _tituloAppBar;
   Doenca _doenca;
   TextEditingController _tecNome;
@@ -37,8 +34,6 @@ class TelaCadastroDoencaState extends State<TelaCadastroDoenca> {
   void initState() {
     super.initState();
     _gerenciadorComponentes = ComponentesUtil();
-    _repositorioDoencas = RepositorioDoenca();
-    _repositorioPerguntas = RepositorioPergunta();
     _tecNome = TextEditingController();
     _tecDescricao = TextEditingController();
     _tecNome.text = _doenca.nome;
@@ -230,12 +225,8 @@ class TelaCadastroDoencaState extends State<TelaCadastroDoenca> {
 
     Navigator.pop(context, true);
 
-    int resultado;
-    if (_doenca.id != null) {
-      resultado = await _repositorioDoencas.atualizarDoenca(_doenca);
-    } else {
-      resultado = await _repositorioDoencas.inserirDoenca(_doenca);
-    }
+    DoencaController doencaController = DoencaController(_doenca);
+    int resultado = await doencaController.salvar();
 
     if (resultado != 0) {
       DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Doença salva com sucesso');
@@ -245,14 +236,8 @@ class TelaCadastroDoencaState extends State<TelaCadastroDoenca> {
   }
 
   void _apagar() async {
-    int resultado;
-    bool existePergunta = await _repositorioPerguntas.existePerguntaSobreDoenca(_doenca);
-    if(existePergunta){
-      _doenca.ativa = false;
-      resultado = await _repositorioDoencas.atualizarDoenca(_doenca);
-    } else {
-      resultado = await _repositorioDoencas.apagarDoenca(_doenca.id);
-    }
+    DoencaController doencaController = DoencaController(_doenca);
+    int resultado = await doencaController.apagar();
 
     Navigator.pop(context, true);
     Navigator.pop(context, true);

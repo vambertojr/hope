@@ -6,6 +6,7 @@ import 'package:hope/repositorios/repositorio_doenca.dart';
 import 'package:hope/repositorios/repositorio_quiz.dart';
 import 'package:hope/visoes/componentes/componentes_util.dart';
 import 'package:hope/visoes/componentes/dialogo_alerta.dart';
+import 'package:hope/visoes/componentes/dialogo_alerta_confirmacao.dart';
 import 'package:hope/visoes/tela_responder_quiz.dart';
 
 
@@ -260,7 +261,10 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
       } else if(resultado == 1){ //gerou sem alerta
         _navegarParaTelaResponderQuiz();
       } else if(resultado == 2){ //gerou com alerta
-        _exibirDialogoAlertaComBotao();
+        String mensagem = 'Não há perguntas cadastradas suficientes. O quiz será '
+            'gerado com as perguntas existentes';
+        DialogoAlertaConfirmacao.show(context, titulo: 'Aviso', mensagem: mensagem,
+            confirmar: _navegarParaTelaResponderQuiz);
       }
     }
   }
@@ -271,35 +275,6 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
       if(_quiz.totalPerguntas==1) mensagem = '${_quiz.titulo} (${_quiz.totalPerguntas} pergunta)';
       return TelaResponderQuiz(_quiz, mensagem);
     }));
-  }
-
-  void _exibirDialogoAlertaComBotao() async {
-    String titulo = 'Status';
-    String mensagem = 'Não há perguntas cadastradas suficientes. O quiz será '
-        'gerado com as perguntas existentes';
-
-    Widget botaoOk = ElevatedButton(
-      style: ElevatedButton.styleFrom(primary: Colors.teal),
-      child: Text("Ok"),
-      onPressed:  () {
-        Navigator.pop(context);
-        _navegarParaTelaResponderQuiz();
-      },
-    );
-
-    AlertDialog alertDialog = AlertDialog(
-      title: Text(titulo),
-      content: Text(mensagem),
-      backgroundColor: Colors.white,
-      actions: [
-        botaoOk,
-      ],
-    );
-
-    showDialog(
-        context: context,
-        builder: (_) => alertDialog
-    );
   }
 
 }
