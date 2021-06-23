@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hope/modelos/resposta.dart';
 
-class DialogoResultado {
+class DialogoResultadoPorPergunta {
   static Future show(
     BuildContext context, {
     @required Resposta resposta,

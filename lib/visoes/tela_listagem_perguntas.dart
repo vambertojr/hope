@@ -1,22 +1,22 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hope/modelos/doenca.dart';
-import 'package:hope/modelos/login.dart';
 import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/repositorios/repositorio_quiz.dart';
-import 'package:hope/visoes/homepage.dart';
-import 'package:hope/visoes/pergunta_info.dart';
+import 'package:hope/visoes/tela_cadastro_pergunta.dart';
 import 'package:hope/repositorios/repositorio_pergunta.dart';
+import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
 import 'package:unicorndial/unicorndial.dart';
 
-class ListaPerguntas extends StatefulWidget {
+class TelaListagemPerguntas extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return ListaPerguntasState();
+    return TelaListagemPerguntasState();
   }
 }
 
-class ListaPerguntasState extends State<ListaPerguntas> {
+class TelaListagemPerguntasState extends State<TelaListagemPerguntas> {
+  GerenciadorComponentes _gerenciadorComponentes;
   RepositorioPergunta _repositorioPerguntas;
   RepositorioQuiz _repositorioQuiz;
   List<Pergunta> _listaPerguntas;
@@ -25,6 +25,7 @@ class ListaPerguntasState extends State<ListaPerguntas> {
   @override
   void initState() {
     super.initState();
+    _gerenciadorComponentes = GerenciadorComponentes();
     _repositorioPerguntas = RepositorioPergunta();
     _repositorioQuiz = RepositorioQuiz();
     if (_listaPerguntas == null) {
@@ -35,72 +36,46 @@ class ListaPerguntasState extends State<ListaPerguntas> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    var childButtons = <UnicornButton>[];
+  Widget build(BuildContext contexto) {
+    var botoes = <UnicornButton>[];
 
-    childButtons.add(UnicornButton(
-        hasLabel: true,
-        labelText: "2 alternativas",
-        currentButton: FloatingActionButton(
-          heroTag: "2",
-          backgroundColor: Colors.teal,
-          mini: true,
-          child: Text('2'),
-          onPressed: () {
-            navigateToDetail(Pergunta(new Doenca('','',''), '', '', '', null, null, null, 1), 'Adicionar pergunta');
-          },
-        )));
+    Pergunta pergunta = Pergunta(new Doenca('','',''), '', '', '', null, null, null, 1);
+    botoes.add(_configurarBotaoUnicorn('2 alternativas', '2', pergunta));
 
-    childButtons.add(UnicornButton(
-        hasLabel: true,
-        labelText: "4 alternativas",
-        currentButton: FloatingActionButton(
-            heroTag: "4",
-            backgroundColor: Colors.teal,
-            mini: true,
-            child: Text('4'),
-            onPressed: () {
-              navigateToDetail(Pergunta(new Doenca('','',''), '', '', '', '', '', null, 1), 'Adicionar pergunta');
-            },
-        )));
+    pergunta = Pergunta(new Doenca('','',''), '', '', '', '', '', null, 1);
+    botoes.add(_configurarBotaoUnicorn('4 alternativas', '4', pergunta));
 
-    childButtons.add(UnicornButton(
-        hasLabel: true,
-        labelText: "5 alternativas",
-        currentButton: FloatingActionButton(
-            heroTag: "5",
-            backgroundColor: Colors.teal,
-            mini: true,
-            child: Text('5'),
-            onPressed: () {
-              navigateToDetail(Pergunta(new Doenca('','',''), '', '', '', '', '', '', 1), 'Adicionar pergunta');
-            },
-        )));
+    pergunta = Pergunta(new Doenca('','',''), '', '', '', '', '', '', 1);
+    botoes.add(_configurarBotaoUnicorn('5 alternativas', '5', pergunta));
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Perguntas"),
-        backgroundColor: Colors.teal,
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {
-              _logout(context);
-            },
-            icon: Icon(Icons.logout),
-          )
-        ],
-      ),
-      body: getListaPerguntasView(),
+      appBar: _gerenciadorComponentes.configurarAppBar("Perguntas", contexto),
+      body: _getListaPerguntasView(),
       floatingActionButton: UnicornDialer(
           backgroundColor: Colors.black45,
           parentButtonBackground: Colors.teal,
           orientation: UnicornOrientation.VERTICAL,
           parentButton: Icon(Icons.add),
-          childButtons: childButtons),
+          childButtons: botoes),
     );
   }
 
-  ListView getListaPerguntasView() {
+  UnicornButton _configurarBotaoUnicorn(String label, String texto, Pergunta pergunta){
+    return UnicornButton(
+        hasLabel: true,
+        labelText: label,
+        currentButton: FloatingActionButton(
+          heroTag: texto,
+          backgroundColor: Colors.teal,
+          mini: true,
+          child: Text(texto),
+          onPressed: () {
+            _navegarParaCadastroPergunta(pergunta, 'Adicionar pergunta');
+          },
+        ));
+  }
+
+  ListView _getListaPerguntasView() {
     return ListView.builder(
       itemCount: _totalPerguntas,
       itemBuilder: (BuildContext context, int position) {
@@ -110,7 +85,7 @@ class ListaPerguntasState extends State<ListaPerguntas> {
           child: ListTile(
             leading: CircleAvatar(
               backgroundColor: Colors.amber,
-              child: Text(_getFirstLetter(this._listaPerguntas[position].doenca.nome),
+              child: Text(_gerenciadorComponentes.getPrimeirasLetras(this._listaPerguntas[position].doenca.nome),
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ),
             title: Text(this._listaPerguntas[position].texto,
@@ -128,17 +103,12 @@ class ListaPerguntasState extends State<ListaPerguntas> {
               ],
             ),
             onTap: () {
-              navigateToDetail(this._listaPerguntas[position], 'Editar pergunta');
+              _navegarParaCadastroPergunta(this._listaPerguntas[position], 'Editar pergunta');
             },
           ),
         );
       },
     );
-  }
-
-  _getFirstLetter(String title) {
-    if(title.length>2) return title.substring(0, 2);
-    else return title.substring(0, 1);
   }
 
   void _dialogoConfirmacaoExclusaoPergunta(BuildContext context, Pergunta pergunta){
@@ -185,29 +155,25 @@ class ListaPerguntasState extends State<ListaPerguntas> {
       resultado = await _repositorioPerguntas.apagarPergunta(pergunta.id);
     }
 
-    _voltarParaUltimaTela();
+    _gerenciadorComponentes.voltarParaUltimaTela(contexto);
 
     if (resultado != 0) {
-      _showSnackBar(contexto, 'Pergunta apagada com sucesso');
+      _exibirSnackBar(contexto, 'Pergunta apagada com sucesso');
       _atualizarListaPerguntas();
     } else {
-      _showSnackBar(contexto, 'Erro ao apagar pergunta');
+      _exibirSnackBar(contexto, 'Erro ao apagar pergunta');
     }
   }
 
-  _voltarParaUltimaTela() {
-    Navigator.pop(context, true);
-  }
-
-  void _showSnackBar(BuildContext context, String message) {
+  void _exibirSnackBar(BuildContext context, String message) {
     final snackBar = SnackBar(content: Text(message));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  void navigateToDetail(Pergunta pergunta, String titulo) async {
+  void _navegarParaCadastroPergunta(Pergunta pergunta, String titulo) async {
     bool result =
     await Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return PerguntaInfo(pergunta, titulo);
+      return TelaCadastroPergunta(pergunta, titulo);
     }));
 
     if (result == true) {
@@ -224,13 +190,6 @@ class ListaPerguntasState extends State<ListaPerguntas> {
         this._totalPerguntas = listaPerguntas.length;
       });
     });
-  }
-
-  void _logout(context) async {
-    Login.registrarLogout();
-    await Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return HomePage();
-    }));
   }
 
 }

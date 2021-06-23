@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:hope/modelos/login.dart';
-import 'package:hope/visoes/homepage.dart';
+import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
 
-class MenuEstudante extends StatelessWidget {
+class TelaMenuEstudante extends StatelessWidget {
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext contexto) {
+    GerenciadorComponentes gerenciadorComponentes = GerenciadorComponentes();
 
     return Scaffold(
       appBar: AppBar
@@ -13,7 +14,7 @@ class MenuEstudante extends StatelessWidget {
         actions: <Widget>[
           IconButton(
             onPressed: () {
-              _logout(context);
+              gerenciadorComponentes.logout(contexto);
             },
             icon: Icon(Icons.logout),
           )
@@ -22,7 +23,7 @@ class MenuEstudante extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(12.0),
         child: (
-            _buildGridView(context)
+            _configurarGridView(contexto)
         ),
       ),
 
@@ -30,18 +31,9 @@ class MenuEstudante extends StatelessWidget {
 
   }
 
-  void _logout(context) async {
-    Login.registrarLogout();
-    await Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return HomePage();
-    }));
-  }
-
-  GridView _buildGridView(BuildContext context) {
+  GridView _configurarGridView(BuildContext context) {
     return GridView.count(
-      //cria um grid com 2 colunas
       crossAxisCount: 2,
-      // Gera 100 Widgets que exibem o seu índice na lista
       children: List.generate(opcoes.length, (index) {
         return Center(
           child: InkWell(
@@ -49,8 +41,6 @@ class MenuEstudante extends StatelessWidget {
                 Navigator.of(context).pushNamed(opcoes[index].tela);
               },
               child: OpcaoCard(opcao: opcoes[index])),
-
-
         );
       }),
     );

@@ -5,65 +5,52 @@ import 'package:hope/modelos/quiz.dart';
 import 'package:hope/modelos/resposta.dart';
 import 'package:hope/repositorios/database_helper.dart';
 import 'package:hope/repositorios/repositorio_quiz.dart';
-import 'package:hope/visoes/componentes/caixa_dialogo.dart';
-import 'package:hope/visoes/componentes/dialogo_termino.dart';
-import 'package:hope/visoes/componentes/dialogo_resultado.dart';
+import 'package:hope/visoes/componentes/dialogo.dart';
+import 'package:hope/visoes/componentes/dialogo_fim_quiz.dart';
+import 'package:hope/visoes/componentes/dialogo_resultado_por_pergunta.dart';
+import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
 
-class ResponderQuiz extends StatefulWidget {
+class TelaResponderQuiz extends StatefulWidget {
 
-  final String appBarTitle;
+  final String tituloAppBar;
   final Quiz quiz;
 
-  ResponderQuiz(this.quiz, this.appBarTitle);
+  TelaResponderQuiz(this.quiz, this.tituloAppBar);
 
   @override
   State<StatefulWidget> createState() {
-    return ResponderQuizState(this.quiz, this.appBarTitle);
+    return TelaResponderQuizState(this.quiz, this.tituloAppBar);
   }
 }
 
-class ResponderQuizState extends State<ResponderQuiz> {
-  String _appBarTitle;
+class TelaResponderQuizState extends State<TelaResponderQuiz> {
+  GerenciadorComponentes _gerenciadorComponentes;
+  String _tituloAppBar;
   Quiz _quiz;
   int _indiceQuestao;
   List<Widget> _scoreKeeper;
 
-  ResponderQuizState(this._quiz, this._appBarTitle);
+  TelaResponderQuizState(this._quiz, this._tituloAppBar);
 
   @override
   void initState() {
     super.initState();
+    _gerenciadorComponentes = GerenciadorComponentes();
     _indiceQuestao = 0;
     _scoreKeeper = [];
   }
 
   @override
-  Widget build(BuildContext context) {
-
+  Widget build(BuildContext contexto) {
     return WillPopScope(
-
         onWillPop: () {
-          return _voltarParaUltimaTela();
+          return _gerenciadorComponentes.voltarParaUltimaTela(contexto);
         },
 
         child: Scaffold(
-          appBar: AppBar(
-            title: Text(_appBarTitle),
-            backgroundColor: Colors.teal,
-            leading: IconButton(icon: Icon(
-                Icons.arrow_back),
-                onPressed: () {
-                  _voltarParaUltimaTela();
-                }
-            ),
-          ),
-
-          body: _buildQuiz()
+          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, contexto),
+          body: _configurarQuiz()
         ));
-  }
-
-  _voltarParaUltimaTela() {
-    Navigator.pop(context, true);
   }
 
   int _getNumeroAlternativas(Pergunta pergunta){
@@ -78,9 +65,9 @@ class ResponderQuizState extends State<ResponderQuiz> {
     return (5 - alternativasNull);
   }
 
-  _buildQuiz() {
+  _configurarQuiz() {
     if (_quiz.perguntas.length == 0)
-      return CaixaDialogo('Sem questões', icon: Icons.warning,);
+      return Dialogo('Sem questões', icon: Icons.warning,);
 
     Pergunta pergunta = _quiz.perguntas[_indiceQuestao].pergunta;
     return Column(
@@ -167,7 +154,7 @@ class ResponderQuizState extends State<ResponderQuiz> {
     bool acertou = resposta.eCorreta();
     if(acertou) _quiz.pontuacao++;
 
-    DialogoResultado.show(
+    DialogoResultadoPorPergunta.show(
       context,
       resposta: resposta,
       acertou: acertou,
@@ -184,7 +171,7 @@ class ResponderQuizState extends State<ResponderQuiz> {
             _indiceQuestao++;
           } else {
             _salvarQuiz();
-            DialogoTermino.show(
+            DialogoFimQuiz.show(
                 context,
                 totalAcertos: _quiz.pontuacao,
                 totalQuestoes: _quiz.perguntas.length,

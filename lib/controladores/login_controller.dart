@@ -2,9 +2,9 @@ import 'package:hope/modelos/usuario.dart';
 import 'package:hope/repositorios/repositorio_usuario.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Login {
+class LoginController {
 
-  static registrarLogin(Usuario usuario) async {
+  void registrarLogin(Usuario usuario) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.setString('login', usuario.login);
     await preferences.setString('senha', usuario.senha);
@@ -12,7 +12,7 @@ class Login {
     await preferences.setInt('status', 1);
   }
 
-  static registrarLogout() async {
+  void registrarLogout() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     await preferences.setString('login', '');
     await preferences.setString('senha', '');
@@ -34,6 +34,5 @@ class Login {
     }
     return usuarioEncontrado;
   }
-
 
 }

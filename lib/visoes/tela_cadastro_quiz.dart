@@ -1,56 +1,50 @@
 import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:hope/modelos/doenca.dart';
-import 'package:hope/modelos/login.dart';
 import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/modelos/quiz.dart';
 import 'package:hope/modelos/resposta.dart';
 import 'package:hope/repositorios/repositorio_doenca.dart';
 import 'package:hope/repositorios/repositorio_pergunta.dart';
 import 'package:hope/repositorios/repositorio_quiz.dart';
-import 'package:hope/visoes/homepage.dart';
-import 'package:hope/visoes/responder_quiz.dart';
+import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
+import 'package:hope/visoes/tela_responder_quiz.dart';
 
 
-class QuizInfo extends StatefulWidget {
+class TelaCadastroQuiz extends StatefulWidget {
 
-  final String appBarTitle;
+  final String tituloAppBar;
   final Quiz quiz;
 
-  QuizInfo(this.quiz, this.appBarTitle);
+  TelaCadastroQuiz(this.quiz, this.tituloAppBar);
 
   @override
   State<StatefulWidget> createState() {
-    return QuizInfoState(this.quiz, this.appBarTitle);
+    return TelaCadastroQuizState(this.quiz, this.tituloAppBar);
   }
 }
 
-class QuizInfoState extends State<QuizInfo> {
-
+class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
+  GerenciadorComponentes _gerenciadorComponentes;
   RepositorioPergunta _perguntasRepositorio;
   RepositorioDoenca _doencasRepositorio;
   RepositorioQuiz _quizRepositorio;
-
-  String _appBarTitle;
+  String _tituloAppBar;
   Quiz _quiz;
-
   List<Doenca> _doencasLista;
   Doenca _doencaSelecionada;
   List<DropdownMenuItem<Doenca>> _menuDoencas;
-
   TextEditingController _quantidadePerguntasController;
   TextEditingController _tituloController;
-
   TextStyle textStyle;
-
   GlobalKey<FormState> _formKey;
 
-  QuizInfoState(this._quiz, this._appBarTitle);
+  TelaCadastroQuizState(this._quiz, this._tituloAppBar);
 
   @override
   void initState() {
     super.initState();
+    _gerenciadorComponentes = GerenciadorComponentes();
     _perguntasRepositorio = RepositorioPergunta();
     _doencasRepositorio = RepositorioDoenca();
     _quizRepositorio = RepositorioQuiz();
@@ -61,34 +55,16 @@ class QuizInfoState extends State<QuizInfo> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    textStyle = Theme.of(context).textTheme.headline6;
+  Widget build(BuildContext contexto) {
+    textStyle = Theme.of(contexto).textTheme.headline6;
 
     return WillPopScope(
-
         onWillPop: () {
-          return _voltarParaUltimaTela();
+          return _gerenciadorComponentes.voltarParaUltimaTela(contexto);
         },
 
         child: Scaffold(
-          appBar: AppBar(
-            title: Text(_appBarTitle),
-            backgroundColor: Colors.teal,
-            leading: IconButton(icon: Icon(
-                Icons.arrow_back),
-                onPressed: () {
-                  _voltarParaUltimaTela();
-                }
-            ),
-            actions: <Widget>[
-              IconButton(
-                onPressed: () {
-                  _logout(context);
-                },
-                icon: Icon(Icons.logout),
-              )
-            ],
-          ),
+          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, contexto),
 
           body: Padding(
             padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
@@ -99,7 +75,7 @@ class QuizInfoState extends State<QuizInfo> {
                     _configurarExibicaoTitulo(),
                     _configurarExibicaoDoenca(),
                     _configurarNumeroPerguntas(),
-                    _configurarBotaoCriar(),
+                    _configurarBotaoCriar(contexto),
                   ],
                 )
             ),
@@ -173,7 +149,7 @@ class QuizInfoState extends State<QuizInfo> {
     );
   }
 
-  _configurarBotaoCriar(){
+  _configurarBotaoCriar(BuildContext contexto){
     return Padding(
       padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
       child: Row(
@@ -189,7 +165,7 @@ class QuizInfoState extends State<QuizInfo> {
               ),
               onPressed: () {
                 setState(() {
-                  _criarQuiz();
+                  _criarQuiz(contexto);
                 });
               },
             ),
@@ -254,10 +230,6 @@ class QuizInfoState extends State<QuizInfo> {
     _quiz.doenca = _doencaSelecionada;
   }
 
-  _voltarParaUltimaTela() {
-    Navigator.pop(context, true);
-  }
-
   void _atualizarQuantidadePerguntas() {
     if(this._quantidadePerguntasController.text == null || this._quantidadePerguntasController.text.isEmpty){
       _quiz.totalPerguntas = 0;
@@ -266,31 +238,42 @@ class QuizInfoState extends State<QuizInfo> {
     }
   }
 
-  void _criarQuiz() async {
-
+  void _criarQuiz(BuildContext contexto) async {
     if (!_formKey.currentState.validate()) {
       return;
     }
 
-    _voltarParaUltimaTela();
-
     int result;
     if (_quiz.id != null) {
       result = await _quizRepositorio.atualizarQuiz(_quiz);
+      _gerenciadorComponentes.voltarParaUltimaTela(contexto);
       if (result != 0) {
-        _showAlertDialog('Status', 'Quiz atualizado com sucesso');
+        _gerenciadorComponentes.exibirDialogoAlerta('Status',
+            'Quiz atualizado com sucesso', contexto);
       } else {
-        _showAlertDialog('Status', 'Erro ao atualizar quiz');
+        _gerenciadorComponentes.exibirDialogoAlerta('Status',
+            'Erro ao atualizar quiz', contexto);
       }
     } else {
-      bool exibirQuiz = await _sortearPerguntas();
-      if(exibirQuiz){
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
+      int resultado = await _sortearPerguntas(contexto);
+      if(resultado == 0){ //não gerou quiz
+        _gerenciadorComponentes.voltarParaUltimaTela(contexto);
+        _gerenciadorComponentes.exibirDialogoAlerta('Status',
+            'Não é possível gerar quiz porque não há perguntas cadastradas.', contexto);
+      } else if(resultado == 1){ //gerou sem alerta
+        Navigator.push(contexto, MaterialPageRoute(builder: (context) {
           String mensagem = '${_quiz.titulo} (${_quiz.totalPerguntas} perguntas)';
           if(_quiz.totalPerguntas==1) mensagem = '${_quiz.titulo} (${_quiz.totalPerguntas} pergunta)';
-          return ResponderQuiz(_quiz, mensagem);
+          return TelaResponderQuiz(_quiz, mensagem);
         }));
-      } else return;
+      } else if(resultado == 2){ //gerou com alerta
+        await _exibirDialogoAlertaComBotao();
+        await Navigator.push(contexto, MaterialPageRoute(builder: (context) {
+          String mensagem = '${_quiz.titulo} (${_quiz.totalPerguntas} perguntas)';
+          if(_quiz.totalPerguntas==1) mensagem = '${_quiz.titulo} (${_quiz.totalPerguntas} pergunta)';
+          return TelaResponderQuiz(_quiz, mensagem);
+        }));
+      }
     }
   }
 
@@ -313,8 +296,8 @@ class QuizInfoState extends State<QuizInfo> {
     return respostas;
   }
 
-  Future<bool> _sortearPerguntas() async {
-    bool exibirQuiz = true;
+  Future<int> _sortearPerguntas(BuildContext contexto) async {
+    int resultado = 1; //0 - nao gerou, 1 - gerou sem alerta, 2 - gerou com alerta
     List<Pergunta> todasAsPerguntas;
     if(_quiz.doenca.id != null){
       todasAsPerguntas = await _perguntasRepositorio.getListaPerguntasAtivasPorDoenca(_quiz.doenca);
@@ -323,13 +306,11 @@ class QuizInfoState extends State<QuizInfo> {
     }
 
     if(todasAsPerguntas==null || todasAsPerguntas.isEmpty){
-      _showAlertDialog('Status', 'Não é possível gerar quiz porque não há perguntas cadastradas.');
-      exibirQuiz = false;
-      return exibirQuiz;
+      resultado = 0;
     } else if(todasAsPerguntas.length<_quiz.totalPerguntas){
-      _showAlertDialog('Status', 'Não há perguntas cadastradas suficientes. O quiz será gerado com as perguntas existentes.');
       _quiz.perguntas = _converterParaListaRespostas(_embaralhar(todasAsPerguntas));
       _quiz.totalPerguntas = _quiz.perguntas.length;
+      resultado = 2;
     } else if(todasAsPerguntas.length==_quiz.totalPerguntas){
       _quiz.perguntas = _converterParaListaRespostas(_embaralhar(todasAsPerguntas));
     } else {
@@ -343,7 +324,39 @@ class QuizInfoState extends State<QuizInfo> {
         }
       }
     }
-    return exibirQuiz;
+    return resultado;
+  }
+
+  void _exibirDialogoAlertaComBotao() async {
+    String titulo = 'Status';
+    String mensagem = 'Não há perguntas cadastradas suficientes. O quiz será '
+        'gerado com as perguntas existentes';
+
+    Widget botaoOk = ElevatedButton(
+      style: ElevatedButton.styleFrom(primary: Colors.teal),
+      child: Text("Ok"),
+      onPressed:  () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) {
+          String mensagem = '${_quiz.titulo} (${_quiz.totalPerguntas} perguntas)';
+          if(_quiz.totalPerguntas==1) mensagem = '${_quiz.titulo} (${_quiz.totalPerguntas} pergunta)';
+          return TelaResponderQuiz(_quiz, mensagem);
+        }));
+      },
+    );
+
+    AlertDialog alertDialog = AlertDialog(
+      title: Text(titulo),
+      content: Text(mensagem),
+      backgroundColor: Colors.white,
+      actions: [
+        botaoOk,
+      ],
+    );
+
+    showDialog(
+        context: context,
+        builder: (_) => alertDialog
+    );
   }
 
   bool _perguntaJaFoiSelecionada(Pergunta perguntaDeInteresse){
@@ -352,25 +365,6 @@ class QuizInfoState extends State<QuizInfo> {
       perguntas.add(_quiz.perguntas[i].pergunta);
     }
     return perguntas.contains(perguntaDeInteresse);
-  }
-
-  void _showAlertDialog(String title, String message) {
-    AlertDialog alertDialog = AlertDialog(
-      title: Text(title),
-      content: Text(message),
-      backgroundColor: Colors.white,
-    );
-    showDialog(
-        context: context,
-        builder: (_) => alertDialog
-    );
-  }
-
-  void _logout(context) async {
-    Login.registrarLogout();
-    await Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return HomePage();
-    }));
   }
 
 }

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hope/modelos/quiz.dart';
-import 'package:hope/visoes/lista_quiz.dart';
-import 'package:hope/visoes/menu_estudante.dart';
+import 'package:hope/visoes/tela_listagem_quiz.dart';
+import 'package:hope/visoes/tela_menu_estudante.dart';
 
-class DialogoTermino {
+class DialogoFimQuiz {
 
   static Future show(
     BuildContext contexto, {
@@ -65,7 +65,7 @@ class DialogoTermino {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ListaQuiz()),
+                  MaterialPageRoute(builder: (context) => TelaListagemQuiz()),
                 );
               },
             ),
@@ -73,7 +73,7 @@ class DialogoTermino {
               child: const Text('Sair'),
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (BuildContext context){
-                  return MenuEstudante();
+                  return TelaMenuEstudante();
                 }));
 
               },

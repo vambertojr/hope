@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hope/visoes/edicao_usuario.dart';
-import 'package:hope/visoes/homepage.dart';
-import 'package:hope/visoes/lista_doencas.dart';
-import 'package:hope/visoes/lista_perguntas.dart';
-import 'package:hope/visoes/lista_quiz.dart';
+import 'package:hope/visoes/tela_inicial.dart';
+import 'package:hope/visoes/tela_listagem_doencas.dart';
+import 'package:hope/visoes/tela_listagem_perguntas.dart';
+import 'package:hope/visoes/tela_listagem_quiz.dart';
 
 
 void main() => runApp(MyApp());
@@ -17,10 +17,10 @@ class MyApp extends StatelessWidget{
       title: "PGIA7310",
       initialRoute: 'home',
       routes: {
-        'home': (context) => HomePage(),
-        'quiz': (context) => ListaQuiz(),
-        'listaDoencas': (context) => ListaDoencas(),
-        'listaPerguntas': (context) => ListaPerguntas(),
+        'home': (context) => TelaInicial(),
+        'quiz': (context) => TelaListagemQuiz(),
+        'listaDoencas': (context) => TelaListagemDoencas(),
+        'listaPerguntas': (context) => TelaListagemPerguntas(),
         'perfilUsuario': (context) => EdicaoUsuario()
       },
     );

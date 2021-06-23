@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hope/modelos/login.dart';
+import 'package:hope/controladores/login_controller.dart';
 import 'package:hope/modelos/usuario.dart';
-import 'package:hope/visoes/usuario_info.dart';
-import 'package:hope/visoes/homepage.dart';
+import 'package:hope/visoes/tela_cadastro_usuario.dart';
+import 'package:hope/visoes/tela_inicial.dart';
 
 class EdicaoUsuario extends StatefulWidget {
 
@@ -20,7 +20,7 @@ class EdicaoUsuarioState extends State<EdicaoUsuario> {
   @override
   void initState() {
     super.initState();
-    Future<Usuario> usuariof = Login.getUsuarioLogado();
+    Future<Usuario> usuariof = LoginController.getUsuarioLogado();
     usuariof.then((value) {
       setState(() {
         _usuario = value;
@@ -32,9 +32,9 @@ class EdicaoUsuarioState extends State<EdicaoUsuario> {
   Widget build(BuildContext context) {
     var page;
     if (_usuario != null) {
-      page = UsuarioInfo(_usuario, 'Editar usuário');
+      page = TelaCadastroUsuario(_usuario, 'Editar usuário');
     } else {
-      page = HomePage();
+      page = TelaInicial();
     }
     return page;
   }

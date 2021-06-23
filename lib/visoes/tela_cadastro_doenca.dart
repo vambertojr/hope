@@ -1,80 +1,62 @@
 import 'package:flutter/material.dart';
-import 'package:hope/controladores/doenca_info_controller.dart';
 import 'package:hope/modelos/doenca.dart';
-import 'package:hope/modelos/login.dart';
-import 'package:hope/visoes/homepage.dart';
+import 'package:hope/repositorios/repositorio_doenca.dart';
+import 'package:hope/repositorios/repositorio_pergunta.dart';
+import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
 
-class DoencaInfo extends StatefulWidget {
+class TelaCadastroDoenca extends StatefulWidget {
 
-  final String appBarTitle;
+  final String tituloAppBar;
   final Doenca doenca;
 
-  DoencaInfo(this.doenca, this.appBarTitle);
+  TelaCadastroDoenca(this.doenca, this.tituloAppBar);
 
   @override
   State<StatefulWidget> createState() {
-    return DoencaInfoState(this.doenca, this.appBarTitle);
+    return TelaCadastroDoencaState(this.doenca, this.tituloAppBar);
   }
 }
 
-class DoencaInfoState extends State<DoencaInfo> {
+class TelaCadastroDoencaState extends State<TelaCadastroDoenca> {
 
-  DoencaInfoController _doencaInfoController;
-
-  String _appBarTitle;
+  GerenciadorComponentes _gerenciadorComponentes;
+  RepositorioDoenca _repositorioDoencas;
+  RepositorioPergunta _repositorioPerguntas;
+  String _tituloAppBar;
   Doenca _doenca;
-
-  TextEditingController _nomeController;
-  TextEditingController _descricaoController;
-  String _agenteController;
-
-  DoencaInfoState(this._doenca, this._appBarTitle);
-
+  TextEditingController _tecNome;
+  TextEditingController _tecDescricao;
+  String _tecAgente;
+  TelaCadastroDoencaState(this._doenca, this._tituloAppBar);
   GlobalKey<FormState> _formKey;
-
   TextStyle textStyle;
 
   @override
   void initState() {
     super.initState();
-    _nomeController = TextEditingController();
-    _descricaoController = TextEditingController();
-    _nomeController.text = _doenca.nome;
-    _descricaoController.text = _doenca.descricao;
-    _agenteController = _doenca.agenteEtiologico.isEmpty ? 'Vírus' : _doenca.agenteEtiologico;
+    _gerenciadorComponentes = GerenciadorComponentes();
+    _repositorioDoencas = RepositorioDoenca();
+    _repositorioPerguntas = RepositorioPergunta();
+    _tecNome = TextEditingController();
+    _tecDescricao = TextEditingController();
+    _tecNome.text = _doenca.nome;
+    _tecDescricao.text = _doenca.descricao;
+    _tecAgente = _doenca.agenteEtiologico.isEmpty ? 'Vírus' : _doenca.agenteEtiologico;
     _formKey = GlobalKey<FormState>();
   }
 
   @override
-  Widget build(BuildContext context) {
-
-    textStyle = Theme.of(context).textTheme.headline6;
+  Widget build(BuildContext contexto) {
+    textStyle = Theme.of(contexto).textTheme.headline6;
 
     return WillPopScope(
 
         onWillPop: () {
-          return _voltarParaUltimaTela();
+          return _gerenciadorComponentes.voltarParaUltimaTela(contexto);
         },
 
         child: Scaffold(
-          appBar: AppBar(
-            title: Text(_appBarTitle),
-            backgroundColor: Colors.teal,
-            leading: IconButton(icon: Icon(
-                Icons.arrow_back),
-                onPressed: () {
-                  _voltarParaUltimaTela();
-                }
-            ),
-            actions: <Widget>[
-              IconButton(
-                onPressed: () {
-                  _logout(context);
-                },
-                icon: Icon(Icons.logout),
-              )
-            ],
-          ),
+          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, contexto),
 
           body: Padding(
             padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
@@ -108,8 +90,8 @@ class DoencaInfoState extends State<DoencaInfo> {
     return Padding(
       padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
       child: TextFormField(
-        controller: _nomeController,
-        validator: _doencaInfoController.validarNome,
+        controller: _tecNome,
+        validator: _validarNome,
         style: textStyle,
         onChanged: (value) {
           _atualizarNome();
@@ -125,11 +107,19 @@ class DoencaInfoState extends State<DoencaInfo> {
     );
   }
 
+  String _validarNome(String nome){
+    String mensagem;
+    if(nome.isEmpty){
+      mensagem = "Informe o nome da doença";
+    }
+    return mensagem;
+  }
+
   _configurarDescricao(){
     return Padding(
       padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
       child: TextField(
-        controller: _descricaoController,
+        controller: _tecDescricao,
         style: textStyle,
         minLines: 10,
         maxLines: 20,
@@ -151,9 +141,9 @@ class DoencaInfoState extends State<DoencaInfo> {
     return Padding(
       padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
       child: DropdownButtonFormField<String>(
-        value: _agenteController,
+        value: _tecAgente,
         onChanged: (value) {
-          _agenteController = value;
+          _tecAgente = value;
           _atualizarAgente();
         },
         decoration: InputDecoration(
@@ -206,8 +196,8 @@ class DoencaInfoState extends State<DoencaInfo> {
         onPressed: () {
           setState(() {
             if (_doenca.id == null) {
-              _voltarParaUltimaTela();
-              _exibirDialogoAlerta('Status', 'Nenhuma doença foi apagada');
+              _gerenciadorComponentes.voltarParaUltimaTela(context);
+              _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Nenhuma doença foi apagada', context);
               return;
             } else {
               _dialogoConfirmacaoExclusaoDoenca();
@@ -218,20 +208,16 @@ class DoencaInfoState extends State<DoencaInfo> {
     );
   }
 
-  _voltarParaUltimaTela() {
-    Navigator.pop(context, true);
-  }
-
   void _atualizarNome(){
-    _doenca.nome = _nomeController.text;
+    _doenca.nome = _tecNome.text;
   }
 
   void _atualizarDescricao() {
-    _doenca.descricao = _descricaoController.text;
+    _doenca.descricao = _tecDescricao.text;
   }
 
   void _atualizarAgente(){
-    _doenca.agenteEtiologico = _agenteController;
+    _doenca.agenteEtiologico = _tecAgente;
   }
 
   void _salvar() async {
@@ -239,14 +225,19 @@ class DoencaInfoState extends State<DoencaInfo> {
       return;
     }
 
-    _voltarParaUltimaTela();
+    _gerenciadorComponentes.voltarParaUltimaTela(context);
 
-    int resultado = await _doencaInfoController.salvar(_doenca);
+    int resultado;
+    if (_doenca.id != null) {
+      resultado = await _repositorioDoencas.atualizarDoenca(_doenca);
+    } else {
+      resultado = await _repositorioDoencas.inserirDoenca(_doenca);
+    }
 
     if (resultado != 0) {
-      _exibirDialogoAlerta('Status', 'Doença salva com sucesso');
+      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Doença salva com sucesso', context);
     } else {
-      _exibirDialogoAlerta('Status', 'Erro ao salvar doença');
+      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Erro ao salvar doença', context);
     }
   }
 
@@ -285,35 +276,23 @@ class DoencaInfoState extends State<DoencaInfo> {
   }
 
   void _apagar() async {
-    int resultado = await _doencaInfoController.apagar(_doenca);
+    int resultado;
+    bool existePergunta = await _repositorioPerguntas.existePerguntaSobreDoenca(_doenca);
+    if(existePergunta){
+      _doenca.ativa = false;
+      resultado = await _repositorioDoencas.atualizarDoenca(_doenca);
+    } else {
+      resultado = await _repositorioDoencas.apagarDoenca(_doenca.id);
+    }
 
-    _voltarParaUltimaTela();
-    _voltarParaUltimaTela();
+    _gerenciadorComponentes.voltarParaUltimaTela(context);
+    _gerenciadorComponentes.voltarParaUltimaTela(context);
 
     if (resultado != 0) {
-      _exibirDialogoAlerta('Status', 'Doença apagada com sucesso');
+      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Doença apagada com sucesso', context);
     } else {
-      _exibirDialogoAlerta('Status', 'Erro ao apagar doença');
+      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Erro ao apagar doença', context);
     }
-  }
-
-  void _exibirDialogoAlerta(String titulo, String mensagem) {
-    AlertDialog alertDialog = AlertDialog(
-      title: Text(titulo),
-      content: Text(mensagem),
-      backgroundColor: Colors.white,
-    );
-    showDialog(
-        context: context,
-        builder: (_) => alertDialog
-    );
-  }
-
-  void _logout(context) async {
-    Login.registrarLogout();
-    await Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return HomePage();
-    }));
   }
 
 }

@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:hope/modelos/login.dart';
 import 'package:hope/modelos/quiz.dart';
-import 'package:hope/visoes/homepage.dart';
+import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
 
 
-class QuizConcluido extends StatefulWidget {
+class TelaVisaoQuizConcluido extends StatefulWidget {
 
-  final String appBarTitle;
+  final String tituloAppBar;
   final Quiz quiz;
 
-  QuizConcluido(this.quiz, this.appBarTitle);
+  TelaVisaoQuizConcluido(this.quiz, this.tituloAppBar);
 
   @override
   State<StatefulWidget> createState() {
-    return QuizConcluidoState(this.quiz, this.appBarTitle);
+    return TelaVisaoQuizConcluidoState(this.quiz, this.tituloAppBar);
   }
 }
 
-class QuizConcluidoState extends State<QuizConcluido> {
-
-  String _appBarTitle;
+class TelaVisaoQuizConcluidoState extends State<TelaVisaoQuizConcluido> {
+  GerenciadorComponentes _gerenciadorComponentes;
+  String _tituloAppBar;
   Quiz _quiz;
   TextEditingController _quantidadePerguntasController;
   TextEditingController _tituloController;
@@ -27,11 +26,12 @@ class QuizConcluidoState extends State<QuizConcluido> {
   TextEditingController _pontuacaoController;
 
 
-  QuizConcluidoState(this._quiz, this._appBarTitle);
+  TelaVisaoQuizConcluidoState(this._quiz, this._tituloAppBar);
 
   @override
   void initState() {
     super.initState();
+    _gerenciadorComponentes = GerenciadorComponentes();
     _quantidadePerguntasController = new TextEditingController(text: _quiz.totalPerguntas.toString());
     _tituloController = new TextEditingController(text: _quiz.titulo);
     if(_quiz.doenca==null){
@@ -43,35 +43,16 @@ class QuizConcluidoState extends State<QuizConcluido> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    TextStyle textStyle = Theme.of(context).textTheme.headline6;
+  Widget build(BuildContext contexto) {
+    TextStyle textStyle = Theme.of(contexto).textTheme.headline6;
 
     return WillPopScope(
-
         onWillPop: () {
-          return _voltarParaUltimaTela();
+          return _gerenciadorComponentes.voltarParaUltimaTela(contexto);
         },
 
         child: Scaffold(
-          appBar: AppBar(
-            title: Text(_appBarTitle),
-            backgroundColor: Colors.teal,
-            leading: IconButton(icon: Icon(
-                Icons.arrow_back),
-                onPressed: () {
-                  _voltarParaUltimaTela();
-                }
-            ),
-            actions: <Widget>[
-              IconButton(
-                onPressed: () {
-                  _logout(context);
-                },
-                icon: Icon(Icons.logout),
-              )
-            ],
-          ),
-
+          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, contexto),
           body: Padding(
             padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
             child: ListView(
@@ -149,14 +130,4 @@ class QuizConcluidoState extends State<QuizConcluido> {
         ));
   }
 
-  _voltarParaUltimaTela() {
-    Navigator.pop(context, true);
-  }
-
-  void _logout(context) async {
-    Login.registrarLogout();
-    await Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return HomePage();
-    }));
-  }
 }

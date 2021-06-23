@@ -1,20 +1,20 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hope/modelos/doenca.dart';
-import 'package:hope/modelos/login.dart';
 import 'package:hope/repositorios/repositorio_pergunta.dart';
-import 'package:hope/visoes/doenca_info.dart';
+import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
+import 'package:hope/visoes/tela_cadastro_doenca.dart';
 import 'package:hope/repositorios/repositorio_doenca.dart';
-import 'package:hope/visoes/homepage.dart';
 
-class ListaDoencas extends StatefulWidget {
+class TelaListagemDoencas extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return ListaDoencasState();
+    return TelaListagemDoencasState();
   }
 }
 
-class ListaDoencasState extends State<ListaDoencas> {
+class TelaListagemDoencasState extends State<TelaListagemDoencas> {
+  GerenciadorComponentes _gerenciadorComponentes;
   RepositorioDoenca _repositorioDoencas;
   RepositorioPergunta _repositorioPerguntas;
   List<Doenca> _listaDoencas;
@@ -23,8 +23,10 @@ class ListaDoencasState extends State<ListaDoencas> {
   @override
   void initState() {
     super.initState();
+    _gerenciadorComponentes = GerenciadorComponentes();
     _repositorioDoencas = RepositorioDoenca();
     _repositorioPerguntas = RepositorioPergunta();
+
     if (_listaDoencas == null) {
       _listaDoencas = [];
       _totalDoencas = 0;
@@ -33,25 +35,14 @@ class ListaDoencasState extends State<ListaDoencas> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext contexto) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Doenças"),
-        backgroundColor: Colors.teal,
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {
-              _logout(context);
-            },
-            icon: Icon(Icons.logout),
-          )
-        ],
-      ),
+      appBar: _gerenciadorComponentes.configurarAppBar("Doenças", contexto),
       body: _getListaDoencasView(),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.teal,
         onPressed: () {
-          _navigateToDetail(Doenca('', '', ''), 'Adicionar doença');
+          _navegarParaCadastroDoenca(Doenca('', '', ''), 'Adicionar doença');
         },
         tooltip: 'Adicionar doença',
         child: Icon(Icons.add, color: Colors.white),
@@ -69,7 +60,7 @@ class ListaDoencasState extends State<ListaDoencas> {
           child: ListTile(
             leading: CircleAvatar(
               backgroundColor: Colors.amber,
-              child: Text(_getFirstLetter(this._listaDoencas[position].nome),
+              child: Text(_gerenciadorComponentes.getPrimeirasLetras(this._listaDoencas[position].nome),
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ),
             title: Text(this._listaDoencas[position].nome,
@@ -87,17 +78,12 @@ class ListaDoencasState extends State<ListaDoencas> {
               ],
             ),
             onTap: () {
-              _navigateToDetail(this._listaDoencas[position], 'Editar doença');
+              _navegarParaCadastroDoenca(this._listaDoencas[position], 'Editar doença');
             },
           ),
         );
       },
     );
-  }
-
-  _getFirstLetter(String title) {
-    if(title.length>2) return title.substring(0, 2);
-    else return title.substring(0, 1);
   }
 
   void _dialogoConfirmacaoExclusaoDoenca(BuildContext contexto, Doenca doenca){
@@ -145,29 +131,25 @@ class ListaDoencasState extends State<ListaDoencas> {
       resultado = await _repositorioDoencas.apagarDoenca(doenca.id);
     }
 
-    _voltarParaUltimaTela();
+    _gerenciadorComponentes.voltarParaUltimaTela(contexto);
 
     if (resultado != 0) {
-      _showSnackBar(contexto, 'Doença apagada com sucesso');
+      _exibirSnackBar(contexto, 'Doença apagada com sucesso');
       _atualizarListaDoencas();
     } else {
-      _showSnackBar(contexto, 'Erro ao apagar doença');
+      _exibirSnackBar(contexto, 'Erro ao apagar doença');
     }
   }
 
-  _voltarParaUltimaTela() {
-    Navigator.pop(context, true);
-  }
-
-  void _showSnackBar(BuildContext context, String message) {
+  void _exibirSnackBar(BuildContext context, String message) {
     final snackBar = SnackBar(content: Text(message));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  void _navigateToDetail(Doenca doenca, String titulo) async {
+  void _navegarParaCadastroDoenca(Doenca doenca, String titulo) async {
     bool result =
     await Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return DoencaInfo(doenca, titulo);
+      return TelaCadastroDoenca(doenca, titulo);
     }));
 
     if (result == true) {
@@ -184,13 +166,5 @@ class ListaDoencasState extends State<ListaDoencas> {
       });
     });
   }
-
-  void _logout(context) async {
-    Login.registrarLogout();
-    await Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return HomePage();
-    }));
-  }
-
 
 }

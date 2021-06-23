@@ -1,24 +1,24 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:hope/modelos/login.dart';
+import 'package:hope/controladores/login_controller.dart';
 import 'package:hope/modelos/quiz.dart';
 import 'package:hope/modelos/usuario.dart';
 import 'package:hope/repositorios/repositorio_quiz.dart';
-import 'package:hope/visoes/homepage.dart';
-import 'package:hope/visoes/quiz_concluido.dart';
-import 'package:hope/visoes/quiz_info.dart';
+import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
+import 'package:hope/visoes/tela_visao_quiz_concluido.dart';
+import 'package:hope/visoes/tela_cadastro_quiz.dart';
 import 'package:intl/intl.dart';
 
-class ListaQuiz extends StatefulWidget {
+class TelaListagemQuiz extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    return ListaQuizState();
+    return TelaListagemQuizState();
   }
 }
 
-class ListaQuizState extends State<ListaQuiz> {
-
-  RepositorioQuiz _databaseHelper;
+class TelaListagemQuizState extends State<TelaListagemQuiz> {
+  GerenciadorComponentes _gerenciadorComponentes;
+  RepositorioQuiz _repositorioQuiz;
   List<Quiz> _listaQuiz;
   int _totalQuiz;
   Usuario _usuario;
@@ -26,14 +26,15 @@ class ListaQuizState extends State<ListaQuiz> {
   @override
   void initState() {
     super.initState();
-    Future<Usuario> usuariof = Login.getUsuarioLogado();
+    _gerenciadorComponentes = GerenciadorComponentes();
+    Future<Usuario> usuariof = LoginController.getUsuarioLogado();
     usuariof.then((value) {
       setState(() {
         _usuario = value;
       });
     });
 
-    _databaseHelper = RepositorioQuiz();
+    _repositorioQuiz = RepositorioQuiz();
 
     if (_listaQuiz == null) {
       _listaQuiz = [];
@@ -43,25 +44,14 @@ class ListaQuizState extends State<ListaQuiz> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext contexto) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Quiz"),
-        backgroundColor: Colors.teal,
-        actions: <Widget>[
-          IconButton(
-            onPressed: () {
-              _logout(context);
-            },
-            icon: Icon(Icons.logout),
-          )
-        ],
-      ),
+      appBar: _gerenciadorComponentes.configurarAppBar("Quiz", contexto),
       body: _getListaQuizView(),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.teal,
         onPressed: () {
-          _navigateToDetail(Quiz('', _usuario, null, 10, [], 0));
+          _navegarParaCadastroQuiz(Quiz('', _usuario, null, 10, [], 0));
         },
         tooltip: 'Criar quiz',
         child: Icon(Icons.add, color: Colors.white),
@@ -69,7 +59,7 @@ class ListaQuizState extends State<ListaQuiz> {
     );
   }
 
-  String _configurarSubtitle(Quiz quiz){
+  String _configurarLegenda(Quiz quiz){
     String subtitle;
     if(quiz.doenca!=null && quiz.doenca.nome.isNotEmpty){
       subtitle = quiz.doenca.nome;
@@ -90,12 +80,12 @@ class ListaQuizState extends State<ListaQuiz> {
           child: ListTile(
             leading: CircleAvatar(
               backgroundColor: Colors.amber,
-              child: Text(_getFirstLetter(this._listaQuiz[position].data.toString()),
+              child: Text(_gerenciadorComponentes.getPrimeirasLetras(this._listaQuiz[position].data.toString()),
                   style: TextStyle(fontWeight: FontWeight.bold)),
             ),
             title: Text(this._listaQuiz[position].titulo,
                 style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text(_configurarSubtitle(this._listaQuiz[position])),
+            subtitle: Text(_configurarLegenda(this._listaQuiz[position])),
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -114,11 +104,6 @@ class ListaQuizState extends State<ListaQuiz> {
         );
       },
     );
-  }
-
-  _getFirstLetter(String title) {
-    if(title.length>2) return title.substring(0, 2);
-    else return title.substring(0, 1);
   }
 
   void _dialogoConfirmacaoExclusaoQuiz(BuildContext contexto, Quiz quiz){
@@ -155,34 +140,30 @@ class ListaQuizState extends State<ListaQuiz> {
     );
   }
 
-  void _apagar(BuildContext context, Quiz quiz) async {
-    int resultado = await _databaseHelper.apagarQuiz(quiz.id);
+  void _apagar(BuildContext contexto, Quiz quiz) async {
+    int resultado = await _repositorioQuiz.apagarQuiz(quiz.id);
 
-    _voltarParaUltimaTela();
+    _gerenciadorComponentes.voltarParaUltimaTela(contexto);
 
     if (resultado != 0) {
-      _showSnackBar(context, 'Quiz apagado com sucesso');
+      _exibirSnackBar(contexto, 'Quiz apagado com sucesso');
       _atualizarListaQuiz();
     } else {
-      _showSnackBar(context, 'Erro ao apagar quiz');
+      _exibirSnackBar(contexto, 'Erro ao apagar quiz');
     }
   }
 
-  _voltarParaUltimaTela() {
-    Navigator.pop(context, true);
-  }
-
-  void _showSnackBar(BuildContext context, String message) {
+  void _exibirSnackBar(BuildContext context, String message) {
     final snackBar = SnackBar(content: Text(message));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  void _navigateToDetail(Quiz quiz) async {
+  void _navegarParaCadastroQuiz(Quiz quiz) async {
     bool result =
     await Navigator.push(context, MaterialPageRoute(builder: (context) {
       if(quiz.titulo == null || quiz.titulo.isEmpty) {
-        return QuizInfo(quiz, 'Criar quiz');
-      } else return QuizInfo(quiz, quiz.titulo);
+        return TelaCadastroQuiz(quiz, 'Criar quiz');
+      } else return TelaCadastroQuiz(quiz, quiz.titulo);
     }));
 
     if (result == true) {
@@ -192,12 +173,12 @@ class ListaQuizState extends State<ListaQuiz> {
 
   _navegarParaRespostas(Quiz quiz) async {
     await Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return QuizConcluido(quiz, quiz.titulo);
+      return TelaVisaoQuizConcluido(quiz, quiz.titulo);
     }));
   }
 
   _atualizarListaQuiz() async {
-    Future<List<Quiz>> listaQuizFutura = _databaseHelper.getListaQuizByUser();
+    Future<List<Quiz>> listaQuizFutura = _repositorioQuiz.getListaQuizByUser();
     listaQuizFutura.then((listaQuiz) {
       setState(() {
         this._listaQuiz = listaQuiz;
@@ -205,13 +186,5 @@ class ListaQuizState extends State<ListaQuiz> {
       });
     });
   }
-
-  void _logout(context) async {
-    Login.registrarLogout();
-    await Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return HomePage();
-    }));
-  }
-
 
 }

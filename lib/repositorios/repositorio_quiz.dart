@@ -1,4 +1,4 @@
-import 'package:hope/modelos/login.dart';
+import 'package:hope/controladores/login_controller.dart';
 import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/modelos/quiz.dart';
 import 'package:hope/modelos/resposta.dart';
@@ -63,7 +63,7 @@ class RepositorioQuiz {
 
   Future<List<Quiz>> getListaQuizByUser() async {
     List<Quiz> quizSelecionados = <Quiz>[];
-    Usuario usuario = await Login.getUsuarioLogado();
+    Usuario usuario = await LoginController.getUsuarioLogado();
     List<Quiz> todosQuiz = await getListaQuiz();
     for(int i=0; i<todosQuiz.length; i++){
       if(todosQuiz[i].usuario == usuario){

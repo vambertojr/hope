@@ -1,66 +1,89 @@
 import 'package:flutter/material.dart';
-import 'package:hope/controladores/pergunta_info_controller.dart';
 import 'package:hope/modelos/doenca.dart';
-import 'package:hope/modelos/login.dart';
 import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/repositorios/repositorio_doenca.dart';
-import 'package:hope/visoes/homepage.dart';
+import 'package:hope/repositorios/repositorio_pergunta.dart';
+import 'package:hope/repositorios/repositorio_quiz.dart';
+import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
 
 
-class PerguntaInfo extends StatefulWidget {
+class TelaCadastroPergunta extends StatefulWidget {
 
-  final String appBarTitle;
+  final String tituloAppBar;
   final Pergunta pergunta;
 
-  PerguntaInfo(this.pergunta, this.appBarTitle);
+  TelaCadastroPergunta(this.pergunta, this.tituloAppBar);
 
   @override
   State<StatefulWidget> createState() {
-    return PerguntaInfoState(this.pergunta, this.appBarTitle);
+    return TelaCadastroPerguntaState(this.pergunta, this.tituloAppBar);
   }
 }
 
-class PerguntaInfoState extends State<PerguntaInfo> {
-
-  PerguntaInfoController _perguntaInfoController;
+class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
+  GerenciadorComponentes _gerenciadorComponentes;
+  RepositorioPergunta _repositorioPerguntas;
+  RepositorioQuiz _repositorioQuiz;
   RepositorioDoenca _repositorioDoencas;
-
-  String _appBarTitle;
+  String _tituloAppBar;
   Pergunta _pergunta;
   List<Doenca> _doencasLista;
   Doenca _doencaSelecionada;
-  int _gabarito;
+  int _tecGabarito;
   List<DropdownMenuItem<Doenca>> _menuDoencas;
   int _numeroAlternativas;
-
-  TextEditingController _textoController;
-  TextEditingController _alternativa1Controller;
-  TextEditingController _alternativa2Controller;
-  TextEditingController _alternativa3Controller;
-  TextEditingController _alternativa4Controller;
-  TextEditingController _alternativa5Controller;
-
+  TextEditingController _tecTexto;
+  TextEditingController _tecAlternativa1;
+  TextEditingController _tecAlternativa2;
+  TextEditingController _tecAlternativa3;
+  TextEditingController _tecAlternativa4;
+  TextEditingController _tecAlternativa5;
   GlobalKey<FormState> _formKey;
-
   TextStyle textStyle;
 
-  PerguntaInfoState(this._pergunta, this._appBarTitle);
+  TelaCadastroPerguntaState(this._pergunta, this._tituloAppBar);
 
   @override
   void initState() {
     super.initState();
-    _perguntaInfoController = PerguntaInfoController();
+    _gerenciadorComponentes = GerenciadorComponentes();
+    _repositorioPerguntas = RepositorioPergunta();
+    _repositorioQuiz = RepositorioQuiz();
     _repositorioDoencas = RepositorioDoenca();
-    _textoController = new TextEditingController(text: _pergunta.texto);
-    _alternativa1Controller = new TextEditingController(text: _pergunta.alternativa1);
-    _alternativa2Controller = new TextEditingController(text: _pergunta.alternativa2);
-    _alternativa3Controller = new TextEditingController(text: _pergunta.alternativa3);
-    _alternativa4Controller = new TextEditingController(text: _pergunta.alternativa4);
-    _alternativa5Controller = new TextEditingController(text: _pergunta.alternativa5);
-    _gabarito = _pergunta.gabarito.toString().isEmpty ? 1 : _pergunta.gabarito;
+    _tecTexto = new TextEditingController(text: _pergunta.texto);
+    _tecAlternativa1 = new TextEditingController(text: _pergunta.alternativa1);
+    _tecAlternativa2 = new TextEditingController(text: _pergunta.alternativa2);
+    _tecAlternativa3 = new TextEditingController(text: _pergunta.alternativa3);
+    _tecAlternativa4 = new TextEditingController(text: _pergunta.alternativa4);
+    _tecAlternativa5 = new TextEditingController(text: _pergunta.alternativa5);
+    _tecGabarito = _pergunta.gabarito.toString().isEmpty ? 1 : _pergunta.gabarito;
     _inicializarMenuDoencas();
     _inicializarNumeroAlternativas();
     _formKey = GlobalKey<FormState>();
+  }
+
+  @override
+  Widget build(BuildContext contexto) {
+    textStyle = Theme.of(contexto).textTheme.headline6;
+
+    return WillPopScope(
+        onWillPop: () {
+          return _gerenciadorComponentes.voltarParaUltimaTela(contexto);
+        },
+
+        child: Scaffold(
+          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, contexto),
+          body: Padding(
+            padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
+            child: Form(
+              key: _formKey,
+              child:  ListView(
+                children: configurarBody(),
+              ),
+            )
+          ),
+
+        ));
   }
 
   void _inicializarNumeroAlternativas(){
@@ -73,49 +96,6 @@ class PerguntaInfoState extends State<PerguntaInfo> {
     }
 
     _numeroAlternativas = 5 - alternativasNull;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    textStyle = Theme.of(context).textTheme.headline6;
-
-    return WillPopScope(
-
-        onWillPop: () {
-          return _voltarParaUltimaTela();
-        },
-
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text(_appBarTitle),
-            backgroundColor: Colors.teal,
-            leading: IconButton(icon: Icon(
-                Icons.arrow_back),
-                onPressed: () {
-                  _voltarParaUltimaTela();
-                }
-            ),
-            actions: <Widget>[
-              IconButton(
-                onPressed: () {
-                  _logout(context);
-                },
-                icon: Icon(Icons.logout),
-              )
-            ],
-          ),
-
-          body: Padding(
-            padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
-            child: Form(
-              key: _formKey,
-              child:  ListView(
-                children: configurarBody(),
-              ),
-            )
-          ),
-
-        ));
   }
 
   _configurarSelecaoDoenca(){
@@ -140,12 +120,20 @@ class PerguntaInfoState extends State<PerguntaInfo> {
     );
   }
 
+  String _validarTexto(String texto){
+    String mensagem;
+    if(texto.isEmpty){
+      mensagem = "Informe o texto da pergunta";
+    }
+    return mensagem;
+  }
+
   _configurarTexto(){
     return Padding(
       padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
       child: TextFormField(
-        controller: _textoController,
-        validator: _perguntaInfoController.validarTexto,
+        controller: _tecTexto,
+        validator: _validarTexto,
         style: textStyle,
         minLines: 3,
         maxLines: 10,
@@ -184,26 +172,34 @@ class PerguntaInfoState extends State<PerguntaInfo> {
     );
   }
 
+  String _validarAlternativa(String alternativa){
+    String mensagem;
+    if(alternativa.isEmpty){
+      mensagem = "Informe a alternativa";
+    }
+    return mensagem;
+  }
+
   List<Widget> configurarBody(){
     var componentesParte1 = <Widget>[
       _configurarSelecaoDoenca(),
       _configurarTexto(),
-      _configurarAlternativa(1, _alternativa1Controller,  _perguntaInfoController.validarAlternativa),
-      _configurarAlternativa(2, _alternativa2Controller,  _perguntaInfoController.validarAlternativa)
+      _configurarAlternativa(1, _tecAlternativa1,  _validarAlternativa),
+      _configurarAlternativa(2, _tecAlternativa2,  _validarAlternativa)
     ];
 
     if(_numeroAlternativas>=4){
       componentesParte1.add(
-          _configurarAlternativa(3, _alternativa3Controller,  _perguntaInfoController.validarAlternativa)
+          _configurarAlternativa(3, _tecAlternativa3,  _validarAlternativa)
       );
       componentesParte1.add(
-          _configurarAlternativa(4, _alternativa4Controller,  _perguntaInfoController.validarAlternativa)
+          _configurarAlternativa(4, _tecAlternativa4,  _validarAlternativa)
       );
     }
 
     if(_numeroAlternativas==5){
       componentesParte1.add(
-          _configurarAlternativa(5, _alternativa5Controller,  _perguntaInfoController.validarAlternativa)
+          _configurarAlternativa(5, _tecAlternativa5,  _validarAlternativa)
       );
     }
 
@@ -232,9 +228,9 @@ class PerguntaInfoState extends State<PerguntaInfo> {
     return Padding(
       padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
       child: DropdownButtonFormField<int>(
-        value: _gabarito,
+        value: _tecGabarito,
         onChanged: (value) {
-          _gabarito = value;
+          _tecGabarito = value;
           _atualizarGabarito();
         },
         decoration: InputDecoration(
@@ -287,8 +283,8 @@ class PerguntaInfoState extends State<PerguntaInfo> {
         onPressed: () {
           setState(() {
             if (_pergunta.id == null) {
-              _voltarParaUltimaTela();
-              _exibirDialogoAlerta('Status', 'Nenhuma pergunta foi apagada');
+              _gerenciadorComponentes.voltarParaUltimaTela(context);
+              _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Nenhuma pergunta foi apagada', context);
               return;
             } else {
               _dialogoConfirmacaoExclusaoPergunta();
@@ -331,12 +327,8 @@ class PerguntaInfoState extends State<PerguntaInfo> {
     _pergunta.doenca = _doencaSelecionada;
   }
 
-  _voltarParaUltimaTela() {
-    Navigator.pop(context, true);
-  }
-
   void _atualizarTexto(){
-    _pergunta.texto = _textoController.text;
+    _pergunta.texto = _tecTexto.text;
   }
 
   void _atualizarAlternativa(int index, TextEditingController controller) {
@@ -355,23 +347,27 @@ class PerguntaInfoState extends State<PerguntaInfo> {
   }
 
   void _atualizarGabarito(){
-    _pergunta.gabarito = _gabarito;
+    _pergunta.gabarito = _tecGabarito;
   }
 
   void _salvar() async {
-
     if (!_formKey.currentState.validate()) {
       return;
     }
 
-    _voltarParaUltimaTela();
+    _gerenciadorComponentes.voltarParaUltimaTela(context);
 
-    int resultado = await _perguntaInfoController.salvar(_pergunta);
+    int resultado;
+    if (_pergunta.id != null) {
+      resultado = await _repositorioPerguntas.atualizarPergunta(_pergunta);
+    } else {
+      resultado = await _repositorioPerguntas.inserirPergunta(_pergunta);
+    }
 
     if (resultado != 0) {
-      _exibirDialogoAlerta('Status', 'Pergunta salva com sucesso');
+      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Pergunta salva com sucesso', context);
     } else {
-      _exibirDialogoAlerta('Status', 'Erro ao salvar pergunta');
+      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Erro ao salvar pergunta', context);
     }
   }
 
@@ -410,35 +406,24 @@ class PerguntaInfoState extends State<PerguntaInfo> {
   }
 
   void _apagar() async {
-    int resultado = await _perguntaInfoController.apagar(_pergunta);
+    int resultado;
+    bool existeQuiz = await _repositorioQuiz.existeQuizQueUsaPergunta(_pergunta);
 
-    _voltarParaUltimaTela();
-    _voltarParaUltimaTela();
+    if(existeQuiz){
+      _pergunta.ativa = false;
+      resultado = await _repositorioPerguntas.atualizarPergunta(_pergunta);
+    } else {
+      resultado = await _repositorioPerguntas.apagarPergunta(_pergunta.id);
+    }
+
+    _gerenciadorComponentes.voltarParaUltimaTela(context);
+    _gerenciadorComponentes.voltarParaUltimaTela(context);
 
     if (resultado != 0) {
-      _exibirDialogoAlerta('Status', 'Pergunta foi apagada com sucesso');
+      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Pergunta foi apagada com sucesso', context);
     } else {
-      _exibirDialogoAlerta('Status', 'Erro ao apagar pergunta');
+      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Erro ao apagar pergunta', context);
     }
-  }
-
-  void _exibirDialogoAlerta(String title, String message) {
-    AlertDialog alertDialog = AlertDialog(
-      title: Text(title),
-      content: Text(message),
-      backgroundColor: Colors.white,
-    );
-    showDialog(
-        context: context,
-        builder: (_) => alertDialog
-    );
-  }
-
-  void _logout(context) async {
-    Login.registrarLogout();
-    await Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return HomePage();
-    }));
   }
 
 }

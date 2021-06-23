@@ -1,84 +1,61 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:hope/modelos/login.dart';
 import 'package:hope/modelos/usuario.dart';
 import 'package:hope/repositorios/repositorio_usuario.dart';
-import 'package:hope/visoes/homepage.dart';
+import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
 
-class UsuarioInfo extends StatefulWidget {
+class TelaCadastroUsuario extends StatefulWidget {
 
-  final String appBarTitle;
+  final String tituloAppBar;
   final Usuario usuario;
 
-  UsuarioInfo(this.usuario, this.appBarTitle);
+  TelaCadastroUsuario(this.usuario, this.tituloAppBar);
 
   @override
   State<StatefulWidget> createState() {
-    return UsuarioInfoState(this.usuario, this.appBarTitle);
+    return TelaCadastroUsuarioState(this.usuario, this.tituloAppBar);
   }
 
 }
 
-class UsuarioInfoState extends State<UsuarioInfo> {
+class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
 
+  GerenciadorComponentes _gerenciadorComponentes;
   GlobalKey<FormState> _formKey;
-
   RepositorioUsuario _repositorioUsuarios;
-
-  String appBarTitle;
-  Usuario usuario;
-
-  TextEditingController _loginController = TextEditingController();
-  TextEditingController _senhaController = TextEditingController();
-  String _papel;
-
+  String _tituloAppBar;
+  TextEditingController _tecLogin;
+  TextEditingController _tecSenha;
   TextStyle textStyle;
+  String _papel;
+  Usuario _usuario;
 
-  UsuarioInfoState(this.usuario, this.appBarTitle);
+  TelaCadastroUsuarioState(this._usuario, this._tituloAppBar);
 
   @override
   void initState() {
     super.initState();
+    _gerenciadorComponentes = GerenciadorComponentes();
     _formKey = GlobalKey<FormState>();
     _repositorioUsuarios = RepositorioUsuario();
-    _loginController = new TextEditingController(text: usuario.login);
-    _senhaController = new TextEditingController(text: usuario.senha);
-    if(usuario.papel.isEmpty){
-      usuario.papel = 'Médico';
+    _tecLogin = new TextEditingController(text: _usuario.login);
+    _tecSenha = new TextEditingController(text: _usuario.senha);
+    if(_usuario.papel.isEmpty){
+      _usuario.papel = 'Médico';
     }
-    _papel = usuario.papel;
+    _papel = _usuario.papel;
   }
 
   @override
-  Widget build(BuildContext context) {
-
-    textStyle = Theme.of(context).textTheme.headline6;
+  Widget build(BuildContext contexto) {
+    textStyle = Theme.of(contexto).textTheme.headline6;
 
     return WillPopScope(
-
         onWillPop: () {
-          return _voltarParaUltimaTela();
+          return _gerenciadorComponentes.voltarParaUltimaTela(contexto);
         },
 
         child: Scaffold(
-          appBar: AppBar(
-            title: Text(appBarTitle),
-            backgroundColor: Colors.teal,
-            leading: IconButton(icon: Icon(
-                Icons.arrow_back),
-                onPressed: () {
-                  _voltarParaUltimaTela();
-                }
-            ),
-            actions: <Widget>[
-              IconButton(
-                onPressed: () {
-                  _logout();
-                },
-                icon: Icon(Icons.logout),
-              )
-            ],
-          ),
+          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, contexto),
 
           body: Padding(
             padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
@@ -95,7 +72,7 @@ class UsuarioInfoState extends State<UsuarioInfo> {
                       children: <Widget>[
                         _configurarBotaoSalvar(),
                         Container(width: 5.0,),
-                        _configurarBotaoDeletar(context),
+                        _configurarBotaoDeletar(contexto),
                       ],
                     ),
                   ),
@@ -110,8 +87,8 @@ class UsuarioInfoState extends State<UsuarioInfo> {
     return Padding(
       padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
       child: TextFormField(
-        controller: _loginController,
-        validator: _validarLogin,
+        controller: _tecLogin,
+        validator: validarCadastroLogin,
         style: textStyle,
         onChanged: (value) {
           _atualizarLogin();
@@ -127,12 +104,32 @@ class UsuarioInfoState extends State<UsuarioInfo> {
     );
   }
 
+  String validarCadastroLogin(String login){
+    String mensagem;
+    if(login.isEmpty){
+      mensagem = "Informe o login";
+    } else if(login.length<4){
+      mensagem = "O login deve ter pelo menos 4 caracteres";
+    }
+    return mensagem;
+  }
+
+  String validarCadastroSenha(String senha){
+    String mensagem;
+    if(senha.isEmpty){
+      mensagem = "Informe a senha";
+    } else if(senha.length<8){
+      mensagem = "A senha deve ter pelo menos 8 caracteres";
+    }
+    return mensagem;
+  }
+
   _configurarSenha(){
     return Padding(
       padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
       child: TextFormField(
-        controller: _senhaController,
-        validator: _validarSenha,
+        controller: _tecSenha,
+        validator: validarCadastroSenha,
         obscureText: true,
         style: textStyle,
         onChanged: (value) {
@@ -214,20 +211,16 @@ class UsuarioInfoState extends State<UsuarioInfo> {
     );
   }
 
-  _voltarParaUltimaTela() {
-    Navigator.pop(context, true);
-  }
-
   void _atualizarLogin(){
-    usuario.login = _loginController.text;
+    _usuario.login = _tecLogin.text;
   }
 
   void _atualizarSenha() {
-    usuario.senha = _senhaController.text;
+    _usuario.senha = _tecSenha.text;
   }
 
   void _atualizarPapel(){
-    usuario.papel = _papel;
+    _usuario.papel = _papel;
   }
 
   void _dialogoConfirmacaoExclusaoUsuario(){
@@ -265,21 +258,21 @@ class UsuarioInfoState extends State<UsuarioInfo> {
   }
 
   void _apagar() async {
-    if (usuario.id == null) {
-      _voltarParaUltimaTela();
-      _exibirDialogoAlerta('Status', 'Nenhum usuário foi apagado');
+    if (_usuario.id == null) {
+      _gerenciadorComponentes.voltarParaUltimaTela(context);
+      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Nenhum usuário foi apagado', context);
       return;
     }
 
-    usuario.ativo = false;
-    int resultado = await _repositorioUsuarios.atualizarUsuario(usuario);
+    _usuario.ativo = false;
+    int resultado = await _repositorioUsuarios.atualizarUsuario(_usuario);
 
     if (resultado != 0) {
-      _logout();
-      _exibirDialogoAlerta('Status', 'Usuário apagado com sucesso');
+      _gerenciadorComponentes.logout(context);
+      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Usuário apagado com sucesso', context);
     } else {
-      _voltarParaUltimaTela();
-      _exibirDialogoAlerta('Status', 'Erro ao apagar usuário');
+      _gerenciadorComponentes.voltarParaUltimaTela(context);
+      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Erro ao apagar usuário', context);
     }
   }
 
@@ -290,62 +283,26 @@ class UsuarioInfoState extends State<UsuarioInfo> {
       return;
     }
 
-    if (usuario.id != null) {
-      resultado = await _repositorioUsuarios.atualizarUsuario(usuario);
+    if (_usuario.id != null) {
+      resultado = await _repositorioUsuarios.atualizarUsuario(_usuario);
     } else {
-      resultado = await _repositorioUsuarios.inserirUsuario(usuario);
+      resultado = await _repositorioUsuarios.inserirUsuario(_usuario);
     }
 
     if (resultado != 0) {
-      _voltarParaUltimaTela();
-      _exibirDialogoAlerta('Status', 'Usuário salvo com sucesso');
+      _gerenciadorComponentes.voltarParaUltimaTela(context);
+      _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Usuário salvo com sucesso', context);
     } else {
-      bool existe = await _repositorioUsuarios.existeUsuarioAtivoComLogin(usuario);
+      bool existe = await _repositorioUsuarios.existeUsuarioAtivoComLogin(_usuario);
       if(existe){
-        _exibirDialogoAlerta('Status', 'Já existe um usuário com esse login');
+        _gerenciadorComponentes.exibirDialogoAlerta('Status',
+            'Já existe um usuário com esse login', context);
       } else {
-        _voltarParaUltimaTela();
-        _exibirDialogoAlerta('Status', 'Erro ao salvar usuário');
+        _gerenciadorComponentes.voltarParaUltimaTela(context);
+        _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Erro ao salvar usuário', context);
       }
     }
 
-  }
-
-  void _exibirDialogoAlerta(String titulo, String mensagem) {
-    AlertDialog alertDialog = AlertDialog(
-      title: Text(titulo),
-      content: Text(mensagem),
-      backgroundColor: Colors.white,
-    );
-    showDialog(
-        context: context,
-        builder: (_) => alertDialog
-    );
-  }
-
-  String _validarLogin(String login){
-    String mensagem;
-    if(login.isEmpty){
-      mensagem = "Informe o login";
-    } else if(login.length<4){
-      mensagem = "O login deve ter pelo menos 4 caracteres";
-    }
-    return mensagem;
-  }
-
-  String _validarSenha(String senha){
-    String mensagem;
-    if(senha.isEmpty){
-      mensagem = "Informe a senha";
-    } else if(senha.length<8){
-      mensagem = "A senha deve ter pelo menos 8 caracteres";
-    }
-    return mensagem;
-  }
-
-  void _logout() async {
-    Login.registrarLogout();
-    await Navigator.of(context).pushNamed('home');
   }
 
 }

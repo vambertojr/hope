@@ -1,29 +1,18 @@
 import 'package:flutter/material.dart';
 
-class CaixaDialogo extends StatelessWidget {
+class Dialogo extends StatelessWidget {
+
   final String message;
   final IconData icon;
   final double iconSize;
   final double fontSize;
 
-  CaixaDialogo(
+  Dialogo(
       this.message, {
         this.icon,
         this.iconSize = 64.0,
         this.fontSize = 14.0,
       });
-
-  void exibirDialogoAlerta(String titulo, String mensagem, BuildContext contexto) {
-    AlertDialog alertDialog = AlertDialog(
-      title: Text(titulo),
-      content: Text(mensagem),
-      backgroundColor: Colors.white,
-    );
-    showDialog(
-        context: contexto,
-        builder: (_) => alertDialog
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
