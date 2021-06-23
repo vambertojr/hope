@@ -16,7 +16,7 @@ class DialogoFimQuiz {
       barrierDismissible: false,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: Colors.grey.shade900,
+          backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.all(
               Radius.circular(10.0),
@@ -39,7 +39,7 @@ class DialogoFimQuiz {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
               const SizedBox(height: 8),
@@ -48,28 +48,28 @@ class DialogoFimQuiz {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                  color: Colors.black,
                 ),
               ),
               Text(
                 'Que tal tentar mais uma vez? Quem sabe você consegue acertar todas na próxima!',
                 style: TextStyle(
-                  color: Colors.white70,
+                  color: Colors.black54,
                 ),
               ),
             ],
           ),
           actions: [
-            TextButton(
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(primary: Colors.teal),
               child: const Text('Novo quiz'),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TelaListagemQuiz()),
+                Navigator.push(context, MaterialPageRoute(builder: (context) => TelaListagemQuiz()),
                 );
               },
             ),
-            TextButton(
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(primary: Colors.teal),
               child: const Text('Sair'),
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (BuildContext context){

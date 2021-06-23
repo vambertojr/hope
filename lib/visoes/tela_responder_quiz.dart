@@ -194,7 +194,7 @@ class TelaResponderQuizState extends State<TelaResponderQuiz> {
 
   _salvarQuiz() async {
     RepositorioQuiz repositorio = new RepositorioQuiz();
-    var resultado = await repositorio.inserirQuiz(_quiz);
+    await repositorio.inserirQuiz(_quiz);
   }
 
 }
