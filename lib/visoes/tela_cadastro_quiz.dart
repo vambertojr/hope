@@ -55,16 +55,16 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
   }
 
   @override
-  Widget build(BuildContext contexto) {
-    textStyle = Theme.of(contexto).textTheme.headline6;
+  Widget build(BuildContext context) {
+    textStyle = Theme.of(context).textTheme.headline6;
 
     return WillPopScope(
         onWillPop: () {
-          return _gerenciadorComponentes.voltarParaUltimaTela(contexto);
+          return _gerenciadorComponentes.voltarParaUltimaTela(context);
         },
 
         child: Scaffold(
-          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, contexto),
+          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, context),
 
           body: Padding(
             padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
@@ -75,7 +75,7 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
                     _configurarExibicaoTitulo(),
                     _configurarExibicaoDoenca(),
                     _configurarNumeroPerguntas(),
-                    _configurarBotaoCriar(contexto),
+                    _configurarBotaoCriar(context),
                   ],
                 )
             ),
@@ -165,7 +165,7 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
               ),
               onPressed: () {
                 setState(() {
-                  _criarQuiz(contexto);
+                  _criarQuiz();
                 });
               },
             ),
@@ -238,7 +238,7 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
     }
   }
 
-  void _criarQuiz(BuildContext contexto) async {
+  void _criarQuiz() async {
     if (!_formKey.currentState.validate()) {
       return;
     }
@@ -246,35 +246,34 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
     int result;
     if (_quiz.id != null) {
       result = await _quizRepositorio.atualizarQuiz(_quiz);
-      _gerenciadorComponentes.voltarParaUltimaTela(contexto);
+      Navigator.pop(context, true);
       if (result != 0) {
         _gerenciadorComponentes.exibirDialogoAlerta('Status',
-            'Quiz atualizado com sucesso', contexto);
+            'Quiz atualizado com sucesso', context);
       } else {
         _gerenciadorComponentes.exibirDialogoAlerta('Status',
-            'Erro ao atualizar quiz', contexto);
+            'Erro ao atualizar quiz', context);
       }
     } else {
-      int resultado = await _sortearPerguntas(contexto);
+      int resultado = await _sortearPerguntas(context);
       if(resultado == 0){ //não gerou quiz
-        _gerenciadorComponentes.voltarParaUltimaTela(contexto);
+        Navigator.pop(context, true);
         _gerenciadorComponentes.exibirDialogoAlerta('Status',
-            'Não é possível gerar quiz porque não há perguntas cadastradas.', contexto);
+            'Não é possível gerar quiz porque não há perguntas cadastradas.', context);
       } else if(resultado == 1){ //gerou sem alerta
-        Navigator.push(contexto, MaterialPageRoute(builder: (context) {
-          String mensagem = '${_quiz.titulo} (${_quiz.totalPerguntas} perguntas)';
-          if(_quiz.totalPerguntas==1) mensagem = '${_quiz.titulo} (${_quiz.totalPerguntas} pergunta)';
-          return TelaResponderQuiz(_quiz, mensagem);
-        }));
+        _navegarParaTelaResponderQuiz();
       } else if(resultado == 2){ //gerou com alerta
-        await _exibirDialogoAlertaComBotao();
-        await Navigator.push(contexto, MaterialPageRoute(builder: (context) {
-          String mensagem = '${_quiz.titulo} (${_quiz.totalPerguntas} perguntas)';
-          if(_quiz.totalPerguntas==1) mensagem = '${_quiz.titulo} (${_quiz.totalPerguntas} pergunta)';
-          return TelaResponderQuiz(_quiz, mensagem);
-        }));
+        _exibirDialogoAlertaComBotao();
       }
     }
+  }
+
+  _navegarParaTelaResponderQuiz(){
+    Navigator.push(context, MaterialPageRoute(builder: (context) {
+      String mensagem = '${_quiz.titulo} (${_quiz.totalPerguntas} perguntas)';
+      if(_quiz.totalPerguntas==1) mensagem = '${_quiz.titulo} (${_quiz.totalPerguntas} pergunta)';
+      return TelaResponderQuiz(_quiz, mensagem);
+    }));
   }
 
   List _embaralhar(List<Pergunta> itens) {
@@ -336,11 +335,8 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
       style: ElevatedButton.styleFrom(primary: Colors.teal),
       child: Text("Ok"),
       onPressed:  () {
-        Navigator.push(context, MaterialPageRoute(builder: (context) {
-          String mensagem = '${_quiz.titulo} (${_quiz.totalPerguntas} perguntas)';
-          if(_quiz.totalPerguntas==1) mensagem = '${_quiz.titulo} (${_quiz.totalPerguntas} pergunta)';
-          return TelaResponderQuiz(_quiz, mensagem);
-        }));
+        Navigator.pop(context);
+        _navegarParaTelaResponderQuiz();
       },
     );
 

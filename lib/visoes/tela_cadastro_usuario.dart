@@ -46,16 +46,16 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
   }
 
   @override
-  Widget build(BuildContext contexto) {
-    textStyle = Theme.of(contexto).textTheme.headline6;
+  Widget build(BuildContext context) {
+    textStyle = Theme.of(context).textTheme.headline6;
 
     return WillPopScope(
         onWillPop: () {
-          return _gerenciadorComponentes.voltarParaUltimaTela(contexto);
+          return _gerenciadorComponentes.voltarParaUltimaTela(context);
         },
 
         child: Scaffold(
-          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, contexto),
+          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, context),
 
           body: Padding(
             padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
@@ -72,7 +72,7 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
                       children: <Widget>[
                         _configurarBotaoSalvar(),
                         Container(width: 5.0,),
-                        _configurarBotaoDeletar(contexto),
+                        _configurarBotaoDeletar(context),
                       ],
                     ),
                   ),
@@ -259,7 +259,7 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
 
   void _apagar() async {
     if (_usuario.id == null) {
-      _gerenciadorComponentes.voltarParaUltimaTela(context);
+      Navigator.pop(context, true);
       _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Nenhum usuário foi apagado', context);
       return;
     }
@@ -271,7 +271,7 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
       _gerenciadorComponentes.logout(context);
       _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Usuário apagado com sucesso', context);
     } else {
-      _gerenciadorComponentes.voltarParaUltimaTela(context);
+      Navigator.pop(context, true);
       _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Erro ao apagar usuário', context);
     }
   }
@@ -290,7 +290,7 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
     }
 
     if (resultado != 0) {
-      _gerenciadorComponentes.voltarParaUltimaTela(context);
+      Navigator.pop(context, true);
       _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Usuário salvo com sucesso', context);
     } else {
       bool existe = await _repositorioUsuarios.existeUsuarioAtivoComLogin(_usuario);
@@ -298,7 +298,7 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
         _gerenciadorComponentes.exibirDialogoAlerta('Status',
             'Já existe um usuário com esse login', context);
       } else {
-        _gerenciadorComponentes.voltarParaUltimaTela(context);
+        Navigator.pop(context, true);
         _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Erro ao salvar usuário', context);
       }
     }

@@ -46,17 +46,17 @@ class TelaCadastroDoencaState extends State<TelaCadastroDoenca> {
   }
 
   @override
-  Widget build(BuildContext contexto) {
-    textStyle = Theme.of(contexto).textTheme.headline6;
+  Widget build(BuildContext context) {
+    textStyle = Theme.of(context).textTheme.headline6;
 
     return WillPopScope(
 
         onWillPop: () {
-          return _gerenciadorComponentes.voltarParaUltimaTela(contexto);
+          return _gerenciadorComponentes.voltarParaUltimaTela(context);
         },
 
         child: Scaffold(
-          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, contexto),
+          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, context),
 
           body: Padding(
             padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
@@ -196,7 +196,7 @@ class TelaCadastroDoencaState extends State<TelaCadastroDoenca> {
         onPressed: () {
           setState(() {
             if (_doenca.id == null) {
-              _gerenciadorComponentes.voltarParaUltimaTela(context);
+              Navigator.pop(context, true);
               _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Nenhuma doença foi apagada', context);
               return;
             } else {
@@ -225,7 +225,7 @@ class TelaCadastroDoencaState extends State<TelaCadastroDoenca> {
       return;
     }
 
-    _gerenciadorComponentes.voltarParaUltimaTela(context);
+    Navigator.pop(context, true);
 
     int resultado;
     if (_doenca.id != null) {
@@ -285,8 +285,8 @@ class TelaCadastroDoencaState extends State<TelaCadastroDoenca> {
       resultado = await _repositorioDoencas.apagarDoenca(_doenca.id);
     }
 
-    _gerenciadorComponentes.voltarParaUltimaTela(context);
-    _gerenciadorComponentes.voltarParaUltimaTela(context);
+    Navigator.pop(context, true);
+    Navigator.pop(context, true);
 
     if (resultado != 0) {
       _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Doença apagada com sucesso', context);

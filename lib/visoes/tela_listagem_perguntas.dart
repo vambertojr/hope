@@ -97,7 +97,7 @@ class TelaListagemPerguntasState extends State<TelaListagemPerguntas> {
                 GestureDetector(
                   child: Icon(Icons.delete,color: Colors.red,),
                   onTap: () {
-                    _dialogoConfirmacaoExclusaoPergunta(context, _listaPerguntas[position]);
+                    _dialogoConfirmacaoExclusaoPergunta(_listaPerguntas[position]);
                   },
                 ),
               ],
@@ -111,7 +111,7 @@ class TelaListagemPerguntasState extends State<TelaListagemPerguntas> {
     );
   }
 
-  void _dialogoConfirmacaoExclusaoPergunta(BuildContext context, Pergunta pergunta){
+  void _dialogoConfirmacaoExclusaoPergunta(Pergunta pergunta){
     Widget botaoCancelar = ElevatedButton(
       style: ElevatedButton.styleFrom(primary: Colors.teal),
       child: Text("Cancelar"),
@@ -124,7 +124,7 @@ class TelaListagemPerguntasState extends State<TelaListagemPerguntas> {
       style: ElevatedButton.styleFrom(primary: Colors.teal),
       child: Text("Continuar"),
       onPressed:  () {
-        _apagar(context, pergunta);
+        _apagar(pergunta);
       },
     );
 
@@ -145,7 +145,7 @@ class TelaListagemPerguntasState extends State<TelaListagemPerguntas> {
     );
   }
 
-  void _apagar(BuildContext contexto, Pergunta pergunta) async {
+  void _apagar(Pergunta pergunta) async {
     int resultado;
     bool existeQuiz = await _repositorioQuiz.existeQuizQueUsaPergunta(pergunta);
     if(existeQuiz){
@@ -155,17 +155,17 @@ class TelaListagemPerguntasState extends State<TelaListagemPerguntas> {
       resultado = await _repositorioPerguntas.apagarPergunta(pergunta.id);
     }
 
-    _gerenciadorComponentes.voltarParaUltimaTela(contexto);
+    Navigator.pop(context, true);
 
     if (resultado != 0) {
-      _exibirSnackBar(contexto, 'Pergunta apagada com sucesso');
+      _exibirSnackBar('Pergunta apagada com sucesso');
       _atualizarListaPerguntas();
     } else {
-      _exibirSnackBar(contexto, 'Erro ao apagar pergunta');
+      _exibirSnackBar('Erro ao apagar pergunta');
     }
   }
 
-  void _exibirSnackBar(BuildContext context, String message) {
+  void _exibirSnackBar(String message) {
     final snackBar = SnackBar(content: Text(message));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }

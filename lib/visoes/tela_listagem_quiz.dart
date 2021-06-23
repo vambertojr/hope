@@ -92,7 +92,7 @@ class TelaListagemQuizState extends State<TelaListagemQuiz> {
                 GestureDetector(
                   child: Icon(Icons.delete,color: Colors.red,),
                   onTap: () {
-                    _dialogoConfirmacaoExclusaoQuiz(context, _listaQuiz[position]);
+                    _dialogoConfirmacaoExclusaoQuiz(_listaQuiz[position]);
                   },
                 ),
               ],
@@ -106,12 +106,12 @@ class TelaListagemQuizState extends State<TelaListagemQuiz> {
     );
   }
 
-  void _dialogoConfirmacaoExclusaoQuiz(BuildContext contexto, Quiz quiz){
+  void _dialogoConfirmacaoExclusaoQuiz(Quiz quiz){
     Widget botaoCancelar = ElevatedButton(
       style: ElevatedButton.styleFrom(primary: Colors.teal),
       child: Text("Cancelar"),
       onPressed:  () {
-        Navigator.of(contexto).pop();
+        Navigator.of(context).pop();
       },
     );
 
@@ -119,7 +119,7 @@ class TelaListagemQuizState extends State<TelaListagemQuiz> {
       style: ElevatedButton.styleFrom(primary: Colors.teal),
       child: Text("Continuar"),
       onPressed:  () {
-        _apagar(contexto, quiz);
+        _apagar(quiz);
       },
     );
 
@@ -133,27 +133,27 @@ class TelaListagemQuizState extends State<TelaListagemQuiz> {
     );
 
     showDialog(
-      context: contexto,
+      context: context,
       builder: (BuildContext context) {
         return alert;
       },
     );
   }
 
-  void _apagar(BuildContext contexto, Quiz quiz) async {
+  void _apagar(Quiz quiz) async {
     int resultado = await _repositorioQuiz.apagarQuiz(quiz.id);
 
-    _gerenciadorComponentes.voltarParaUltimaTela(contexto);
+    Navigator.pop(context, true);
 
     if (resultado != 0) {
-      _exibirSnackBar(contexto, 'Quiz apagado com sucesso');
+      _exibirSnackBar('Quiz apagado com sucesso');
       _atualizarListaQuiz();
     } else {
-      _exibirSnackBar(contexto, 'Erro ao apagar quiz');
+      _exibirSnackBar('Erro ao apagar quiz');
     }
   }
 
-  void _exibirSnackBar(BuildContext context, String message) {
+  void _exibirSnackBar(String message) {
     final snackBar = SnackBar(content: Text(message));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }

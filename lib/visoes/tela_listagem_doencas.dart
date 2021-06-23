@@ -99,7 +99,7 @@ class TelaListagemDoencasState extends State<TelaListagemDoencas> {
       style: ElevatedButton.styleFrom(primary: Colors.teal),
       child: Text("Continuar"),
       onPressed:  () {
-        _apagar(contexto, doenca);
+        _apagar(doenca);
       },
     );
 
@@ -120,7 +120,7 @@ class TelaListagemDoencasState extends State<TelaListagemDoencas> {
     );
   }
 
-  void _apagar(BuildContext contexto, Doenca doenca) async {
+  void _apagar(Doenca doenca) async {
     int resultado;
     bool existePergunta = await _repositorioPerguntas.existePerguntaSobreDoenca(doenca);
 
@@ -131,13 +131,13 @@ class TelaListagemDoencasState extends State<TelaListagemDoencas> {
       resultado = await _repositorioDoencas.apagarDoenca(doenca.id);
     }
 
-    _gerenciadorComponentes.voltarParaUltimaTela(contexto);
+    Navigator.pop(context, true);
 
     if (resultado != 0) {
-      _exibirSnackBar(contexto, 'Doença apagada com sucesso');
+      _exibirSnackBar(context, 'Doença apagada com sucesso');
       _atualizarListaDoencas();
     } else {
-      _exibirSnackBar(contexto, 'Erro ao apagar doença');
+      _exibirSnackBar(context, 'Erro ao apagar doença');
     }
   }
 

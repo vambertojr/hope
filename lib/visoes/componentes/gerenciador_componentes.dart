@@ -12,20 +12,20 @@ class GerenciadorComponentes {
     }));
   }
 
-  AppBar configurarAppBar(String titulo, BuildContext contexto){
+  AppBar configurarAppBar(String titulo, BuildContext context){
     return AppBar(
       title: Text(titulo),
       backgroundColor: Colors.teal,
       leading: IconButton(icon: Icon(
         Icons.arrow_back),
         onPressed: () {
-          voltarParaUltimaTela(contexto);
+          Navigator.pop(context, true);
         }
       ),
       actions: <Widget>[
         IconButton(
           onPressed: () {
-            logout(contexto);
+            logout(context);
           },
           icon: Icon(Icons.logout),
         )

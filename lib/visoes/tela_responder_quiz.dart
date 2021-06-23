@@ -41,14 +41,14 @@ class TelaResponderQuizState extends State<TelaResponderQuiz> {
   }
 
   @override
-  Widget build(BuildContext contexto) {
+  Widget build(BuildContext context) {
     return WillPopScope(
         onWillPop: () {
-          return _gerenciadorComponentes.voltarParaUltimaTela(contexto);
+          return _gerenciadorComponentes.voltarParaUltimaTela(context);
         },
 
         child: Scaffold(
-          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, contexto),
+          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, context),
           body: _configurarQuiz()
         ));
   }

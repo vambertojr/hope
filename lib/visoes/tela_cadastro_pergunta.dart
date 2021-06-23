@@ -63,16 +63,16 @@ class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
   }
 
   @override
-  Widget build(BuildContext contexto) {
-    textStyle = Theme.of(contexto).textTheme.headline6;
+  Widget build(BuildContext context) {
+    textStyle = Theme.of(context).textTheme.headline6;
 
     return WillPopScope(
         onWillPop: () {
-          return _gerenciadorComponentes.voltarParaUltimaTela(contexto);
+          return _gerenciadorComponentes.voltarParaUltimaTela(context);
         },
 
         child: Scaffold(
-          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, contexto),
+          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, context),
           body: Padding(
             padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
             child: Form(
@@ -283,7 +283,7 @@ class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
         onPressed: () {
           setState(() {
             if (_pergunta.id == null) {
-              _gerenciadorComponentes.voltarParaUltimaTela(context);
+              Navigator.pop(context, true);
               _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Nenhuma pergunta foi apagada', context);
               return;
             } else {
@@ -355,7 +355,7 @@ class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
       return;
     }
 
-    _gerenciadorComponentes.voltarParaUltimaTela(context);
+    Navigator.pop(context, true);
 
     int resultado;
     if (_pergunta.id != null) {
@@ -416,8 +416,8 @@ class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
       resultado = await _repositorioPerguntas.apagarPergunta(_pergunta.id);
     }
 
-    _gerenciadorComponentes.voltarParaUltimaTela(context);
-    _gerenciadorComponentes.voltarParaUltimaTela(context);
+    Navigator.pop(context, true);
+    Navigator.pop(context, true);
 
     if (resultado != 0) {
       _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Pergunta foi apagada com sucesso', context);

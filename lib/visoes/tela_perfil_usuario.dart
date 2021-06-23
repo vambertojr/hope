@@ -4,16 +4,16 @@ import 'package:hope/modelos/usuario.dart';
 import 'package:hope/visoes/tela_cadastro_usuario.dart';
 import 'package:hope/visoes/tela_inicial.dart';
 
-class EdicaoUsuario extends StatefulWidget {
+class TelaPerfilUsuario extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() {
-    return EdicaoUsuarioState();
+    return TelaPerfilUsuarioState();
   }
 
 }
 
-class EdicaoUsuarioState extends State<EdicaoUsuario> {
+class TelaPerfilUsuarioState extends State<TelaPerfilUsuario> {
 
   Usuario _usuario;
 

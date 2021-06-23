@@ -43,16 +43,16 @@ class TelaVisaoQuizConcluidoState extends State<TelaVisaoQuizConcluido> {
   }
 
   @override
-  Widget build(BuildContext contexto) {
-    TextStyle textStyle = Theme.of(contexto).textTheme.headline6;
+  Widget build(BuildContext context) {
+    TextStyle textStyle = Theme.of(context).textTheme.headline6;
 
     return WillPopScope(
         onWillPop: () {
-          return _gerenciadorComponentes.voltarParaUltimaTela(contexto);
+          return _gerenciadorComponentes.voltarParaUltimaTela(context);
         },
 
         child: Scaffold(
-          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, contexto),
+          appBar: _gerenciadorComponentes.configurarAppBar(_tituloAppBar, context),
           body: Padding(
             padding: EdgeInsets.only(top: 15.0, left: 10.0, right: 10.0),
             child: ListView(

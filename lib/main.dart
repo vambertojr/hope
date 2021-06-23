@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hope/visoes/edicao_usuario.dart';
+import 'package:hope/visoes/tela_perfil_usuario.dart';
 import 'package:hope/visoes/tela_inicial.dart';
 import 'package:hope/visoes/tela_listagem_doencas.dart';
 import 'package:hope/visoes/tela_listagem_perguntas.dart';
@@ -21,7 +21,7 @@ class MyApp extends StatelessWidget{
         'quiz': (context) => TelaListagemQuiz(),
         'listaDoencas': (context) => TelaListagemDoencas(),
         'listaPerguntas': (context) => TelaListagemPerguntas(),
-        'perfilUsuario': (context) => EdicaoUsuario()
+        'perfilUsuario': (context) => TelaPerfilUsuario()
       },
     );
   }
