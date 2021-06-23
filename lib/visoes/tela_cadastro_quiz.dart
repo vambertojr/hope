@@ -1,11 +1,8 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:hope/controladores/quiz_controller.dart';
 import 'package:hope/modelos/doenca.dart';
-import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/modelos/quiz.dart';
-import 'package:hope/modelos/resposta.dart';
 import 'package:hope/repositorios/repositorio_doenca.dart';
-import 'package:hope/repositorios/repositorio_pergunta.dart';
 import 'package:hope/repositorios/repositorio_quiz.dart';
 import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
 import 'package:hope/visoes/tela_responder_quiz.dart';
@@ -25,8 +22,8 @@ class TelaCadastroQuiz extends StatefulWidget {
 }
 
 class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
+
   GerenciadorComponentes _gerenciadorComponentes;
-  RepositorioPergunta _perguntasRepositorio;
   RepositorioDoenca _doencasRepositorio;
   RepositorioQuiz _quizRepositorio;
   String _tituloAppBar;
@@ -34,8 +31,8 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
   List<Doenca> _doencasLista;
   Doenca _doencaSelecionada;
   List<DropdownMenuItem<Doenca>> _menuDoencas;
-  TextEditingController _quantidadePerguntasController;
-  TextEditingController _tituloController;
+  TextEditingController _tecQuantidadePerguntas;
+  TextEditingController _tecTitulo;
   TextStyle textStyle;
   GlobalKey<FormState> _formKey;
 
@@ -45,11 +42,10 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
   void initState() {
     super.initState();
     _gerenciadorComponentes = GerenciadorComponentes();
-    _perguntasRepositorio = RepositorioPergunta();
     _doencasRepositorio = RepositorioDoenca();
     _quizRepositorio = RepositorioQuiz();
-    _quantidadePerguntasController = new TextEditingController(text: _quiz.totalPerguntas.toString());
-    _tituloController = new TextEditingController(text: _quiz.titulo);
+    _tecQuantidadePerguntas = new TextEditingController(text: _quiz.totalPerguntas.toString());
+    _tecTitulo = new TextEditingController(text: _quiz.titulo);
     _inicializarMenuDoencas();
     _formKey = GlobalKey<FormState>();
   }
@@ -88,7 +84,7 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
     return Padding(
       padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
       child: TextFormField(
-        controller: _tituloController,
+        controller: _tecTitulo,
         validator: _validarTitulo,
         style: textStyle,
         onChanged: (value) {
@@ -131,7 +127,7 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
     return Padding(
       padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
       child: TextFormField(
-        controller: _quantidadePerguntasController,
+        controller: _tecQuantidadePerguntas,
         validator: _validarQuantidadePerguntas,
         style: textStyle,
         keyboardType: TextInputType.number,
@@ -222,7 +218,7 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
   }
 
   void _atualizarTitulo() {
-    _quiz.titulo = this._tituloController.text;
+    _quiz.titulo = this._tecTitulo.text;
   }
 
   void _atualizarDoenca(Doenca doenca){
@@ -231,10 +227,10 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
   }
 
   void _atualizarQuantidadePerguntas() {
-    if(this._quantidadePerguntasController.text == null || this._quantidadePerguntasController.text.isEmpty){
+    if(this._tecQuantidadePerguntas.text == null || this._tecQuantidadePerguntas.text.isEmpty){
       _quiz.totalPerguntas = 0;
     } else {
-      _quiz.totalPerguntas = int.parse(this._quantidadePerguntasController.text);
+      _quiz.totalPerguntas = int.parse(this._tecQuantidadePerguntas.text);
     }
   }
 
@@ -255,7 +251,9 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
             'Erro ao atualizar quiz', context);
       }
     } else {
-      int resultado = await _sortearPerguntas(context);
+      QuizController quizController = QuizController(_quiz);
+      int resultado = await quizController.sortearPerguntas();
+
       if(resultado == 0){ //não gerou quiz
         Navigator.pop(context, true);
         _gerenciadorComponentes.exibirDialogoAlerta('Status',
@@ -274,56 +272,6 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
       if(_quiz.totalPerguntas==1) mensagem = '${_quiz.titulo} (${_quiz.totalPerguntas} pergunta)';
       return TelaResponderQuiz(_quiz, mensagem);
     }));
-  }
-
-  List _embaralhar(List<Pergunta> itens) {
-    Random random = new Random();
-    for (int i=itens.length-1; i>0; i--) {
-      int n = random.nextInt(i+1);
-      Pergunta temp = itens[i];
-      itens[i] = itens[n];
-      itens[n] = temp;
-    }
-    return itens;
-  }
-
-  List<Resposta> _converterParaListaRespostas(List perguntas){
-    List<Resposta> respostas = [];
-    for (int i=0; i<perguntas.length; i++) {
-      respostas.add(new Resposta(0, perguntas[i]));
-    }
-    return respostas;
-  }
-
-  Future<int> _sortearPerguntas(BuildContext contexto) async {
-    int resultado = 1; //0 - nao gerou, 1 - gerou sem alerta, 2 - gerou com alerta
-    List<Pergunta> todasAsPerguntas;
-    if(_quiz.doenca.id != null){
-      todasAsPerguntas = await _perguntasRepositorio.getListaPerguntasAtivasPorDoenca(_quiz.doenca);
-    } else {
-      todasAsPerguntas = await _perguntasRepositorio.getListaPerguntasAtivas();
-    }
-
-    if(todasAsPerguntas==null || todasAsPerguntas.isEmpty){
-      resultado = 0;
-    } else if(todasAsPerguntas.length<_quiz.totalPerguntas){
-      _quiz.perguntas = _converterParaListaRespostas(_embaralhar(todasAsPerguntas));
-      _quiz.totalPerguntas = _quiz.perguntas.length;
-      resultado = 2;
-    } else if(todasAsPerguntas.length==_quiz.totalPerguntas){
-      _quiz.perguntas = _converterParaListaRespostas(_embaralhar(todasAsPerguntas));
-    } else {
-      Random random = new Random();
-      _quiz.perguntas = [];
-      while(_quiz.perguntas.length<_quiz.totalPerguntas){
-        int indice = random.nextInt(todasAsPerguntas.length);
-        Pergunta pergunta = todasAsPerguntas[indice];
-        if(!_perguntaJaFoiSelecionada(pergunta)){
-          _quiz.perguntas.add(new Resposta(0, pergunta));
-        }
-      }
-    }
-    return resultado;
   }
 
   void _exibirDialogoAlertaComBotao() async {
@@ -353,14 +301,6 @@ class TelaCadastroQuizState extends State<TelaCadastroQuiz> {
         context: context,
         builder: (_) => alertDialog
     );
-  }
-
-  bool _perguntaJaFoiSelecionada(Pergunta perguntaDeInteresse){
-    List<Pergunta> perguntas = [];
-    for(int i=0; i<_quiz.perguntas.length; i++){
-      perguntas.add(_quiz.perguntas[i].pergunta);
-    }
-    return perguntas.contains(perguntaDeInteresse);
   }
 
 }
