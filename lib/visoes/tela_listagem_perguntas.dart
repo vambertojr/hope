@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:hope/modelos/doenca.dart';
 import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/repositorios/repositorio_quiz.dart';
+import 'package:hope/visoes/componentes/dialogo_confirmacao_exclusao.dart';
 import 'package:hope/visoes/tela_cadastro_pergunta.dart';
 import 'package:hope/repositorios/repositorio_pergunta.dart';
 import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
@@ -97,7 +98,9 @@ class TelaListagemPerguntasState extends State<TelaListagemPerguntas> {
                 GestureDetector(
                   child: Icon(Icons.delete,color: Colors.red,),
                   onTap: () {
-                    _dialogoConfirmacaoExclusaoPergunta(_listaPerguntas[position]);
+                    String mensagem = 'Você tem certeza que deseja apagar a pergunta?';
+                    DialogoConfirmacaoExclusao.showObject(context, mensagem: mensagem, apagar: _apagar,
+                        argumento: _listaPerguntas[position]);
                   },
                 ),
               ],
@@ -111,41 +114,8 @@ class TelaListagemPerguntasState extends State<TelaListagemPerguntas> {
     );
   }
 
-  void _dialogoConfirmacaoExclusaoPergunta(Pergunta pergunta){
-    Widget botaoCancelar = ElevatedButton(
-      style: ElevatedButton.styleFrom(primary: Colors.teal),
-      child: Text("Cancelar"),
-      onPressed:  () {
-        Navigator.of(context).pop();
-      },
-    );
-
-    Widget botaoContinuar = ElevatedButton(
-      style: ElevatedButton.styleFrom(primary: Colors.teal),
-      child: Text("Continuar"),
-      onPressed:  () {
-        _apagar(pergunta);
-      },
-    );
-
-    AlertDialog alert = AlertDialog(
-      title: Text('Confirmação'),
-      content: Text('Você tem certeza que deseja apagar a pergunta?'),
-      actions: [
-        botaoCancelar,
-        botaoContinuar,
-      ],
-    );
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
-
-  void _apagar(Pergunta pergunta) async {
+  void _apagar(Object object) async {
+    Pergunta pergunta = object;
     int resultado;
     bool existeQuiz = await _repositorioQuiz.existeQuizQueUsaPergunta(pergunta);
     if(existeQuiz){

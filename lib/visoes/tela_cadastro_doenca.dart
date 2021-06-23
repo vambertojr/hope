@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hope/modelos/doenca.dart';
 import 'package:hope/repositorios/repositorio_doenca.dart';
 import 'package:hope/repositorios/repositorio_pergunta.dart';
+import 'package:hope/visoes/componentes/dialogo_confirmacao_exclusao.dart';
 import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
 
 class TelaCadastroDoenca extends StatefulWidget {
@@ -200,7 +201,8 @@ class TelaCadastroDoencaState extends State<TelaCadastroDoenca> {
               _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Nenhuma doença foi apagada', context);
               return;
             } else {
-              _dialogoConfirmacaoExclusaoDoenca();
+              String mensagem = 'Você tem certeza que deseja apagar a doença?';
+              DialogoConfirmacaoExclusao.show(context, mensagem: mensagem, apagar: _apagar);
             }
           });
         },
@@ -239,40 +241,6 @@ class TelaCadastroDoencaState extends State<TelaCadastroDoenca> {
     } else {
       _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Erro ao salvar doença', context);
     }
-  }
-
-  void _dialogoConfirmacaoExclusaoDoenca(){
-    Widget botaoCancelar = ElevatedButton(
-      style: ElevatedButton.styleFrom(primary: Colors.teal),
-      child: Text("Cancelar"),
-      onPressed:  () {
-        Navigator.of(context).pop();
-      },
-    );
-
-    Widget botaoContinuar = ElevatedButton(
-      style: ElevatedButton.styleFrom(primary: Colors.teal),
-      child: Text("Continuar"),
-      onPressed:  () {
-        _apagar();
-      },
-    );
-
-    AlertDialog alert = AlertDialog(
-      title: Text('Confirmação'),
-      content: Text('Você tem certeza que deseja apagar a doença?'),
-      actions: [
-        botaoCancelar,
-        botaoContinuar,
-      ],
-    );
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
   }
 
   void _apagar() async {

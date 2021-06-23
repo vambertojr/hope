@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hope/modelos/usuario.dart';
 import 'package:hope/repositorios/repositorio_usuario.dart';
+import 'package:hope/visoes/componentes/dialogo_confirmacao_exclusao.dart';
 import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
 
 class TelaCadastroUsuario extends StatefulWidget {
@@ -204,7 +205,8 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
         ),
         onPressed: () {
           setState(() {
-            _dialogoConfirmacaoExclusaoUsuario();
+            String mensagem = 'Você tem certeza que deseja apagar sua conta?';
+            DialogoConfirmacaoExclusao.show(context, mensagem: mensagem, apagar: _apagar);
           });
         },
       ),
@@ -221,40 +223,6 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
 
   void _atualizarPapel(){
     _usuario.papel = _papel;
-  }
-
-  void _dialogoConfirmacaoExclusaoUsuario(){
-      Widget botaoCancelar = ElevatedButton(
-        style: ElevatedButton.styleFrom(primary: Colors.teal),
-        child: Text("Cancelar"),
-        onPressed:  () {
-          Navigator.of(context).pop();
-        },
-      );
-
-      Widget botaoContinuar = ElevatedButton(
-        style: ElevatedButton.styleFrom(primary: Colors.teal),
-        child: Text("Continuar"),
-        onPressed:  () {
-          _apagar();
-        },
-      );
-
-      AlertDialog alert = AlertDialog(
-        title: Text('Confirmação'),
-        content: Text('Você tem certeza que deseja apagar sua conta?'),
-        actions: [
-          botaoCancelar,
-          botaoContinuar,
-        ],
-      );
-
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return alert;
-        },
-      );
   }
 
   void _apagar() async {

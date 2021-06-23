@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:hope/modelos/doenca.dart';
 import 'package:hope/repositorios/repositorio_pergunta.dart';
+import 'package:hope/visoes/componentes/dialogo_confirmacao_exclusao.dart';
 import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
 import 'package:hope/visoes/tela_cadastro_doenca.dart';
 import 'package:hope/repositorios/repositorio_doenca.dart';
@@ -72,7 +73,9 @@ class TelaListagemDoencasState extends State<TelaListagemDoencas> {
                 GestureDetector(
                   child: Icon(Icons.delete,color: Colors.red,),
                   onTap: () {
-                    _dialogoConfirmacaoExclusaoDoenca(context, _listaDoencas[position]);
+                    String mensagem = 'Você tem certeza que deseja apagar a doença?';
+                    DialogoConfirmacaoExclusao.showObject(context, mensagem: mensagem, apagar: _apagar,
+                        argumento: _listaDoencas[position]);
                   },
                 ),
               ],
@@ -86,41 +89,8 @@ class TelaListagemDoencasState extends State<TelaListagemDoencas> {
     );
   }
 
-  void _dialogoConfirmacaoExclusaoDoenca(BuildContext contexto, Doenca doenca){
-    Widget botaoCancelar = ElevatedButton(
-      style: ElevatedButton.styleFrom(primary: Colors.teal),
-      child: Text("Cancelar"),
-      onPressed:  () {
-        Navigator.of(contexto).pop();
-      },
-    );
-
-    Widget botaoContinuar = ElevatedButton(
-      style: ElevatedButton.styleFrom(primary: Colors.teal),
-      child: Text("Continuar"),
-      onPressed:  () {
-        _apagar(doenca);
-      },
-    );
-
-    AlertDialog alert = AlertDialog(
-      title: Text('Confirmação'),
-      content: Text('Você tem certeza que deseja apagar a doença?'),
-      actions: [
-        botaoCancelar,
-        botaoContinuar,
-      ],
-    );
-
-    showDialog(
-      context: contexto,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
-
-  void _apagar(Doenca doenca) async {
+  void _apagar(Object object) async {
+    Doenca doenca = object;
     int resultado;
     bool existePergunta = await _repositorioPerguntas.existePerguntaSobreDoenca(doenca);
 

@@ -4,6 +4,7 @@ import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/repositorios/repositorio_doenca.dart';
 import 'package:hope/repositorios/repositorio_pergunta.dart';
 import 'package:hope/repositorios/repositorio_quiz.dart';
+import 'package:hope/visoes/componentes/dialogo_confirmacao_exclusao.dart';
 import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
 
 
@@ -287,7 +288,8 @@ class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
               _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Nenhuma pergunta foi apagada', context);
               return;
             } else {
-              _dialogoConfirmacaoExclusaoPergunta();
+              String mensagem = 'Você tem certeza que deseja apagar a pergunta?';
+              DialogoConfirmacaoExclusao.show(context, mensagem: mensagem, apagar: _apagar);
             }
           });
         },
@@ -369,40 +371,6 @@ class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
     } else {
       _gerenciadorComponentes.exibirDialogoAlerta('Status', 'Erro ao salvar pergunta', context);
     }
-  }
-
-  void _dialogoConfirmacaoExclusaoPergunta(){
-    Widget botaoCancelar = ElevatedButton(
-      style: ElevatedButton.styleFrom(primary: Colors.teal),
-      child: Text("Cancelar"),
-      onPressed:  () {
-        Navigator.of(context).pop();
-      },
-    );
-
-    Widget botaoContinuar = ElevatedButton(
-      style: ElevatedButton.styleFrom(primary: Colors.teal),
-      child: Text("Continuar"),
-      onPressed:  () {
-        _apagar();
-      },
-    );
-
-    AlertDialog alert = AlertDialog(
-      title: Text('Confirmação'),
-      content: Text('Você tem certeza que deseja apagar a pergunta?'),
-      actions: [
-        botaoCancelar,
-        botaoContinuar,
-      ],
-    );
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
   }
 
   void _apagar() async {

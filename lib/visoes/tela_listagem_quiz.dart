@@ -4,6 +4,7 @@ import 'package:hope/controladores/login_controller.dart';
 import 'package:hope/modelos/quiz.dart';
 import 'package:hope/modelos/usuario.dart';
 import 'package:hope/repositorios/repositorio_quiz.dart';
+import 'package:hope/visoes/componentes/dialogo_confirmacao_exclusao.dart';
 import 'package:hope/visoes/componentes/gerenciador_componentes.dart';
 import 'package:hope/visoes/tela_visao_quiz_concluido.dart';
 import 'package:hope/visoes/tela_cadastro_quiz.dart';
@@ -92,7 +93,9 @@ class TelaListagemQuizState extends State<TelaListagemQuiz> {
                 GestureDetector(
                   child: Icon(Icons.delete,color: Colors.red,),
                   onTap: () {
-                    _dialogoConfirmacaoExclusaoQuiz(_listaQuiz[position]);
+                    String mensagem = 'Você tem certeza que deseja apagar o quiz?';
+                    DialogoConfirmacaoExclusao.showObject(context, mensagem: mensagem, apagar: _apagar,
+                        argumento: _listaQuiz[position]);
                   },
                 ),
               ],
@@ -106,41 +109,8 @@ class TelaListagemQuizState extends State<TelaListagemQuiz> {
     );
   }
 
-  void _dialogoConfirmacaoExclusaoQuiz(Quiz quiz){
-    Widget botaoCancelar = ElevatedButton(
-      style: ElevatedButton.styleFrom(primary: Colors.teal),
-      child: Text("Cancelar"),
-      onPressed:  () {
-        Navigator.of(context).pop();
-      },
-    );
-
-    Widget botaoContinuar = ElevatedButton(
-      style: ElevatedButton.styleFrom(primary: Colors.teal),
-      child: Text("Continuar"),
-      onPressed:  () {
-        _apagar(quiz);
-      },
-    );
-
-    AlertDialog alert = AlertDialog(
-      title: Text('Confirmação'),
-      content: Text('Você tem certeza que deseja apagar o quiz?'),
-      actions: [
-        botaoCancelar,
-        botaoContinuar,
-      ],
-    );
-
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return alert;
-      },
-    );
-  }
-
-  void _apagar(Quiz quiz) async {
+  void _apagar(Object object) async {
+    Quiz quiz = object;
     int resultado = await _repositorioQuiz.apagarQuiz(quiz.id);
 
     Navigator.pop(context, true);
