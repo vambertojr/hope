@@ -86,7 +86,6 @@ class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
 
   void _inicializarNumeroAlternativas(){
     _numeroAlternativas = _pergunta.getNumeroAlternativasSemNull();
-    print("numero alternativas: ${_numeroAlternativas}");
   }
 
   _configurarSelecaoDoenca(){
