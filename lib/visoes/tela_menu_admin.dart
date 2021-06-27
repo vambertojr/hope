@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hope/visoes/componentes/componentes_util.dart';
 
-class TelaMenu extends StatelessWidget {
+class TelaMenuAdmin extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {

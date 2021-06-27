@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hope/modelos/quiz.dart';
 import 'package:hope/visoes/tela_listagem_quiz.dart';
-import 'package:hope/visoes/tela_menu_estudante.dart';
+import 'package:hope/visoes/tela_menu_usuario.dart';
 
 class DialogoFimQuiz {
 
@@ -73,7 +73,7 @@ class DialogoFimQuiz {
               child: const Text('Sair'),
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (BuildContext context){
-                  return TelaMenuEstudante();
+                  return TelaMenuUsuario();
                 }));
 
               },

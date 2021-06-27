@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hope/visoes/componentes/componentes_util.dart';
 
-class TelaMenuEstudante extends StatelessWidget {
+class TelaMenuUsuario extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {

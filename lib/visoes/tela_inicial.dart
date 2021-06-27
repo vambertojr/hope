@@ -5,8 +5,8 @@ import 'package:hope/modelos/usuario.dart';
 import 'package:hope/visoes/componentes/componentes_util.dart';
 import 'package:hope/visoes/componentes/dialogo_alerta.dart';
 import 'package:hope/visoes/tela_cadastro_usuario.dart';
-import 'package:hope/visoes/tela_menu.dart';
-import 'package:hope/visoes/tela_menu_estudante.dart';
+import 'package:hope/visoes/tela_menu_admin.dart';
+import 'package:hope/visoes/tela_menu_usuario.dart';
 
 class TelaInicial extends StatelessWidget {
 
@@ -150,9 +150,9 @@ class TelaInicial extends StatelessWidget {
     else {
       Navigator.push(contexto, MaterialPageRoute(builder: (BuildContext context){
         if(usuarioEncontrado.papel == ComponentesUtil.papelAdmin){
-          return TelaMenu();
+          return TelaMenuAdmin();
         } else {
-          return TelaMenuEstudante();
+          return TelaMenuUsuario();
         }
       }));
     }
