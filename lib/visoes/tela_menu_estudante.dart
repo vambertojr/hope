@@ -58,6 +58,7 @@ class Opcao {
 List<Opcao> opcoes = <Opcao>[
   Opcao(titulo: 'Início', icon: (Icons.home ), tela:'home'),
   Opcao(titulo: 'Perfil', icon: Icons.account_box, tela:'perfilUsuario'),
+  Opcao(titulo: 'Doenças', icon: Icons.sick, tela:'listaDoencasSemEdicao'),
   Opcao(titulo: 'Quiz', icon: Icons.article, tela:'quiz'),
 ];
 
