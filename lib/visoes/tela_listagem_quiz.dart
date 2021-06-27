@@ -7,7 +7,7 @@ import 'package:hope/modelos/usuario.dart';
 import 'package:hope/repositorios/repositorio_quiz.dart';
 import 'package:hope/visoes/componentes/dialogo_confirmacao_exclusao.dart';
 import 'package:hope/visoes/componentes/componentes_util.dart';
-import 'package:hope/visoes/tela_visao_quiz_concluido.dart';
+import 'package:hope/visoes/tela_quiz_concluido.dart';
 import 'package:hope/visoes/tela_cadastro_quiz.dart';
 import 'package:intl/intl.dart';
 
@@ -146,7 +146,7 @@ class TelaListagemQuizState extends State<TelaListagemQuiz> {
 
   _navegarParaRespostas(Quiz quiz) async {
     await Navigator.push(context, MaterialPageRoute(builder: (context) {
-      return TelaVisaoQuizConcluido(quiz, quiz.titulo);
+      return TelaQuizConcluido(quiz, quiz.titulo);
     }));
   }
 

@@ -3,20 +3,20 @@ import 'package:hope/modelos/quiz.dart';
 import 'package:hope/visoes/componentes/componentes_util.dart';
 
 
-class TelaVisaoQuizConcluido extends StatefulWidget {
+class TelaQuizConcluido extends StatefulWidget {
 
   final String tituloAppBar;
   final Quiz quiz;
 
-  TelaVisaoQuizConcluido(this.quiz, this.tituloAppBar);
+  TelaQuizConcluido(this.quiz, this.tituloAppBar);
 
   @override
   State<StatefulWidget> createState() {
-    return TelaVisaoQuizConcluidoState(this.quiz, this.tituloAppBar);
+    return TelaQuizConcluidoState(this.quiz, this.tituloAppBar);
   }
 }
 
-class TelaVisaoQuizConcluidoState extends State<TelaVisaoQuizConcluido> {
+class TelaQuizConcluidoState extends State<TelaQuizConcluido> {
 
   ComponentesUtil _gerenciadorComponentes;
   String _tituloAppBar;
@@ -27,7 +27,7 @@ class TelaVisaoQuizConcluidoState extends State<TelaVisaoQuizConcluido> {
   TextEditingController _pontuacaoController;
 
 
-  TelaVisaoQuizConcluidoState(this._quiz, this._tituloAppBar);
+  TelaQuizConcluidoState(this._quiz, this._tituloAppBar);
 
   @override
   void initState() {
