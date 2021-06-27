@@ -38,7 +38,12 @@ class TelaCadastroDoencaState extends State<TelaCadastroDoenca> {
     _tecDescricao = TextEditingController();
     _tecNome.text = _doenca.nome;
     _tecDescricao.text = _doenca.descricao;
-    _tecAgente = _doenca.agenteEtiologico.isEmpty ? 'Vírus' : _doenca.agenteEtiologico;
+    if(_doenca.agenteEtiologico.isEmpty){
+      _tecAgente = 'Vírus';
+      _doenca.agenteEtiologico = _tecAgente;
+    } else {
+      _tecAgente = _doenca.agenteEtiologico;
+    }
     _formKey = GlobalKey<FormState>();
   }
 
