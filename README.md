@@ -8,11 +8,10 @@ Metodologia: Investigar sobre a doença incluindo, assuntos como tratamento, pro
 
 Funcionalidades:<br>
 
-- Armazenamento de dados relativos ao aprendizado na nuvem
-- Armazenamento de dados informações de contato (opcional para o usuário)
-- Armazenamento de perguntas na nuvem permitindo o cadastro por profissionais qualificados
-- As perguntas e respostas devem ser recuperadas da base na nuvem
-- Uso de voz para interação com o usuário
+- Criação e gerenciamento de usuários com dois tipos de perfis: administrador e usuário
+- Criação de descrição sobre a doença para aprendizado
+- Criação de quiz para avaliar o nível de aprendizado do usuário sobre uma doença 
+
 
 
 # Logo
@@ -23,3 +22,6 @@ Funcionalidades:<br>
 
 # Video Marketing
 [https://youtu.be/k5bOSNKTKQc](url)
+
+# Video de Usabilidade do APP
+[https://youtu.be/SvtLNyOUKaw](url)
