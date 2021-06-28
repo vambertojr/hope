@@ -20,6 +20,9 @@ Funcionalidades:<br>
 # Fluxo
 ![Projeto](https://user-images.githubusercontent.com/17991183/114729647-8f108d00-9d16-11eb-9f63-4273eb8dc206.png)
 
+# WidgetTree
+![widget_tree](https://user-images.githubusercontent.com/17991183/123679807-51ec6f00-d81e-11eb-8485-7cfe40f726f1.png)
+
 # Video Marketing
 [https://youtu.be/k5bOSNKTKQc](url)
 
