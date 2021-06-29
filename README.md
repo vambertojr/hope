@@ -8,11 +8,10 @@ Metodologia: Investigar sobre a doença incluindo, assuntos como tratamento, pro
 
 Funcionalidades:<br>
 
-- Armazenamento de dados relativos ao aprendizado na nuvem
-- Armazenamento de dados informações de contato (opcional para o usuário)
-- Armazenamento de perguntas na nuvem permitindo o cadastro por profissionais qualificados
-- As perguntas e respostas devem ser recuperadas da base na nuvem
-- Uso de voz para interação com o usuário
+- Criação e gerenciamento de usuários com dois tipos de perfis: administrador e usuário
+- Criação de descrição sobre a doença para aprendizado
+- Criação de quiz para avaliar o nível de aprendizado do usuário sobre uma doença 
+
 
 
 # Logo
@@ -21,5 +20,11 @@ Funcionalidades:<br>
 # Fluxo
 ![Projeto](https://user-images.githubusercontent.com/17991183/114729647-8f108d00-9d16-11eb-9f63-4273eb8dc206.png)
 
+# WidgetTree
+![widget_tree](https://user-images.githubusercontent.com/17991183/123679807-51ec6f00-d81e-11eb-8485-7cfe40f726f1.png)
+
 # Video Marketing
 [https://youtu.be/k5bOSNKTKQc](url)
+
+# Video de Usabilidade do APP
+[https://youtu.be/SvtLNyOUKaw](url)
