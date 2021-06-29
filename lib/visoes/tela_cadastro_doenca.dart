@@ -202,7 +202,7 @@ class TelaCadastroDoencaState extends State<TelaCadastroDoenca> {
               DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Nenhuma doença foi apagada');
               return;
             } else {
-              String mensagem = 'Você tem certeza que deseja apagar a doença?';
+              String mensagem = 'Você tem certeza que deseja apagar a doença? Perguntas que a utilizam também serão apagadas.';
               DialogoConfirmacaoExclusao.show(context, mensagem: mensagem, apagar: _apagar);
             }
           });

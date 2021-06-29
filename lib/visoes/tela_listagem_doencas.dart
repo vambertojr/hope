@@ -71,7 +71,7 @@ class TelaListagemDoencasState extends State<TelaListagemDoencas> {
                 GestureDetector(
                   child: Icon(Icons.delete,color: Colors.red,),
                   onTap: () {
-                    String mensagem = 'Você tem certeza que deseja apagar a doença?';
+                    String mensagem = 'Você tem certeza que deseja apagar a doença? Perguntas que a utilizam também serão apagadas.';
                     DialogoConfirmacaoExclusao.showObject(context, mensagem: mensagem, apagar: _apagar,
                         argumento: _listaDoencas[position]);
                   },

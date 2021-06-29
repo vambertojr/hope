@@ -2,6 +2,7 @@ import 'package:hope/modelos/doenca.dart';
 import 'package:hope/modelos/pergunta.dart';
 import 'package:hope/repositorios/constante_repositorio.dart';
 import 'package:hope/repositorios/database_helper.dart';
+import 'package:hope/repositorios/repositorio_doenca.dart';
 import 'package:sqflite/sqflite.dart';
 import 'dart:async';
 
@@ -28,12 +29,14 @@ class RepositorioPergunta {
   }
 
   Future<List<Pergunta>> getListaPerguntasAtivas() async {
+    List<Doenca> doencasAtivas = await RepositorioDoenca().getListaDoencasAtivas();
     var perguntasMapList = await _getPerguntasAtivasMapList();
     int count = perguntasMapList.length;
 
     List<Pergunta> listaPerguntas = <Pergunta>[];
     for (int i = 0; i < count; i++) {
-      listaPerguntas.add(Pergunta.fromJson(perguntasMapList[i]));
+      Pergunta pergunta = Pergunta.fromJson(perguntasMapList[i]);
+      if(doencasAtivas.contains(pergunta.doenca)) listaPerguntas.add(pergunta);
     }
 
     return listaPerguntas;
@@ -89,6 +92,17 @@ class RepositorioPergunta {
       }
     }
     return existe;
+  }
+
+  Future<List<Pergunta>> getPerguntasSobreDoenca(Doenca doenca) async {
+    List<Pergunta> perguntasDeInteresse = [];
+    var todasPerguntas = await _getListaPerguntas();
+    for(int i=0; i<todasPerguntas.length; i++){
+      if(todasPerguntas[i].doenca == doenca){
+        perguntasDeInteresse.add(todasPerguntas[i]);
+      }
+    }
+    return perguntasDeInteresse;
   }
 
   /*INVESTIGAR

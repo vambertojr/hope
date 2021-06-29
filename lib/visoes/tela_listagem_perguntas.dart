@@ -97,7 +97,7 @@ class TelaListagemPerguntasState extends State<TelaListagemPerguntas> {
                 GestureDetector(
                   child: Icon(Icons.delete,color: Colors.red,),
                   onTap: () {
-                    String mensagem = 'Você tem certeza que deseja apagar a pergunta?';
+                    String mensagem = 'Você tem certeza que deseja apagar a pergunta? Ela não poderá ser mais usada em nenhum quiz.';
                     DialogoConfirmacaoExclusao.showObject(context, mensagem: mensagem, apagar: _apagar,
                         argumento: _listaPerguntas[position]);
                   },

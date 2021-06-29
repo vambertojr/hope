@@ -277,7 +277,7 @@ class TelaCadastroPerguntaState extends State<TelaCadastroPergunta> {
               DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Nenhuma pergunta foi apagada');
               return;
             } else {
-              String mensagem = 'Você tem certeza que deseja apagar a pergunta?';
+              String mensagem = 'Você tem certeza que deseja apagar a pergunta? Ela não poderá ser mais usada em nenhum quiz.';
               DialogoConfirmacaoExclusao.show(context, mensagem: mensagem, apagar: _apagar);
             }
           });
