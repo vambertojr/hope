@@ -15,6 +15,10 @@ class DialogoFimQuiz {
       context: contexto,
       barrierDismissible: false,
       builder: (context) {
+        String mensagem = 'Bom trabalho!';
+        String alternativa = 'Que tal tentar mais uma vez? Quem sabe você consegue acertar todas na próxima!';
+        if(totalAcertos < totalQuestoes) mensagem = alternativa;
+
         return AlertDialog(
           backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
@@ -26,7 +30,7 @@ class DialogoFimQuiz {
             backgroundColor: Colors.green,
             maxRadius: 35.0,
             child: Icon(
-              totalAcertos < 6 ? Icons.warning : Icons.favorite,
+              totalAcertos < totalQuestoes ? Icons.warning : Icons.favorite,
               color: Colors.grey.shade900,
             ),
           ),
@@ -35,7 +39,7 @@ class DialogoFimQuiz {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Parabéns',
+                totalAcertos == totalQuestoes ? 'Parabéns' : '',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -52,7 +56,7 @@ class DialogoFimQuiz {
                 ),
               ),
               Text(
-                'Que tal tentar mais uma vez? Quem sabe você consegue acertar todas na próxima!',
+                mensagem,
                 style: TextStyle(
                   color: Colors.black54,
                 ),
