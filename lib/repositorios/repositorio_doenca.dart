@@ -48,4 +48,20 @@ class RepositorioDoenca {
     return result;
   }
 
+  Future<bool> existeDoencaAtivaComMesmoNome(Doenca doenca) async {
+    var db = await new DatabaseHelper().database;
+    var result = await db.query(ConstanteRepositorio.doencaTabela,
+        where: '${ConstanteRepositorio.doencaTabela_colNome} = ? AND '
+            '${ConstanteRepositorio.doencaTabela_colAtiva} = ?',
+        whereArgs: [doenca.nome, 1]);
+    int count = result.length;
+    List<Doenca> listaDoencas = <Doenca>[];
+    for (int i = 0; i < count; i++) {
+      Doenca d = Doenca.fromJson(result[i]);
+      if(doenca.id == null || (doenca.id!=d.id)) listaDoencas.add(d);
+    }
+    bool resultado = listaDoencas.isEmpty? false : true;
+    return resultado;
+  }
+
 }

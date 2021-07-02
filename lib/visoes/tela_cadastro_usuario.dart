@@ -251,17 +251,14 @@ class TelaCadastroUsuarioState extends State<TelaCadastroUsuario> {
     UsuarioController usuarioController = UsuarioController(_usuario);
     int resultado = await usuarioController.salvar();
 
-    if (resultado != 0) {
+    if(resultado == -1){
+      DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Já existe um usuário com esse login');
+    } else if(resultado == 0){
+      Navigator.pop(context, true);
+      DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Erro ao salvar usuário');
+    } else {
       Navigator.pop(context, true);
       DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Usuário salvo com sucesso');
-    } else {
-      bool existe = await usuarioController.existe();
-      if(existe){
-        DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Já existe um usuário com esse login');
-      } else {
-        Navigator.pop(context, true);
-        DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Erro ao salvar usuário');
-      }
     }
 
   }

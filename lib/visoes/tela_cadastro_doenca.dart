@@ -228,15 +228,17 @@ class TelaCadastroDoencaState extends State<TelaCadastroDoenca> {
       return;
     }
 
-    Navigator.pop(context, true);
-
     DoencaController doencaController = DoencaController(_doenca);
     int resultado = await doencaController.salvar();
 
-    if (resultado != 0) {
-      DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Doença salva com sucesso');
-    } else {
+    if(resultado == -1){
+      DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Já existe uma doença com esse nome');
+    } else if(resultado == 0){
+      Navigator.pop(context, true);
       DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Erro ao salvar doença');
+    } else {
+      Navigator.pop(context, true);
+      DialogoAlerta.show(context, titulo: 'Aviso', mensagem: 'Doença salva com sucesso');
     }
   }
 

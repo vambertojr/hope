@@ -17,15 +17,17 @@ class UsuarioController {
 
   Future<int> salvar() async {
     int resultado;
-    if (_usuario.id != null) {
-      resultado = await _repositorioUsuarios.atualizarUsuario(_usuario);
-    } else {
+    bool existe = await _existeUsuarioComMesmoLogin();
+    if(existe) resultado = -1;
+    else if(_usuario.id == null){
       resultado = await _repositorioUsuarios.inserirUsuario(_usuario);
+    } else {
+      resultado = await _repositorioUsuarios.atualizarUsuario(_usuario);
     }
     return resultado;
   }
 
-  Future<bool> existe() async {
+  Future<bool> _existeUsuarioComMesmoLogin() async {
     return await _repositorioUsuarios.existeUsuarioAtivoComLogin(_usuario);
   }
 

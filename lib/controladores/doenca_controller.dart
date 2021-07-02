@@ -37,10 +37,12 @@ class DoencaController {
 
   Future<int> salvar() async {
     int resultado;
-    if (_doenca.id != null) {
-      resultado = await _repositorioDoencas.atualizarDoenca(_doenca);
-    } else {
+    bool existe = await _existeDoencaComMesmoNome();
+    if(existe) resultado = -1;
+    else if(_doenca.id == null){
       resultado = await _repositorioDoencas.inserirDoenca(_doenca);
+    } else {
+      resultado = await _repositorioDoencas.atualizarDoenca(_doenca);
     }
     return resultado;
   }
@@ -71,6 +73,10 @@ class DoencaController {
       if(existeQuiz) break;
     }
     return existeQuiz;
+  }
+
+  Future<bool> _existeDoencaComMesmoNome() async {
+    return await _repositorioDoencas.existeDoencaAtivaComMesmoNome(_doenca);
   }
 
 }

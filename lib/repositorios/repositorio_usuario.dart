@@ -48,10 +48,11 @@ class RepositorioUsuario {
         where: '${ConstanteRepositorio.usuarioTabela_colLogin} = ? AND '
             '${ConstanteRepositorio.usuarioTabela_colAtivo} = ?',
         whereArgs: [usuario.login, 1]);
-    int count = result.length;
+    int total = result.length;
     List<Usuario> listaUsuarios = <Usuario>[];
-    for (int i = 0; i < count; i++) {
-      listaUsuarios.add(Usuario.fromJson(result[i]));
+    for (int i = 0; i < total; i++) {
+      Usuario u = Usuario.fromJson(result[i]);
+      if(usuario.id == null || (usuario.id!=u.id)) listaUsuarios.add(u);
     }
     bool resultado = listaUsuarios.isEmpty? false : true;
     return resultado;

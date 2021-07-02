@@ -43,8 +43,7 @@ class DatabaseHelper {
         '${ConstanteRepositorio.doencaTabela_colNome} TEXT, '
         '${ConstanteRepositorio.doencaTabela_colDescricao} TEXT, '
         '${ConstanteRepositorio.doencaTabela_colAgente} TEXT, '
-        '${ConstanteRepositorio.doencaTabela_colAtiva} INTEGER, '
-        'UNIQUE(${ConstanteRepositorio.doencaTabela_colNome}) ON CONFLICT IGNORE)'
+        '${ConstanteRepositorio.doencaTabela_colAtiva} INTEGER)'
     );
 
     await db.execute(
@@ -69,8 +68,7 @@ class DatabaseHelper {
             '${ConstanteRepositorio.usuarioTabela_colLogin} TEXT, '
             '${ConstanteRepositorio.usuarioTabela_colSenha} TEXT, '
             '${ConstanteRepositorio.usuarioTabela_colPapel} TEXT, '
-            '${ConstanteRepositorio.usuarioTabela_colAtivo} INTEGER, '
-            'UNIQUE(${ConstanteRepositorio.usuarioTabela_colLogin}) ON CONFLICT IGNORE)'
+            '${ConstanteRepositorio.usuarioTabela_colAtivo} INTEGER)'
     );
 
     await db.execute(
