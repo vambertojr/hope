@@ -17,6 +17,9 @@ Funcionalidades:<br>
 # Logo
 ![hope_logo](https://user-images.githubusercontent.com/17991183/115553149-773f8880-a283-11eb-9a0a-9bca8b4c95cc.png)
 
+# Diagrama de telas
+![Diagrama_Telas](https://user-images.githubusercontent.com/17991183/125072537-1ad55380-e091-11eb-8c44-773ac0fb5f4a.png)
+
 # Fluxo
 ![Projeto](https://user-images.githubusercontent.com/17991183/114729647-8f108d00-9d16-11eb-9f63-4273eb8dc206.png)
 
